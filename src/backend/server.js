@@ -27,7 +27,7 @@ const app = express();
 const allowedOrigins = [
   'https://fantometechnologies.vercel.app',
   'https://www.fantometechnologies.vercel.app',
-  'https://congenial-broccoli-jjrv5pxpv565c57w7-5173.app.github.dev',
+  'https://organic-trout-q7vjq5w55w56f69w6.github.dev',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://fantometechnologies.com',
