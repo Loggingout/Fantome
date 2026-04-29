@@ -1,8 +1,3 @@
-interface ServiceButtonProps {
-    onClick: () => void;
-}
-
-
 export default function ServiceButton({ onClick }: { onClick: () => void }) {
   return (
     <button

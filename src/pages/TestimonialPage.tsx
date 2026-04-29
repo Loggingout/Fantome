@@ -27,12 +27,6 @@ export default function TestimonialPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Motion variants for page fade-in
-  const pageVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
-
   // Motion variants for Return Home button fade-in
   const buttonVariants = {
     hidden: { opacity: 0, y: 10 },

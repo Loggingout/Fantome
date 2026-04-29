@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import StudioImg from "../assets/ft-studio.png";
-import CompanyTeam from "../assets/FTCompanyTeam.png";
 import MeImg from "../assets/me.jpg";
 import {
   Building2,
