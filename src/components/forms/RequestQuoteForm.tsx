@@ -1,14 +1,14 @@
 import { useState } from "react";
 import RequestQuoteModal from "../modal/requestQuoteModal";
-import FormLoader from "../loaders/formLoader"; // Import the loader component
+import FormLoader from "../loaders/formLoader";
 
 export default function RequestQuoteForm() {
   const [websiteType, setWebsiteType] = useState("");
   const [pages, setPages] = useState<number | "">("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [modalOpen, setModalOpen] = useState(false); // modal state
-  const [isSubmitting, setIsSubmitting] = useState(false); // submission state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const basePrices: Record<string, number> = {
     "Landing Page": 250,
@@ -21,10 +21,13 @@ export default function RequestQuoteForm() {
   const estimatedPrice =
     websiteType && pages
       ? (() => {
-          const base = basePrices[websiteType] + Number(pages) * pricePerPage;
+          const base =
+            basePrices[websiteType] + Number(pages) * pricePerPage;
+
           const variability = base * 0.05;
           const randomAdjustment =
             Math.random() * (variability * 2) - variability;
+
           return Math.round(base + randomAdjustment);
         })()
       : null;
@@ -54,7 +57,7 @@ export default function RequestQuoteForm() {
             pages,
             estimatedPrice,
           }),
-        },
+        }
       );
 
       const data = await response.json();
@@ -78,78 +81,145 @@ export default function RequestQuoteForm() {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
-      <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-        Get a Quote!
-      </h2>
-
-      <p className="text-sm text-gray-600 text-center mb-6">
-        Stop thinking about it. Start building it.{" "}
-        <span className="font-semibold">
-          -Let's turn your idea into a website that actually brings in the
-          customers.
+    <div
+      className="
+        w-full
+        rounded-[2rem]
+        border border-neutral-800
+        bg-neutral-900
+        shadow-[0_8px_40px_rgba(0,0,0,0.35)]
+        p-6 sm:p-8 md:p-10
+      "
+      style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
+    >
+      {/* Header */}
+      <div className="text-center mb-8">
+        <span className="inline-block mb-5 px-4 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400 text-xs tracking-widest uppercase">
+          Website Estimate
         </span>
-        .
-      </p>
+
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          Get Your{" "}
+          <span className="italic font-normal text-neutral-400">
+            Custom Quote
+          </span>
+        </h2>
+
+        <p className="text-neutral-400 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+          Stop thinking about it. Start building it. Let’s turn your
+          idea into a website that actually helps grow your business.
+        </p>
+
+        <div className="mt-8 mx-auto w-16 h-px bg-neutral-700" />
+      </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
         <fieldset disabled={isSubmitting} className="space-y-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm text-neutral-300 mb-2">
               Name
             </label>
+
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Your name"
+              className="
+                w-full rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                text-white
+                px-5 py-3
+                placeholder:text-neutral-500
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+              "
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm text-neutral-300 mb-2">
               Email
             </label>
+
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="you@example.com"
+              className="
+                w-full rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                text-white
+                px-5 py-3
+                placeholder:text-neutral-500
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+              "
             />
           </div>
 
           {/* Website Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm text-neutral-300 mb-2">
               Website Type
             </label>
+
             <select
               value={websiteType}
               onChange={(e) => setWebsiteType(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="
+                w-full rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                text-white
+                px-5 py-3
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+              "
             >
               <option value="">Select a website type</option>
               <option value="Landing Page">Landing Page</option>
-              <option value="Business Website">Business Website</option>
-              <option value="Website Redesign">Website Redesign</option>
+              <option value="Business Website">
+                Business Website
+              </option>
+              <option value="Website Redesign">
+                Website Redesign
+              </option>
             </select>
           </div>
 
-          {/* Number of Pages */}
+          {/* Pages */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm text-neutral-300 mb-2">
               Number of Pages
             </label>
+
             <select
               value={pages}
-              onChange={(e) => setPages(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onChange={(e) =>
+                setPages(Number(e.target.value))
+              }
+              className="
+                w-full rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                text-white
+                px-5 py-3
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+              "
             >
               <option value="">Select pages</option>
+
               {[...Array(10)].map((_, i) => (
                 <option key={i + 1} value={i + 1}>
                   {i + 1} {i === 9 ? "+" : ""}
@@ -161,15 +231,26 @@ export default function RequestQuoteForm() {
           {/* Estimated Price */}
           {estimatedPrice && (
             <div
-              className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl text-center
-               animate-[slideUpFade_0.4s_ease-out]"
+              className="
+                rounded-3xl
+                bg-neutral-950
+                border border-neutral-800
+                p-6
+                text-center
+                animate-[slideUpFade_0.4s_ease-out]
+              "
             >
-              <p className="text-gray-700 text-sm">Estimated Project Cost</p>
-              <p className="text-3xl font-bold text-purple-700">
+              <p className="text-neutral-400 text-sm uppercase tracking-wide">
+                Estimated Project Cost
+              </p>
+
+              <p className="text-4xl font-bold text-white mt-2">
                 ${estimatedPrice.toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Final pricing may vary based on features & scope
+
+              <p className="text-xs text-neutral-500 mt-3">
+                Final pricing may vary based on features,
+                integrations, and project scope.
               </p>
             </div>
           )}
@@ -178,11 +259,21 @@ export default function RequestQuoteForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 rounded-xl font-semibold text-white
-    bg-gradient-to-r from-purple-600 to-pink-600
-    hover:shadow-lg hover:shadow-purple-500/40
-    transition-all duration-300 hover:scale-[1.02]
-    disabled:opacity-70 disabled:cursor-not-allowed"
+            className="
+              w-full
+              rounded-2xl
+              border border-neutral-700
+              bg-white
+              text-black
+              font-semibold
+              py-4
+              transition-all duration-300
+              hover:bg-neutral-200
+              hover:shadow-md
+              active:scale-[0.99]
+              disabled:opacity-70
+              disabled:cursor-not-allowed
+            "
           >
             {isSubmitting ? (
               <FormLoader text="Sending request..." />
@@ -191,14 +282,13 @@ export default function RequestQuoteForm() {
             )}
           </button>
 
-          <p className="text-xs text-gray-500 mt-2 text-center font-bold">
-            You'll receive a personalized quote within 24 hours of providing
-            your email. No spam, no pressure🎁
+          <p className="text-xs text-neutral-500 text-center leading-relaxed">
+            You’ll receive a personalized quote within 24 hours.
+            No spam, no pressure.
           </p>
         </fieldset>
       </form>
 
-      {/* Request Quote Modal */}
       <RequestQuoteModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

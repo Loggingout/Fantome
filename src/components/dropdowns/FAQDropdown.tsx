@@ -34,29 +34,29 @@ export default function QuestionsDropdown() {
 
     return (
         <div className="w-full max-w-3xl mx-auto py-12 px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-bold text-center mb-12 text-white">Frequently Asked Questions</h2>
             
-            <div className="space-y-3">
+            <div className="space-y-4">
                 {faqs.map((faq) => (
                     <div 
                         key={faq.id} 
-                        className="border border-gray-200 rounded-lg overflow-hidden transition-all hover:border-gray-400 hover:shadow-md"
+                        className="overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 shadow-[0_18px_60px_rgba(15,23,42,0.35)] transition-all duration-300 hover:border-neutral-700"
                     >
                         <button
                             onClick={() => setActiveQuestion(activeQuestion === faq.id ? null : faq.id)}
-                            className="w-full px-6 py-4 text-left font-semibold text-lg hover:bg-purple-50 transition-colors flex justify-between items-center gap-4"
+                            className="w-full px-6 py-4 text-left font-semibold text-lg text-white transition-colors duration-300 hover:bg-neutral-800 flex justify-between items-center gap-4"
                         >
                             <span>{faq.question}</span>
                             {activeQuestion === faq.id ? (
-                                <Minus className="w-5 h-5 flex-shrink-0 text-red-600" />
+                                <Minus className="w-5 h-5 shrink-0 text-cyan-300" />
                             ) : (
-                                <Plus className="w-5 h-5 flex-shrink-0 text-purple-600" />
+                                <Plus className="w-5 h-5 shrink-0 text-fuchsia-300" />
                             )}
                         </button>
                         
                         {activeQuestion === faq.id && (
-                            <div className="px-6 py-4 bg-gradient-to-l from-purple-50 to-transparent">
-                                <p className="text-gray-700 leading-relaxed">
+                            <div className="px-6 py-4 bg-neutral-950/80 border-t border-neutral-800">
+                                <p className="text-neutral-300 leading-relaxed">
                                     {faq.answer}
                                 </p>
                             </div>

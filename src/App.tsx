@@ -1,25 +1,76 @@
 import { AnimatePresence } from "motion/react";
 import { Routes, Route } from "react-router-dom";
+
 import ScrollToTop from "./components/scroll/ScrollToTop";
-import LandingPage from "./pages/LandingPage";
-import AboutUsPage from "./pages/AboutUsPage";
-import ServicePage from "./pages/ServicesPage";
-import RequestQuotePage from "./pages/RequestQuotePage";
-import FourOFourPage from './pages/FourOFourPage';
-import TestimonialPage from './pages/TestimonialPage';
+
+// Marketing Pages
+import LandingPage from "./pages/marketing/LandingPage";
+import AboutUsPage from "./pages/marketing/AboutUsPage";
+import ServicePage from "./pages/marketing/ServicesPage";
+import RequestQuotePage from "./pages/marketing/RequestQuotePage";
+import FourOFourPage from "./pages/errors/FourOFourPage";
+import TestimonialPage from "./pages/marketing/TestimonialPage";
+import BlogPage from "./pages/blog/BlogPage";
+
+// Auth
+import LoginPage from "./pages/auth/LoginPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import RoleGuard from "./components/auth/RoleGuard";
+
+// Admin Layout
+import DashboardLayout from "./components/layout/DashboardLayout";
+
+// Admin Modules
+import DashboardPage from "./pages/admin/dashboard/DashboardPage";
+import AnalyticsPage from "./pages/admin/analytics/AnalyticsPage";
+import EmployeeManagementPage from "./pages/admin/employees/EmployeeManagementPage";
+import BlogManagementPage from "./pages/admin/blog/BlogManagementPage";
+import PermissionsPage from "./pages/admin/permissions/PermissionsPage";
+import CompanySettingsPage from "./pages/admin/settings/CompanySettingsPage";
+import AdminProfilePage from "./pages/admin/settings/AdminProfilePage";
+import LeaveRequestPage from "./pages/admin/leave/LeaveRequestPage";
 
 function App() {
   return (
     <AnimatePresence>
       <ScrollToTop />
+
       <Routes>
+        {/* Marketing Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutUsPage />} />
         <Route path="/services" element={<ServicePage />} />
         <Route path="/request-quote" element={<RequestQuotePage />} />
         <Route path="/FourOFour" element={<FourOFourPage />} />
         <Route path="/testimonials" element={<TestimonialPage />} />
-        {/* Add more routes here as you build more pages */}
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* ============================
+            ADMIN ROUTES (Protected)
+           ============================ */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["admin"]}>
+                <DashboardLayout />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="employees" element={<EmployeeManagementPage />} />
+          <Route path="blog" element={<BlogManagementPage />} />
+          <Route path="permissions" element={<PermissionsPage />} />
+          <Route path="settings" element={<CompanySettingsPage />} />
+          <Route path="settings/profile" element={<AdminProfilePage />} />
+          <Route path="leave" element={<LeaveRequestPage />} />
+        </Route>
+
+        {/* Catch-all */}
+        <Route path="*" element={<FourOFourPage />} />
       </Routes>
     </AnimatePresence>
   );

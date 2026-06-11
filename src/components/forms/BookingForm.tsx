@@ -7,18 +7,28 @@ interface BookingFormProps {
   isModal?: boolean;
 }
 
-const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
+const BookingForm = ({
+  onClose,
+  isModal = false,
+}: BookingFormProps) => {
   const [formData, setFormData] = useState({
     businessName: "",
     productIdea: "",
     estimatedBudget: "",
     email: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
 
     if (
@@ -51,7 +61,11 @@ const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
       }
 
       const result = await response.json();
-      console.log("Booking submitted successfully:", result);
+
+      console.log(
+        "Booking submitted successfully:",
+        result
+      );
 
       setSuccess(true);
 
@@ -62,6 +76,7 @@ const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
           estimatedBudget: "",
           email: "",
         });
+
         setSuccess(false);
 
         if (onClose) {
@@ -69,17 +84,26 @@ const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
         }
       }, 2000);
     } catch (err) {
-      console.error("Error submitting booking:", err);
-      setError("Failed to submit booking. Please try again.");
+      console.error(
+        "Error submitting booking:",
+        err
+      );
+
+      setError(
+        "Failed to submit booking. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -90,26 +114,55 @@ const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
 
   const formContent = (
     <div
-      className={`bg-gradient-to-br from-slate-900 to-purple-900 p-8 rounded-2xl ${
-        isModal ? "border border-purple-500/30 shadow-2xl" : ""
-      }`}
+      className={`
+        rounded-[2rem]
+        border border-neutral-800
+        bg-neutral-900
+        shadow-[0_8px_40px_rgba(0,0,0,0.35)]
+        p-6 sm:p-8
+        ${
+          isModal
+            ? "backdrop-blur-sm"
+            : ""
+        }
+      `}
+      style={{
+        fontFamily:
+          "'Georgia', 'Times New Roman', serif",
+      }}
     >
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-8">
+        <div className="flex items-center gap-4">
           <img
             src={Logo}
             alt="Company Logo"
-            className="h-12 w-12 rounded-xl"
+            className="h-12 w-12 rounded-2xl"
           />
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Let's Build Together
-          </h3>
+
+          <div>
+            <span className="inline-block mb-2 px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400 text-[10px] tracking-widest uppercase">
+              Discovery Call
+            </span>
+
+            <h3 className="text-2xl sm:text-3xl font-bold text-white">
+              Let's{" "}
+              <span className="italic font-normal text-neutral-400">
+                Build Together
+              </span>
+            </h3>
+          </div>
         </div>
 
         {isModal && onClose && (
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors text-2xl"
+            className="
+              text-neutral-500
+              hover:text-white
+              transition-colors
+              text-2xl
+            "
             aria-label="Close form"
           >
             ×
@@ -117,88 +170,170 @@ const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
         )}
       </div>
 
+      {/* Divider */}
+      <div className="w-16 h-px bg-neutral-700 mb-8" />
+
+      {/* Error */}
       {error && (
-        <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
+        <div className="mb-5 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-red-200 text-sm">
           {error}
         </div>
       )}
 
+      {/* Success */}
       {success && (
-        <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200 text-sm">
+        <div className="mb-5 rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-green-200 text-sm">
           ✓ Booking submitted successfully!
         </div>
       )}
 
-      <div className="space-y-5">
-        <fieldset disabled={isSubmitting} className="space-y-5">
+      <div className="space-y-6">
+        <fieldset
+          disabled={isSubmitting}
+          className="space-y-6"
+        >
+          {/* Business Name */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-purple-300">
+            <label className="block text-sm text-neutral-300 mb-2">
               Business Name *
             </label>
+
             <input
               name="businessName"
               type="text"
               value={formData.businessName}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-purple-500/30 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Your business name"
               required
+              className="
+                w-full
+                rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                px-5 py-3
+                text-white
+                placeholder:text-neutral-500
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+                disabled:opacity-50
+              "
             />
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-purple-300">
+            <label className="block text-sm text-neutral-300 mb-2">
               Email *
             </label>
+
             <input
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-purple-500/30 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="you@example.com"
               required
+              className="
+                w-full
+                rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                px-5 py-3
+                text-white
+                placeholder:text-neutral-500
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+                disabled:opacity-50
+              "
             />
           </div>
 
+          {/* Product Idea */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-purple-300">
+            <label className="block text-sm text-neutral-300 mb-2">
               Product Idea *
             </label>
+
             <textarea
               name="productIdea"
               value={formData.productIdea}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-purple-500/30 rounded-lg focus:outline-none focus:border-purple-500 transition-colors h-32 resize-none text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Tell us about your project vision"
               required
+              className="
+                w-full
+                rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                px-5 py-3
+                h-36
+                resize-none
+                text-white
+                placeholder:text-neutral-500
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+                disabled:opacity-50
+              "
             />
           </div>
 
+          {/* Budget */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-purple-300">
+            <label className="block text-sm text-neutral-300 mb-2">
               Estimated Budget *
             </label>
+
             <input
               name="estimatedBudget"
               type="text"
               value={formData.estimatedBudget}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-purple-500/30 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="$5,000 - $10,000"
               required
+              className="
+                w-full
+                rounded-2xl
+                border border-neutral-700
+                bg-neutral-950
+                px-5 py-3
+                text-white
+                placeholder:text-neutral-500
+                focus:outline-none
+                focus:border-neutral-500
+                transition-colors
+                disabled:opacity-50
+              "
             />
           </div>
         </fieldset>
 
-        <p className="text-sm text-white font-semibold mt-2 text-center">
-          You'll receive an email 24 hours after submission.
+        <p className="text-sm text-neutral-500 text-center leading-relaxed">
+          You’ll receive an email within 24 hours
+          after submission.
         </p>
 
+        {/* Submit */}
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-bold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="
+            w-full
+            rounded-2xl
+            border border-neutral-700
+            bg-white
+            text-black
+            py-4
+            font-semibold
+            transition-all duration-300
+            hover:bg-neutral-200
+            hover:shadow-md
+            active:scale-[0.99]
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+          "
         >
           {isSubmitting ? (
             <FormLoader text="Submitting booking..." />
@@ -212,8 +347,10 @@ const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
 
   if (isModal) {
     return (
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full">{formContent}</div>
+      <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div className="max-w-xl w-full">
+          {formContent}
+        </div>
       </div>
     );
   }

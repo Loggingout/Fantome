@@ -43,43 +43,43 @@ export default function DiscoveryDropdown() {
 
   return (
     <div className="w-full max-w-3xl mx-auto py-12 px-4">
-      <h2 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-black to-black bg-clip-text text-transparent">
+      <h2 className="text-4xl font-bold text-center mb-8 text-white">
         How It Works
       </h2>
-      <p className="text-center text-gray-400 mb-8 font-bold">
-        "A step-by-step process to bring your vision to life"
+      <p className="text-center text-neutral-400 mb-8 font-semibold">
+        A step-by-step process to bring your vision to life
       </p>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {steps.map((step) => {
           const Icon = step.icon
 
           return (
             <div
               key={step.id}
-              className="border border-gray-200 rounded-lg overflow-hidden"
+              className="overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 shadow-[0_18px_60px_rgba(15,23,42,0.35)]"
             >
               <button
                 onClick={() =>
                   setActiveStep(activeStep === step.id ? null : step.id)
                 }
-                className="w-full px-6 py-4 text-left font-semibold text-lg hover:bg-gray-50 transition-colors flex justify-between items-center"
+                className="w-full px-6 py-4 text-left text-white transition-colors duration-300 hover:bg-neutral-800 flex justify-between items-center"
               >
                 <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-purple-600" />
-                  {step.title}
+                  <Icon className="w-5 h-5 text-cyan-300" />
+                  <span className="font-semibold text-lg">{step.title}</span>
                 </div>
 
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
+                  className={`w-5 h-5 text-neutral-400 transition-transform duration-300 ${
                     activeStep === step.id ? 'rotate-180' : ''
                   }`}
                 />
               </button>
 
               {activeStep === step.id && (
-                <div className="px-6 py-4 bg-gradient-to-l from-purple-50 to-transparent">
-                  <p className="text-gray-700 leading-relaxed">
+                <div className="px-6 py-4 bg-neutral-950/80 border-t border-neutral-800">
+                  <p className="text-neutral-300 leading-relaxed">
                     {step.description}
                   </p>
                 </div>

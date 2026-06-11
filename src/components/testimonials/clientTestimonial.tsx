@@ -23,10 +23,6 @@ export default function ClientTestimonial({
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-13  ">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent text-shadow-md">
-        What Our Clients Say
-      </h2>
-      <p className="text-center mb-5n text-md font-semibold"> Providing more calls, foot traffic, and leads for our clients. One client at a time!</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {testimonials.map((t, idx) => (
