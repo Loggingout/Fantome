@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import BookingForm from '../../components/forms/BookingForm';
 import Navbar from '../../components/header/Navbar';
-import HeroImage from '../../assets/Dashboard display (3).png'
+import HeroImage from '../../assets/dashboard-display.png'
 import ServiceButton from '../../components/buttons/DiscoverHowWeHelpButton';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
