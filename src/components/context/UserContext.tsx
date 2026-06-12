@@ -1,17 +1,30 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api, { setAuthToken, clearAuthData, getAuthToken } from "../../utils/api";
 
-const UserContext = createContext(null);
+interface UserContextType {
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+  login: (username: string, password: string) => Promise<any>;
+  logout: () => Promise<void>;
+  loading: boolean;
+  isAuthenticated: boolean;
+  role: string | null;
+}
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
+interface UserProviderProps {
+  children: React.ReactNode;
+}
+
+const UserContext = createContext<UserContextType | null>(null);
+
+export const UserProvider = ({ children }: UserProviderProps) => {
+  const [user, setUser] = useState<any>(() => {
     const saved = localStorage.getItem("user");
     return saved ? JSON.parse(saved) : null;
   });
 
   const [loading, setLoading] = useState(true);
 
-  // Load user on refresh if token exists
   useEffect(() => {
     const token = getAuthToken();
     if (!token) {
@@ -24,7 +37,7 @@ export const UserProvider = ({ children }) => {
         const res = await api.get("/auth/me");
         setUser(res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
-      } catch (err) {
+      } catch {
         clearAuthData();
         setUser(null);
       } finally {
@@ -35,11 +48,9 @@ export const UserProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // LOGIN
-  const login = async (username, password) => {
+  const login = async (username: string, password: string) => {
     try {
       const res = await api.post("/auth/login", { username, password });
-
       const { token, user } = res.data;
 
       setAuthToken(token);
@@ -47,7 +58,7 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(user));
 
       return { success: true, user };
-    } catch (err) {
+    } catch (err: any) {
       return {
         success: false,
         error: err.response?.data?.error || "Login failed",
@@ -55,11 +66,10 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // LOGOUT
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       await api.post("/auth/logout");
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Logout error:", err.message);
     }
 
@@ -84,4 +94,4 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => useContext(UserContext) as UserContextType;

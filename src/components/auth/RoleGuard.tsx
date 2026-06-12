@@ -1,8 +1,19 @@
 import { Navigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
-export default function RoleGuard({ children, allowedRoles }) {
-  const { user } = useUser();
+interface RoleGuardProps {
+  children: React.ReactNode;
+  allowedRoles: string[];
+}
+
+export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
+  const userContext = useUser();
+
+  if (!userContext) {
+    return <p>Loading...</p>;
+  }
+
+  const { user } = userContext;
 
   if (!user) {
     return <Navigate to="/login" replace />;

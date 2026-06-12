@@ -27,12 +27,17 @@ const CARD_ACCENTS = [
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
-  visible: (i = 0) => ({
+  visible: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.1, ease: "easeOut" },
+    transition: {
+      duration: 0.6,
+      delay: i * 0.1,
+      ease: [0.42, 0, 0.58, 1] // cubic-bezier equivalent of easeOut
+    },
   }),
 };
+
 
 const infoItems = [
   {
