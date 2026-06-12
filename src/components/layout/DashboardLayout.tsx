@@ -5,15 +5,20 @@ import PageContainer from "../layout/PageContainer";
 
 export default function DashboardLayout() {
   return (
-    <div className="flex h-screen bg-neutral-900">
+    <div className="flex min-h-screen bg-neutral-900 overflow-hidden">
+      {/* Sidebar */}
       <AdminSidebar />
 
-      <div className="flex flex-col flex-1">
+      {/* Main Content Area */}
+      <div className="flex flex-col flex-1 max-h-screen overflow-y-auto">
         <DashboardHeader />
 
-        <PageContainer>
-          <Outlet />
-        </PageContainer>
+        {/* Scrollable content wrapper */}
+        <div className="flex-1 overflow-y-auto">
+          <PageContainer>
+            <Outlet />
+          </PageContainer>
+        </div>
       </div>
     </div>
   );

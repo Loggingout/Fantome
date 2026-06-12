@@ -4,7 +4,7 @@ import api, { setAuthToken, clearAuthData, getAuthToken } from "../../utils/api"
 interface UserContextType {
   user: any;
   setUser: React.Dispatch<React.SetStateAction<any>>;
-  login: (username: string, password: string) => Promise<any>;
+  login: (email: string, password: string) => Promise<any>;
   logout: () => Promise<void>;
   loading: boolean;
   isAuthenticated: boolean;
@@ -25,6 +25,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const [loading, setLoading] = useState(true);
 
+  // Load user if token exists
   useEffect(() => {
     const token = getAuthToken();
     if (!token) {
@@ -35,8 +36,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     const fetchUser = async () => {
       try {
         const res = await api.get("/auth/me");
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
+
+        // Backend returns: { success, employee }
+        const employee = res.data.employee;
+
+        setUser(employee);
+        localStorage.setItem("user", JSON.stringify(employee));
       } catch {
         clearAuthData();
         setUser(null);
@@ -48,24 +53,31 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     fetchUser();
   }, []);
 
-  const login = async (username: string, password: string) => {
+  // LOGIN FUNCTION (fixed)
+  const login = async (email: string, password: string) => {
     try {
-      const res = await api.post("/auth/login", { username, password });
-      const { token, user } = res.data;
+      // Backend expects: { email, password }
+      const res = await api.post("/auth/login", { email, password });
 
+      const { token, employee } = res.data;
+
+      // Save token
       setAuthToken(token);
-      setUser(user);
-      localStorage.setItem("user", JSON.stringify(user));
 
-      return { success: true, user };
+      // Save user
+      setUser(employee);
+      localStorage.setItem("user", JSON.stringify(employee));
+
+      return { success: true, user: employee };
     } catch (err: any) {
       return {
         success: false,
-        error: err.response?.data?.error || "Login failed",
+        error: err.response?.data?.message || "Login failed",
       };
     }
   };
 
+  // LOGOUT
   const logout = async (): Promise<void> => {
     try {
       await api.post("/auth/logout");

@@ -1,116 +1,21 @@
-import { useState } from "react";
 import Logo from "/new-logo.png";
 import FormLoader from "../../components/loaders/formLoader";
+import { useBookingForm } from "../hooks/useBookingForm";
 
 interface BookingFormProps {
   onClose?: () => void;
   isModal?: boolean;
 }
 
-const BookingForm = ({
-  onClose,
-  isModal = false,
-}: BookingFormProps) => {
-  const [formData, setFormData] = useState({
-    businessName: "",
-    productIdea: "",
-    estimatedBudget: "",
-    email: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
-
-  const [error, setError] =
-    useState<string | null>(null);
-
-  const [success, setSuccess] = useState(false);
-
-  const handleSubmit = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    e.preventDefault();
-
-    if (
-      !formData.businessName ||
-      !formData.productIdea ||
-      !formData.estimatedBudget ||
-      !formData.email
-    ) {
-      setError("Please fill in all required fields");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      const response = await fetch(
-        "https://fantome-technologies.onrender.com/api/bookings",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit booking");
-      }
-
-      const result = await response.json();
-
-      console.log(
-        "Booking submitted successfully:",
-        result
-      );
-
-      setSuccess(true);
-
-      setTimeout(() => {
-        setFormData({
-          businessName: "",
-          productIdea: "",
-          estimatedBudget: "",
-          email: "",
-        });
-
-        setSuccess(false);
-
-        if (onClose) {
-          onClose();
-        }
-      }, 2000);
-    } catch (err) {
-      console.error(
-        "Error submitting booking:",
-        err
-      );
-
-      setError(
-        "Failed to submit booking. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (error) setError(null);
-  };
+const BookingForm = ({ onClose, isModal = false }: BookingFormProps) => {
+  const {
+    formData,
+    isSubmitting,
+    error,
+    success,
+    handleChange,
+    handleSubmit,
+  } = useBookingForm(onClose);
 
   const formContent = (
     <div
@@ -120,15 +25,10 @@ const BookingForm = ({
         bg-neutral-900
         shadow-[0_8px_40px_rgba(0,0,0,0.35)]
         p-6 sm:p-8
-        ${
-          isModal
-            ? "backdrop-blur-sm"
-            : ""
-        }
+        ${isModal ? "backdrop-blur-sm" : ""}
       `}
       style={{
-        fontFamily:
-          "'Georgia', 'Times New Roman', serif",
+        fontFamily: "'Georgia', 'Times New Roman', serif",
       }}
     >
       {/* Header */}
@@ -188,10 +88,7 @@ const BookingForm = ({
       )}
 
       <div className="space-y-6">
-        <fieldset
-          disabled={isSubmitting}
-          className="space-y-6"
-        >
+        <fieldset disabled={isSubmitting} className="space-y-6">
           {/* Business Name */}
           <div>
             <label className="block text-sm text-neutral-300 mb-2">
@@ -311,8 +208,7 @@ const BookingForm = ({
         </fieldset>
 
         <p className="text-sm text-neutral-500 text-center leading-relaxed">
-          You’ll receive an email within 24 hours
-          after submission.
+          You’ll receive an email within 24 hours after submission.
         </p>
 
         {/* Submit */}
@@ -347,8 +243,8 @@ const BookingForm = ({
 
   if (isModal) {
     return (
-      <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div className="max-w-xl w-full">
+      <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto">
           {formContent}
         </div>
       </div>
