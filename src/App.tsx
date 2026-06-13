@@ -29,6 +29,13 @@ import PermissionsPage from "./pages/admin/permissions/PermissionsPage";
 import CompanySettingsPage from "./pages/admin/settings/CompanySettingsPage";
 import AdminProfilePage from "./pages/admin/settings/AdminProfilePage";
 import LeaveRequestPage from "./pages/admin/leave/LeaveRequestPage";
+import SettingsIndex from "./pages/admin/settings/index";
+import SettingsProfile from "./pages/admin/settings/AdminProfilePage";
+import SettingsCompany from "./pages/admin/settings/CompanySettingsPage";
+import SettingsCreateEmployee from "./pages/admin/settings/CreateEmployeePage";
+import SettingsDeleteEmployee from "./pages/admin/settings/DeleteEmployeePage";
+import SettingsManageRoles from "./pages/admin/settings/ManageRolesPage";
+import SettingsSystem from "./pages/admin/settings/SystemsPreferencesPage";
 
 function App() {
   return (
@@ -67,6 +74,13 @@ function App() {
           <Route path="settings" element={<CompanySettingsPage />} />
           <Route path="settings/profile" element={<AdminProfilePage />} />
           <Route path="leave" element={<LeaveRequestPage />} />
+          <Route path="settings" element={<SettingsIndex />} />
+          <Route path="settings/profile" element={<SettingsProfile />} />
+          <Route path="settings/company" element={<SettingsCompany />} />
+          <Route path="settings/create-employee" element={<SettingsCreateEmployee />} />
+          <Route path="settings/delete-employee" element={<SettingsDeleteEmployee />} />
+          <Route path="settings/manage-roles" element={<SettingsManageRoles />} />
+          <Route path="settings/system" element={<SettingsSystem />} />
         </Route>
 
         {/* Catch-all */}

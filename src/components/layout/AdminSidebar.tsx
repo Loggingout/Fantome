@@ -30,6 +30,29 @@ const NAV_ITEMS: NavItem[] = [
     path: "/admin",
   },
   {
+    label: "Analytics",
+    icon: FileText,
+    path: "/admin/analytics",
+  },
+  {
+    label: "Employees",
+    icon: Users,
+    children: [
+      { label: "All Employees", path: "/admin/employees" },
+      { label: "Add Employee", path: "/admin/employees/add" },
+      { label: "Employee Roles", path: "/admin/employees/roles" },
+    ],
+  },
+  {
+    label: "Leave",
+    icon: UserCircle,
+    children: [
+      { label: "Leave Dashboard", path: "/admin/leave" },
+      { label: "Requests", path: "/admin/leave/requests" },
+      { label: "Policies", path: "/admin/leave/policies" },
+    ],
+  },
+  {
     label: "Blog Posts",
     icon: FileText,
     path: "/admin/blog",
@@ -59,10 +82,23 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+
 const BOTTOM_ITEMS: NavItem[] = [
-  { label: "Settings", icon: Settings, path: "/admin/settings" },
+  {
+    label: "Settings",
+    icon: Settings,
+    children: [
+      { label: "Admin Profile", path: "/admin/settings/profile" },
+      { label: "Company Settings", path: "/admin/settings/company" },
+      { label: "Create Employee", path: "/admin/settings/create-employee" },
+      { label: "Delete Employee", path: "/admin/settings/delete-employee" },
+      { label: "Manage Roles", path: "/admin/settings/manage-roles" },
+      { label: "System Preferences", path: "/admin/settings/system" },
+    ],
+  },
   { label: "My Profile", icon: UserCircle, path: "/admin/profile" },
 ];
+
 
 export default function AdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);
