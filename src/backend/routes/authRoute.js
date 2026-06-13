@@ -1,6 +1,7 @@
 import express from "express";
 import { authController } from "../controllers/authController.js";
-import { authMiddleware } from "../middleware/authMiddle.js";
+import { protect } from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post("/logout", authController.logout);
 // Protected routes
 router.get(
   "/me",
-  authMiddleware,
+  protect,
   authController.getCurrentEmployee
 );
 

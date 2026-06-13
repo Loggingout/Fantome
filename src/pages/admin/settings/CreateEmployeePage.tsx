@@ -1,7 +1,15 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import PageContainer, { SectionHeader, DashCard } from "../../../components/layout/PageContainer";
 
 export default function CreateEmployeePage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("employee");
+  const [password, setPassword] = useState(""); // ⭐ NEW
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
   const fadeUp = {
     hidden: { opacity: 0, y: 24 },
     visible: (i = 0) => ({
@@ -9,6 +17,35 @@ export default function CreateEmployeePage() {
       y: 0,
       transition: { duration: 0.6, delay: i * 0.1, ease: "easeOut" },
     }),
+  };
+
+  const handleCreate = async () => {
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/admin/employees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, role, password }), // ⭐ SEND PASSWORD
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "Failed to create employee");
+      } else {
+        setMessage("Employee created successfully!");
+        setName("");
+        setEmail("");
+        setRole("employee");
+        setPassword(""); // ⭐ RESET
+      }
+    } catch (err) {
+      setMessage("Server error — check backend logs");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -28,23 +65,48 @@ export default function CreateEmployeePage() {
             <input
               type="text"
               placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
             />
 
             <input
               type="email"
               placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
             />
 
-            <select className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white">
-              <option>Employee</option>
-              <option>Admin</option>
+            {/* ⭐ NEW PASSWORD FIELD */}
+            <input
+              type="password"
+              placeholder="Temporary Password (dev only)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
+            />
+
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
+            >
+              <option value="employee">Employee</option>
+              <option value="admin">Admin</option>
             </select>
 
-            <button className="bg-white text-black rounded-xl py-3 font-semibold hover:bg-neutral-200 transition">
-              Create Employee
+            <button
+              onClick={handleCreate}
+              disabled={loading}
+              className="bg-white text-black rounded-xl py-3 font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
+            >
+              {loading ? "Creating..." : "Create Employee"}
             </button>
+
+            {message && (
+              <p className="text-center text-sm text-white mt-2">{message}</p>
+            )}
           </div>
         </DashCard>
       </motion.div>
