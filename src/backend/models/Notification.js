@@ -9,7 +9,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["role-change", "general"],
+      enum: ["role-change", "task-assigned", "general"],
       default: "general",
     },
     message: { type: String, required: true },

@@ -1,3 +1,6 @@
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+
 interface EmployeePayroll {
   name: string;
   payType?: string;
@@ -11,8 +14,18 @@ interface EmployeePayroll {
 }
 
 export default function PayrollDetail({ employee }: { employee: EmployeePayroll }) {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1.5 text-neutral-400 hover:text-white text-sm transition-colors mb-5 w-fit"
+      >
+        <ChevronLeft className="w-4 h-4 shrink-0" />
+        <span>Back</span>
+      </button>
+
       <h2 className="text-xl font-serif text-white mb-1">Payroll Summary</h2>
       <p className="text-neutral-500 text-sm mb-5">{employee.payPeriod}</p>
 

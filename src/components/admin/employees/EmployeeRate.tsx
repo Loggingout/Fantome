@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../../../utils/api";
 
 interface Props {
   employeeId: string;
   currentRate?: number;
   onSaved?: (rate: number) => void;
+  employeeName?: string;
 }
 
-export default function EmployeeRate({ employeeId, currentRate = 0, onSaved }: Props) {
+export default function EmployeeRate({ employeeId, currentRate = 0, onSaved, employeeName }: Props) {
   const [rate, setRate] = useState(String(currentRate));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  // Sync input if the parent re-fetches and passes a new currentRate
+  useEffect(() => {
+    setRate(String(currentRate));
+  }, [currentRate]);
 
   const handleSave = async () => {
     const val = parseFloat(rate);
@@ -30,7 +36,9 @@ export default function EmployeeRate({ employeeId, currentRate = 0, onSaved }: P
 
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-      <h2 className="text-xl font-serif text-white mb-4">Employee Pay Rate</h2>
+      <h2 className="text-base font-serif text-white mb-4">
+        {employeeName ?? "Employee"} — Pay Rate
+      </h2>
       <div className="flex flex-col gap-4 max-w-sm">
         <div className="flex items-center gap-2">
           <span className="text-neutral-500">$</span>

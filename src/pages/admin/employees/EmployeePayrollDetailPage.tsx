@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import api from "../../../utils/api";
 import PayrollDetail from "../../../components/admin/employees/PayrollDetail";
 import PayStubPreview from "../../../components/admin/employees/PayStubPreview";
@@ -28,6 +29,7 @@ interface EmployeeInfo {
 
 export default function EmployeePayrollDetailPage() {
   const { employeeId } = useParams<{ employeeId: string }>();
+  const navigate = useNavigate();
   const [employee, setEmployee] = useState<EmployeeInfo | null>(null);
   const [payroll, setPayroll] = useState<MonthPayroll[]>([]);
   const [selected, setSelected] = useState(0);
@@ -73,6 +75,14 @@ export default function EmployeePayrollDetailPage() {
 
   return (
     <PageContainer>
+      <button
+        onClick={() => navigate("/admin/employees/payroll")}
+        className="flex items-center gap-1.5 text-neutral-400 hover:text-white text-sm transition-colors mb-4 w-fit"
+      >
+        <ChevronLeft className="w-4 h-4 shrink-0" />
+        <span>Back to Payroll Overview</span>
+      </button>
+
       <SectionHeader title={`Payroll — ${employee.name}`} />
 
       {/* Pay period selector */}

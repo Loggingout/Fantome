@@ -18,13 +18,16 @@ export default function MyTaskList() {
   };
 
   const handleStatusChange = async (id: string, status: string) => {
+    // Optimistic update — apply immediately so the controlled select reflects
+    // the new value before the async request completes.
+    const prev = tasks.find((t) => t._id === id)?.status ?? "";
+    setTasks((ts) => ts.map((t) => (t._id === id ? { ...t, status } : t)));
     try {
       await api.patch(`/tasks/${id}/status`, { status });
-      setTasks((prev) =>
-        prev.map((t) => (t._id === id ? { ...t, status } : t))
-      );
     } catch (err) {
       console.error("Update task status error:", err);
+      // Revert to previous status on failure
+      setTasks((ts) => ts.map((t) => (t._id === id ? { ...t, status: prev } : t)));
     }
   };
 

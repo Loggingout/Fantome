@@ -15,10 +15,16 @@ export default function EmployeeHeader({ title = "Dashboard" }: { title?: string
   });
 
   useEffect(() => {
-    api
-      .get("/notifications/mine")
-      .then((res) => setUnreadCount(res.data.unreadCount ?? 0))
-      .catch(() => {});
+    const fetchCount = () => {
+      api
+        .get("/notifications/mine")
+        .then((res) => setUnreadCount(res.data.unreadCount ?? 0))
+        .catch(() => {});
+    };
+
+    fetchCount();
+    const interval = setInterval(fetchCount, 30_000);
+    return () => clearInterval(interval);
   }, []);
 
   return (

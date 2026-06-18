@@ -1,6 +1,3 @@
-import { useState } from "react";
-import api from "../../../utils/api";
-
 export interface AttendanceRecord {
   _id: string;
   employee: {
@@ -21,7 +18,6 @@ export interface AttendanceRecord {
 
 interface Props {
   records: AttendanceRecord[];
-  onRateChange: (employeeId: string, rate: number) => void;
 }
 
 function formatTime(iso: string | null) {
@@ -39,27 +35,7 @@ const STATUS_STYLES: Record<string, string> = {
   "clocked-out": "bg-neutral-700/50 text-neutral-400 border border-neutral-700",
 };
 
-export default function AttendanceSummaryTable({ records, onRateChange }: Props) {
-  const [editingRate, setEditingRate] = useState<Record<string, string>>({});
-  const [saving, setSaving] = useState<string | null>(null);
-
-  const handleRateBlur = async (employeeId: string, current: number) => {
-    const raw = editingRate[employeeId];
-    if (raw === undefined) return; // untouched
-    const val = parseFloat(raw);
-    if (isNaN(val) || val < 0 || val === current) return;
-
-    setSaving(employeeId);
-    try {
-      await api.patch(`/admin/employees/${employeeId}/rate`, { hourlyRate: val });
-      onRateChange(employeeId, val);
-    } catch (err) {
-      console.error("Rate update failed:", err);
-    } finally {
-      setSaving(null);
-    }
-  };
-
+export default function AttendanceSummaryTable({ records }: Props) {
   const totalHours = records.reduce((s, r) => s + r.hoursWorked, 0);
   const totalPayout = records.reduce((s, r) => s + r.payout, 0);
   const activeNow = records.filter(
@@ -118,10 +94,6 @@ export default function AttendanceSummaryTable({ records, onRateChange }: Props)
           </thead>
           <tbody className="divide-y divide-neutral-800/60">
             {records.map((r) => {
-              const rateDisplay =
-                editingRate[r.employee._id] ?? String(r.employee.hourlyRate ?? 0);
-              const isSaving = saving === r.employee._id;
-
               return (
                 <tr
                   key={r._id}
@@ -165,37 +137,13 @@ export default function AttendanceSummaryTable({ records, onRateChange }: Props)
                     </span>
                   </td>
 
-                  {/* Rate — editable */}
+                  {/* Rate — read-only; edit via "Employee Pay Rates" above */}
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-neutral-500 text-xs">$</span>
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        value={rateDisplay}
-                        onChange={(e) =>
-                          setEditingRate((prev) => ({
-                            ...prev,
-                            [r.employee._id]: e.target.value,
-                          }))
-                        }
-                        onBlur={() =>
-                          handleRateBlur(r.employee._id, r.employee.hourlyRate)
-                        }
-                        onKeyDown={(e) =>
-                          e.key === "Enter" &&
-                          (e.target as HTMLInputElement).blur()
-                        }
-                        title="Edit hourly rate and press Enter or click away to save"
-                        className="w-16 bg-neutral-800 border border-neutral-700 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:border-neutral-500 transition-colors"
-                      />
-                      {isSaving && (
-                        <span className="text-neutral-600 text-[10px]">
-                          saving…
-                        </span>
-                      )}
-                    </div>
+                    {r.employee.hourlyRate > 0 ? (
+                      <span className="text-white text-sm">${r.employee.hourlyRate}/hr</span>
+                    ) : (
+                      <span className="text-neutral-600 text-xs italic">not set</span>
+                    )}
                   </td>
 
                   {/* Payout */}

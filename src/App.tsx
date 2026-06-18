@@ -31,6 +31,7 @@ import EmployeeTimeClockPage from "./pages/employee/TimeClockPage";
 import EmployeeTimeOffPage from "./pages/employee/TimeOffRequestPage";
 import EmployeeSickLeavePage from "./pages/employee/SickLeavePage";
 import EmployeePayHistoryPage from "./pages/employee/PayHistoryPage";
+import EmployeeMyPayoutPage from "./pages/employee/MyPayoutPage";
 import EmployeeNotificationsPage from "./pages/employee/NotificationsPage";
 
 // Admin Modules
@@ -130,6 +131,7 @@ function App() {
           <Route path="time-off" element={<EmployeeTimeOffPage />} />
           <Route path="sick-leave" element={<EmployeeSickLeavePage />} />
           <Route path="pay-history" element={<EmployeePayHistoryPage />} />
+          <Route path="my-payout" element={<EmployeeMyPayoutPage />} />
           <Route path="notifications" element={<EmployeeNotificationsPage />} />
         </Route>
 

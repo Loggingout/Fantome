@@ -10,6 +10,8 @@ import {
   ChevronRight,
   LogOut,
   Bell,
+  Wallet,
+  DollarSign,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import api from "../../utils/api";
@@ -26,6 +28,8 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Sick Leave", icon: HeartPulse, path: "/employee/sick-leave" },
   { label: "Time Clock", icon: Clock, path: "/employee/time-clock" },
   { label: "Time Off Request", icon: FilePlus2, path: "/employee/time-off" },
+  { label: "Pay History", icon: Wallet, path: "/employee/pay-history" },
+  { label: "My Payout", icon: DollarSign, path: "/employee/my-payout" },
   { label: "Notifications", icon: Bell, path: "/employee/notifications" },
 ];
 

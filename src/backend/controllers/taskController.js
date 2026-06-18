@@ -1,4 +1,5 @@
 import { Task } from "../models/Task.js";
+import { Notification } from "../models/Notification.js";
 
 // ── ADMIN ──────────────────────────────────────────
 
@@ -22,7 +23,17 @@ export const createTask = async (req, res) => {
       dueDate: dueDate || null,
     });
 
-    const populated = await task.populate("assignedTo", "name email role");
+    const populated = await task.populate([
+      { path: "assignedTo", select: "name email role" },
+      { path: "assignedBy", select: "name" },
+    ]);
+
+    // Notify the assigned employee
+    await Notification.create({
+      employee: assignedTo,
+      type: "task-assigned",
+      message: `You have been assigned a new task: "${title}"`,
+    });
 
     return res.status(201).json({ success: true, task: populated });
   } catch (err) {
