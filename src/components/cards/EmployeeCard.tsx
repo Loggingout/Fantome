@@ -53,16 +53,3 @@ export default function EmployeeCard() {
     </div>
   );
 }
-              <p className="text-sm text-white font-semibold">
-                {emp.performance}%
-              </p>
-              <p className="text-xs text-neutral-500">
-                Performance
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
