@@ -139,3 +139,50 @@ export const lunchEnd = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// GET /api/attendance/admin/summary  — admin view of all records
+export const getAdminSummary = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const query = {};
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) query.date.$gte = startDate;
+      if (endDate) query.date.$lte = endDate;
+    }
+
+    const records = await Attendance.find(query)
+      .populate("employee", "name email hourlyRate")
+      .sort({ date: -1, createdAt: -1 });
+
+    const summary = records.map((r) => {
+      let hoursWorked = 0;
+      if (r.clockIn && r.clockOut) {
+        let ms = r.clockOut.getTime() - r.clockIn.getTime();
+        if (r.lunchStart && r.lunchEnd) {
+          ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
+        }
+        hoursWorked = Math.max(0, ms / 3_600_000);
+      }
+      const rate = r.employee?.hourlyRate ?? 0;
+      return {
+        _id: r._id,
+        employee: r.employee,
+        date: r.date,
+        clockIn: r.clockIn,
+        clockOut: r.clockOut,
+        lunchStart: r.lunchStart,
+        lunchEnd: r.lunchEnd,
+        status: r.status,
+        hoursWorked: Math.round(hoursWorked * 100) / 100,
+        payout: Math.round(hoursWorked * rate * 100) / 100,
+      };
+    });
+
+    return res.status(200).json({ success: true, summary });
+  } catch (err) {
+    console.error("getAdminSummary Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};

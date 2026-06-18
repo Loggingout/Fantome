@@ -29,6 +29,11 @@ const employeeSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    hourlyRate: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   { timestamps: true }
 );

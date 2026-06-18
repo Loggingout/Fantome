@@ -79,3 +79,29 @@ export const updateEmployeeRole = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// PATCH /api/admin/employees/:id/rate  — update employee hourly rate
+export const updateHourlyRate = async (req, res) => {
+  try {
+    const { hourlyRate } = req.body;
+
+    if (typeof hourlyRate !== "number" || hourlyRate < 0) {
+      return res.status(400).json({ success: false, message: "Invalid hourly rate" });
+    }
+
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      { hourlyRate },
+      { new: true }
+    ).select("name email role hourlyRate");
+
+    if (!employee) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+
+    return res.status(200).json({ success: true, employee });
+  } catch (err) {
+    console.error("updateHourlyRate Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
