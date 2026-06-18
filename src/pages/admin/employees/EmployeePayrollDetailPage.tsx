@@ -1,36 +1,119 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../../../utils/api";
 import PayrollDetail from "../../../components/admin/employees/PayrollDetail";
 import PayStubPreview from "../../../components/admin/employees/PayStubPreview";
 import PayPeriodAttendance from "../../../components/admin/employees/PayPeriodAttendance";
 import DownloadPayStubButton from "../../../components/admin/employees/DownloadPayStubButton";
+import EmployeeRate from "../../../components/admin/employees/EmployeeRate";
 import PageContainer, { SectionHeader } from "../../../components/layout/PageContainer";
 
-export default function EmployeePayrollDetailPage() {
-  const employee = {
-    name: "John Doe",
-    payType: "hourly",
-    rate: 22,
-    hoursWorked: 38,
-    gross: 836,
-    net: 720,
-    taxes: 90,
-    deductions: 26,
-    payPeriod: "June 1 – June 15",
-  };
+interface MonthPayroll {
+  monthKey: string;
+  label: string;
+  totalHours: number;
+  gross: number;
+  net: number;
+  daysWorked: number;
+  details: { date: string; hours: number; clockIn: string | null; clockOut: string | null; status: string }[];
+}
 
-  const attendance = [
-    { date: "June 1", hours: 8 },
-    { date: "June 2", hours: 7.5 },
-    { date: "June 3", hours: 8 },
-  ];
+interface EmployeeInfo {
+  _id: string;
+  name: string;
+  email: string;
+  hourlyRate: number;
+  role: string;
+}
+
+export default function EmployeePayrollDetailPage() {
+  const { employeeId } = useParams<{ employeeId: string }>();
+  const [employee, setEmployee] = useState<EmployeeInfo | null>(null);
+  const [payroll, setPayroll] = useState<MonthPayroll[]>([]);
+  const [selected, setSelected] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!employeeId) return;
+    api
+      .get(`/attendance/admin/employee/${employeeId}/payroll`)
+      .then((res) => {
+        setEmployee(res.data.employee);
+        setPayroll(res.data.payroll ?? []);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [employeeId]);
+
+  const month = payroll[selected];
+
+  const employeePayroll = employee && month ? {
+    name: employee.name,
+    payType: "hourly",
+    rate: employee.hourlyRate,
+    hoursWorked: month.totalHours,
+    gross: month.gross,
+    net: month.net,
+    taxes: Math.round((month.gross - month.net) * 0.7 * 100) / 100,
+    deductions: Math.round((month.gross - month.net) * 0.3 * 100) / 100,
+    payPeriod: month.label,
+  } : null;
+
+  if (loading) return (
+    <PageContainer>
+      <p className="text-neutral-500 text-sm">Loading…</p>
+    </PageContainer>
+  );
+
+  if (!employee) return (
+    <PageContainer>
+      <p className="text-neutral-500 text-sm">Employee not found.</p>
+    </PageContainer>
+  );
 
   return (
     <PageContainer>
-      <SectionHeader title="Employee Payroll Details" />
+      <SectionHeader title={`Payroll — ${employee.name}`} />
 
-      <PayrollDetail employee={employee} />
-      <PayStubPreview employee={employee} />
-      <PayPeriodAttendance records={attendance} />
-      <DownloadPayStubButton />
+      {/* Pay period selector */}
+      {payroll.length > 0 && (
+        <div className="flex gap-2 flex-wrap mb-4">
+          {payroll.map((m, i) => (
+            <button
+              key={m.monthKey}
+              onClick={() => setSelected(i)}
+              className={`px-3 py-1.5 rounded-lg text-sm transition ${
+                i === selected
+                  ? "bg-white text-black font-semibold"
+                  : "bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {employeePayroll ? (
+        <>
+          <PayrollDetail employee={employeePayroll} />
+          <PayStubPreview employee={employeePayroll} />
+          <PayPeriodAttendance
+            records={(month?.details ?? []).map((d) => ({ date: d.date, hours: d.hours }))}
+          />
+          <DownloadPayStubButton />
+        </>
+      ) : (
+        <p className="text-neutral-500 text-sm mt-4">No payroll records found.</p>
+      )}
+
+      <div className="mt-8">
+        <EmployeeRate
+          employeeId={employee._id}
+          currentRate={employee.hourlyRate}
+          onSaved={(r) => setEmployee((prev) => prev ? { ...prev, hourlyRate: r } : prev)}
+        />
+      </div>
     </PageContainer>
   );
 }

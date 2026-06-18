@@ -268,3 +268,96 @@ export const getMyPayroll = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// GET /api/attendance/admin/payroll  — all employees' payroll totals (admin)
+export const getAdminPayrollSummary = async (req, res) => {
+  try {
+    const records = await Attendance.find({})
+      .populate("employee", "name email hourlyRate")
+      .sort({ date: -1 });
+
+    const empMap = new Map();
+    for (const r of records) {
+      if (!r.employee) continue;
+      const id = r.employee._id.toString();
+      if (!empMap.has(id)) empMap.set(id, { employee: r.employee, records: [] });
+      empMap.get(id).records.push(r);
+    }
+
+    const summary = Array.from(empMap.values()).map(({ employee, records: recs }) => {
+      let totalHours = 0;
+      const rate = employee.hourlyRate ?? 0;
+      for (const r of recs) {
+        if (r.clockIn && r.clockOut) {
+          let ms = r.clockOut.getTime() - r.clockIn.getTime();
+          if (r.lunchStart && r.lunchEnd) ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
+          totalHours += Math.max(0, ms / 3_600_000);
+        }
+      }
+      const gross = Math.round(totalHours * rate * 100) / 100;
+      return {
+        employee,
+        daysWorked: recs.length,
+        totalHours: Math.round(totalHours * 100) / 100,
+        gross,
+        net: Math.round(gross * 0.85 * 100) / 100,
+        rate,
+      };
+    });
+
+    return res.status(200).json({ success: true, summary });
+  } catch (err) {
+    console.error("getAdminPayrollSummary Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// GET /api/attendance/admin/employee/:id/payroll  — one employee's detailed payroll (admin)
+export const getEmployeePayrollDetail = async (req, res) => {
+  try {
+    const emp = await Employee.findById(req.params.id).select("name email hourlyRate role");
+    if (!emp) return res.status(404).json({ success: false, message: "Employee not found" });
+
+    const records = await Attendance.find({ employee: req.params.id }).sort({ date: -1 });
+    const rate = emp.hourlyRate ?? 0;
+
+    const grouped = {};
+    for (const r of records) {
+      const key = r.date.substring(0, 7);
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(r);
+    }
+
+    const payroll = Object.entries(grouped)
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([key, recs]) => {
+        let totalHours = 0;
+        const details = recs.map((r) => {
+          let h = 0;
+          if (r.clockIn && r.clockOut) {
+            let ms = r.clockOut.getTime() - r.clockIn.getTime();
+            if (r.lunchStart && r.lunchEnd) ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
+            h = Math.max(0, ms / 3_600_000);
+          }
+          totalHours += h;
+          return { date: r.date, clockIn: r.clockIn, clockOut: r.clockOut, status: r.status, hours: Math.round(h * 100) / 100 };
+        });
+        const gross = Math.round(totalHours * rate * 100) / 100;
+        const [y, m] = key.split("-");
+        return {
+          monthKey: key,
+          label: new Date(parseInt(y), parseInt(m) - 1, 1).toLocaleString("default", { month: "long", year: "numeric" }),
+          totalHours: Math.round(totalHours * 100) / 100,
+          gross,
+          net: Math.round(gross * 0.85 * 100) / 100,
+          daysWorked: recs.length,
+          details,
+        };
+      });
+
+    return res.status(200).json({ success: true, employee: emp, payroll, hourlyRate: rate });
+  } catch (err) {
+    console.error("getEmployeePayrollDetail Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -6,6 +6,8 @@ import {
   lunchStart,
   lunchEnd,
   getAdminSummary,
+  getAdminPayrollSummary,
+  getEmployeePayrollDetail,
   getMyAttendance,
   getMyPayroll,
 } from "../controllers/attendanceController.js";
@@ -17,6 +19,8 @@ router.use(protect);
 
 // Admin-only
 router.get("/admin/summary", adminOnly, getAdminSummary);
+router.get("/admin/payroll", adminOnly, getAdminPayrollSummary);
+router.get("/admin/employee/:id/payroll", adminOnly, getEmployeePayrollDetail);
 
 // Employee routes
 router.get("/today", getToday);
