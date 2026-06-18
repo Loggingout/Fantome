@@ -106,7 +106,10 @@ export default function DashboardHeader({
 
       {/* Notification Modal */}
       {showNotifications && (
-        <NotificationModal onClose={() => setShowNotifications(false)} />
+        <NotificationModal
+          onClose={() => setShowNotifications(false)}
+          onRead={() => {}}
+        />
       )}
     </>
   );

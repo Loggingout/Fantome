@@ -1,22 +1,52 @@
-import React from "react";
-import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Bell } from "lucide-react";
+import api from "../../utils/api";
 
 interface NotificationModalProps {
   onClose: () => void;
+  onRead?: () => void; // optional callback so parent can clear badge
 }
 
-const MOCK_NOTIFICATIONS = [
-  { id: 1, message: "New user signed up", time: "2 min ago" },
-  { id: 2, message: "Server backup completed", time: "10 min ago" },
-  { id: 3, message: "New comment on blog post", time: "1 hour ago" },
-  { id: 4, message: "Payment received", time: "3 hours ago" },
-];
+interface Notification {
+  _id: string;
+  type: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
 
-export default function NotificationModal({ onClose }: NotificationModalProps) {
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "Just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+export default function NotificationModal({ onClose, onRead }: NotificationModalProps) {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get("/notifications/mine")
+      .then((res) => setNotifications(res.data.notifications))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+
+    // Mark all as read and notify parent to clear badge
+    api
+      .patch("/notifications/read-all")
+      .then(() => onRead?.())
+      .catch(() => {});
+  }, []);
+
   return (
     <div
       className="
-        fixed inset-0 z-[999]
+        fixed inset-0 z-999
         bg-black/50 backdrop-blur-sm
         flex items-start justify-end
         p-4 sm:p-6
@@ -29,6 +59,7 @@ export default function NotificationModal({ onClose }: NotificationModalProps) {
           bg-neutral-900 border border-neutral-800
           rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.45)]
           w-full max-w-sm
+          mt-0 sm:mt-2
           p-5 flex flex-col gap-4
           animate-fadeIn
         "
@@ -46,37 +77,48 @@ export default function NotificationModal({ onClose }: NotificationModalProps) {
           </button>
         </div>
 
-        {/* Notification List */}
-        <div className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-1">
-          {MOCK_NOTIFICATIONS.map((n) => (
-            <div
-              key={n.id}
-              className="
-                p-3 rounded-xl
-                bg-neutral-800/40 border border-neutral-700
-                hover:bg-neutral-800 transition
-                flex flex-col gap-1
-              "
-            >
-              <span className="text-white text-sm">{n.message}</span>
-              <span className="text-neutral-500 text-xs">{n.time}</span>
+        {/* List */}
+        <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto pr-1">
+          {loading ? (
+            <p className="text-neutral-500 text-sm text-center py-6">Loading…</p>
+          ) : notifications.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 py-10 text-neutral-600">
+              <Bell className="w-7 h-7" />
+              <p className="text-sm">No notifications yet.</p>
             </div>
-          ))}
+          ) : (
+            notifications.map((n) => (
+              <div
+                key={n._id}
+                className="
+                  p-3 rounded-xl
+                  bg-neutral-800/40 border border-neutral-700/60
+                  hover:bg-neutral-800 transition
+                  flex items-start gap-3
+                "
+              >
+                <div
+                  className={`w-1.5 h-1.5 mt-1.5 rounded-full shrink-0 ${
+                    n.isRead ? "bg-neutral-600" : "bg-red-500"
+                  }`}
+                />
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <span className="text-white text-sm leading-snug">{n.message}</span>
+                  <span className="text-neutral-500 text-xs">{timeAgo(n.createdAt)}</span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* Animation */}
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-fadeIn {
-            animation: fadeIn 0.25s ease-out;
-          }
-        `}
-      </style>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+      `}</style>
     </div>
   );
 }
