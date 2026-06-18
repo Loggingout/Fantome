@@ -7,6 +7,8 @@ import requestQuoteRoutes from "./routes/requestQuote.js";
 import authRoutes from "./routes/authRoute.js";
 import adminEmployeeRoutes from "./routes/adminEmployeeRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
+import shiftRoutes from "./routes/shiftRoutes.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -33,6 +35,8 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/request-quote", requestQuoteRoutes);
 app.use("/api/admin/employees", adminEmployeeRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/shifts", shiftRoutes);
 
 // Health Route
 app.get("/", (req, res) => {

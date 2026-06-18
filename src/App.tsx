@@ -36,6 +36,8 @@ import EmployeePayHistoryPage from "./pages/employee/PayHistoryPage";
 import DashboardPage from "./pages/admin/dashboard/DashboardPage";
 import AnalyticsPage from "./pages/admin/analytics/AnalyticsPage";
 import EmployeeManagementPage from "./pages/admin/employees/EmployeeManagementPage";
+import EmployeeTasksPage from "./pages/admin/employees/EmployeeTasksPage";
+import UpcomingShiftsPage from "./pages/admin/employees/UpcomingShiftsPage";
 import BlogManagementPage from "./pages/admin/blog/BlogManagementPage";
 import PermissionsPage from "./pages/admin/permissions/PermissionsPage";
 import CompanySettingsPage from "./pages/admin/settings/CompanySettingsPage";
@@ -81,6 +83,8 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="employees" element={<EmployeeManagementPage />} />
+          <Route path="employees/tasks" element={<EmployeeTasksPage />} />
+          <Route path="employees/shifts" element={<UpcomingShiftsPage />} />
           <Route path="blog" element={<BlogManagementPage />} />
           <Route path="permissions" element={<PermissionsPage />} />
           <Route path="settings" element={<CompanySettingsPage />} />

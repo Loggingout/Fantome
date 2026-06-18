@@ -1,5 +1,19 @@
 import { createEmployeeSchema } from "../validations/employeeValidation.js";
 import { createEmployeeService } from "../services/employeeService.js";
+import { Employee } from "../models/Employee.js";
+
+// GET /api/admin/employees  — list all employees
+export const getAllEmployees = async (req, res) => {
+  try {
+    const employees = await Employee.find({ isActive: true }).select(
+      "name email role"
+    );
+    return res.status(200).json({ success: true, employees });
+  } catch (err) {
+    console.error("getAllEmployees Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 export const createEmployee = async (req, res) => {
   try {

@@ -1,8 +1,14 @@
+import PageContainer, { SectionHeader, DashCard } from "../../components/layout/PageContainer";
+import MyShifts from "../../components/employee/shifts/MyShifts";
+
 export default function SchedulePage() {
   return (
-    <div className="text-white">
-      <h1 className="text-2xl font-bold mb-2">My Schedule</h1>
-      <p className="text-neutral-400">This page is coming soon.</p>
-    </div>
+    <PageContainer>
+      <SectionHeader title="My Schedule" />
+      <DashCard className="p-6">
+        <h3 className="text-white font-semibold mb-4">Upcoming Shifts</h3>
+        <MyShifts />
+      </DashCard>
+    </PageContainer>
   );
 }

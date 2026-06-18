@@ -15,6 +15,7 @@ import {
   ChevronUp,
   UserCircle,
 } from "lucide-react";
+import { useUser } from "../context/UserContext";
 
 interface NavItem {
   label: string;
@@ -41,6 +42,8 @@ const NAV_ITEMS: NavItem[] = [
       { label: "All Employees", path: "/admin/employees" },
       { label: "Add Employee", path: "/admin/employees/add" },
       { label: "Employee Roles", path: "/admin/employees/roles" },
+      { label: "Employee Tasks", path: "/admin/employees/tasks" },
+      { label: "Upcoming Shifts", path: "/admin/employees/shifts" },
     ],
   },
   {
@@ -105,6 +108,7 @@ export default function AdminSidebar() {
   const [openGroups, setOpenGroups] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useUser();
 
   const isActive = (path?: string) =>
     path ? location.pathname === path : false;
@@ -254,7 +258,7 @@ export default function AdminSidebar() {
 
         {/* Sign Out */}
         <button
-          onClick={() => navigate("/")}
+          onClick={async () => { await logout(); navigate("/login"); }}
           title={collapsed ? "Sign Out" : undefined}
           className="
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl

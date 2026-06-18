@@ -8,7 +8,9 @@ import {
   FilePlus2,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
+import { useUser } from "../context/UserContext";
 
 interface NavItem {
   label: string;
@@ -19,15 +21,16 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: Home, path: "/employee" },
   { label: "Schedule", icon: Calendar, path: "/employee/schedule" },
-  { label: "Sick Leave", icon: HeartPulse, path: "/employee/leave/sick" },
-  { label: "Time Clock", icon: Clock, path: "/employee/attendance/time-clock" },
-  { label: "Time Off Request", icon: FilePlus2, path: "/employee/leave/time-off" },
+  { label: "Sick Leave", icon: HeartPulse, path: "/employee/sick-leave" },
+  { label: "Time Clock", icon: Clock, path: "/employee/time-clock" },
+  { label: "Time Off Request", icon: FilePlus2, path: "/employee/time-off" },
 ];
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useUser();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -115,8 +118,35 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Footer */}
+      {/* Sign Out */}
       <div className="mt-auto mx-4 h-px bg-neutral-800" />
+      <div className="flex flex-col gap-1 px-3 py-3">
+        <button
+          onClick={async () => { await logout(); navigate("/login"); }}
+          title={collapsed ? "Sign Out" : undefined}
+          className="
+            w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+            text-sm font-medium text-neutral-500
+            hover:bg-neutral-800/60 hover:text-red-400
+            transition-all duration-200 group relative
+          "
+        >
+          <LogOut className={`shrink-0 ${collapsed ? "w-5 h-5" : "w-4 h-4"}`} />
+          {!collapsed && <span>Sign Out</span>}
+          {collapsed && (
+            <span className="
+              absolute left-full ml-3 px-2.5 py-1 rounded-lg
+              bg-neutral-800 border border-neutral-700
+              text-white text-xs whitespace-nowrap
+              opacity-0 group-hover:opacity-100 pointer-events-none
+              transition-opacity duration-150 z-50
+            ">
+              Sign Out
+            </span>
+          )}
+        </button>
+      </div>
+      <div className="mx-4 h-px bg-neutral-800" />
       <div
         className={`
           flex items-center gap-3 px-4 py-4

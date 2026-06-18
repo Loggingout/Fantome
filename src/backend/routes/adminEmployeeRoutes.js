@@ -1,10 +1,10 @@
 import express from "express";
-import { createEmployee } from "../controllers/adminEmployeeController.js";
+import { createEmployee, getAllEmployees } from "../controllers/adminEmployeeController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Admin creates employees
+router.get("/", protect, adminOnly, getAllEmployees);
 router.post("/", protect, adminOnly, createEmployee);
 
 export default router;
