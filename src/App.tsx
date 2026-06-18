@@ -20,6 +20,18 @@ import RoleGuard from "./components/auth/RoleGuard";
 // Admin Layout
 import DashboardLayout from "./components/layout/DashboardLayout";
 
+// Employee Layout
+import EmployeeLayout from "./components/layout/EmployeeLayout";
+
+// Employee Pages
+import EmployeeDashboardPage from "./pages/employee/DashboardPage";
+import EmployeeProfilePage from "./pages/employee/EmployeeProfilePage";
+import EmployeeSchedulePage from "./pages/employee/SchedulePage";
+import EmployeeTimeClockPage from "./pages/employee/TimeClockPage";
+import EmployeeTimeOffPage from "./pages/employee/TimeOffRequestPage";
+import EmployeeSickLeavePage from "./pages/employee/SickLeavePage";
+import EmployeePayHistoryPage from "./pages/employee/PayHistoryPage";
+
 // Admin Modules
 import DashboardPage from "./pages/admin/dashboard/DashboardPage";
 import AnalyticsPage from "./pages/admin/analytics/AnalyticsPage";
@@ -81,6 +93,28 @@ function App() {
           <Route path="settings/delete-employee" element={<SettingsDeleteEmployee />} />
           <Route path="settings/manage-roles" element={<SettingsManageRoles />} />
           <Route path="settings/system" element={<SettingsSystem />} />
+        </Route>
+
+        {/* ============================
+            EMPLOYEE ROUTES (Protected)
+           ============================ */}
+        <Route
+          path="/employee"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["employee", "admin"]}>
+                <EmployeeLayout />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<EmployeeDashboardPage />} />
+          <Route path="profile" element={<EmployeeProfilePage />} />
+          <Route path="schedule" element={<EmployeeSchedulePage />} />
+          <Route path="time-clock" element={<EmployeeTimeClockPage />} />
+          <Route path="time-off" element={<EmployeeTimeOffPage />} />
+          <Route path="sick-leave" element={<EmployeeSickLeavePage />} />
+          <Route path="pay-history" element={<EmployeePayHistoryPage />} />
         </Route>
 
         {/* Catch-all */}

@@ -5,7 +5,8 @@ import express from "express";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import requestQuoteRoutes from "./routes/requestQuote.js";
 import authRoutes from "./routes/authRoute.js";
-import adminEmployeeRoutes from "./routes/adminEmployeeRoutes.js"; // ⭐ ADDED
+import adminEmployeeRoutes from "./routes/adminEmployeeRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -30,7 +31,8 @@ app.use(requestLogger);
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/request-quote", requestQuoteRoutes);
-app.use("/api/admin/employees", adminEmployeeRoutes); // ⭐ ADDED
+app.use("/api/admin/employees", adminEmployeeRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 // Health Route
 app.get("/", (req, res) => {

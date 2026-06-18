@@ -1,29 +1,24 @@
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import EmployeeHeader from "./EmployeeHeader";
 
-export default function EmployeeLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function EmployeeLayout() {
   return (
     <div
-      className="w-full h-screen flex bg-neutral-950 text-white"
+      className="flex min-h-screen bg-neutral-950 text-white overflow-hidden"
       style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
     >
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-col flex-1 max-h-screen overflow-y-auto">
         {/* Header */}
-        <EmployeeLayout>
-          <h2 className="text-white">Employee Dashboard</h2>
-        </EmployeeLayout>
+        <EmployeeHeader />
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>
