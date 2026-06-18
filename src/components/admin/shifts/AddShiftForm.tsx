@@ -139,7 +139,7 @@ export default function AddShiftForm({ onCreated }: Props) {
       />
 
       {/* Time range */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <input
           type="time"
           value={sharedForm.startTime}
@@ -185,7 +185,7 @@ export default function AddShiftForm({ onCreated }: Props) {
       {/* ── Specific dates mode ── */}
       {mode === "specific" && (
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="date"
               value={dateInput}
@@ -195,7 +195,7 @@ export default function AddShiftForm({ onCreated }: Props) {
             <button
               type="button"
               onClick={addDate}
-              className="px-4 bg-neutral-700 text-white rounded-xl hover:bg-neutral-600 transition text-sm"
+              className="w-full sm:w-auto px-6 bg-neutral-700 text-white rounded-xl hover:bg-neutral-600 transition text-sm py-3"
             >
               Add
             </button>
@@ -229,13 +229,13 @@ export default function AddShiftForm({ onCreated }: Props) {
       {mode === "recurring" && (
         <div className="flex flex-col gap-3">
           {/* Day of week selector */}
-          <div className="flex gap-1">
+          <div className="grid grid-cols-7 gap-1">
             {DAY_LABELS.map((label, i) => (
               <button
                 key={label}
                 type="button"
                 onClick={() => toggleDay(i)}
-                className={`flex-1 py-2 text-xs font-medium rounded-lg transition ${
+                className={`py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium rounded-lg transition ${
                   recurringDays.includes(i)
                     ? "bg-white text-black"
                     : "bg-neutral-800 text-neutral-400 border border-neutral-700 hover:text-white"
@@ -247,20 +247,18 @@ export default function AddShiftForm({ onCreated }: Props) {
           </div>
 
           {/* Date range */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className="flex-1 bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
-              placeholder="Start date"
             />
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className="flex-1 bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
-              placeholder="End date"
             />
           </div>
 

@@ -9,6 +9,8 @@ import adminEmployeeRoutes from "./routes/adminEmployeeRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import shiftRoutes from "./routes/shiftRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";
+import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -37,6 +39,8 @@ app.use("/api/admin/employees", adminEmployeeRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/shifts", shiftRoutes);
+app.use("/api/blog", blogRoutes);
+app.use("/api/admin/dashboard", adminDashboardRoutes);
 
 // Health Route
 app.get("/", (req, res) => {
