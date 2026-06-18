@@ -296,15 +296,3 @@ export default function AddShiftForm({ onCreated }: Props) {
     </form>
   );
 }
-
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [form, setForm] = useState({
-    employee: "",
-    role: "",
-    date: "",
-    startTime: "",
-    endTime: "",
-    notes: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
