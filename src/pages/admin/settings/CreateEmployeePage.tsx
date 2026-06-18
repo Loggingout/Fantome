@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import api from "../../../utils/api";
 import PageContainer, { SectionHeader, DashCard } from "../../../components/layout/PageContainer";
 
 export default function CreateEmployeePage() {
@@ -24,28 +25,29 @@ export default function CreateEmployeePage() {
     setMessage("");
 
     try {
-      const res = await fetch("/api/admin/employees", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, role, password }), // ⭐ SEND PASSWORD
+      // Use axios api instance (has token interceptor)
+      const res = await api.post("/admin/employees", {
+        name,
+        email,
+        role,
+        password,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.message || "Failed to create employee");
-      } else {
-        setMessage("Employee created successfully!");
-        setName("");
-        setEmail("");
-        setRole("employee");
-        setPassword(""); // ⭐ RESET
-      }
-    } catch (err) {
-      setMessage("Server error — check backend logs");
+      setMessage("Employee created successfully!");
+      setName("");
+      setEmail("");
+      setRole("employee");
+      setPassword("");
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to create employee";
+      setMessage(errorMsg);
+      console.error("Create Employee Error:", err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
