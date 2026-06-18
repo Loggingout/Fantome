@@ -31,11 +31,14 @@ import EmployeeTimeClockPage from "./pages/employee/TimeClockPage";
 import EmployeeTimeOffPage from "./pages/employee/TimeOffRequestPage";
 import EmployeeSickLeavePage from "./pages/employee/SickLeavePage";
 import EmployeePayHistoryPage from "./pages/employee/PayHistoryPage";
+import EmployeeNotificationsPage from "./pages/employee/NotificationsPage";
 
 // Admin Modules
 import DashboardPage from "./pages/admin/dashboard/DashboardPage";
 import AnalyticsPage from "./pages/admin/analytics/AnalyticsPage";
 import EmployeeManagementPage from "./pages/admin/employees/EmployeeManagementPage";
+import AddEmployeePage from "./pages/admin/employees/AddEmployeePage";
+import EmployeeRolesPage from "./pages/admin/employees/EmployeeRolesPage";
 import EmployeeTasksPage from "./pages/admin/employees/EmployeeTasksPage";
 import UpcomingShiftsPage from "./pages/admin/employees/UpcomingShiftsPage";
 import BlogManagementPage from "./pages/admin/blog/BlogManagementPage";
@@ -83,6 +86,8 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="employees" element={<EmployeeManagementPage />} />
+          <Route path="employees/add" element={<AddEmployeePage />} />
+          <Route path="employees/roles" element={<EmployeeRolesPage />} />
           <Route path="employees/tasks" element={<EmployeeTasksPage />} />
           <Route path="employees/shifts" element={<UpcomingShiftsPage />} />
           <Route path="blog" element={<BlogManagementPage />} />
@@ -119,6 +124,7 @@ function App() {
           <Route path="time-off" element={<EmployeeTimeOffPage />} />
           <Route path="sick-leave" element={<EmployeeSickLeavePage />} />
           <Route path="pay-history" element={<EmployeePayHistoryPage />} />
+          <Route path="notifications" element={<EmployeeNotificationsPage />} />
         </Route>
 
         {/* Catch-all */}

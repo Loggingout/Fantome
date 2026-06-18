@@ -11,6 +11,7 @@ import taskRoutes from "./routes/taskRoutes.js";
 import shiftRoutes from "./routes/shiftRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -41,6 +42,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/shifts", shiftRoutes);
 app.use("/api/blog", blogRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Health Route
 app.get("/", (req, res) => {

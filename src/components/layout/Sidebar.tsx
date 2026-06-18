@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Home,
@@ -9,8 +9,10 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Bell,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
+import api from "../../utils/api";
 
 interface NavItem {
   label: string;
@@ -24,13 +26,22 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Sick Leave", icon: HeartPulse, path: "/employee/sick-leave" },
   { label: "Time Clock", icon: Clock, path: "/employee/time-clock" },
   { label: "Time Off Request", icon: FilePlus2, path: "/employee/time-off" },
+  { label: "Notifications", icon: Bell, path: "/employee/notifications" },
 ];
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useUser();
+
+  useEffect(() => {
+    api
+      .get("/notifications/mine")
+      .then((res) => setUnreadCount(res.data.unreadCount ?? 0))
+      .catch(() => {});
+  }, [location.pathname]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -98,7 +109,16 @@ export default function Sidebar() {
 
               <Icon className={`shrink-0 ${collapsed ? "w-5 h-5" : "w-4 h-4"}`} />
 
-              {!collapsed && <span className="flex-1 text-left">{item.label}</span>}
+              {!collapsed && (
+                <span className="flex-1 text-left flex items-center gap-2">
+                  {item.label}
+                  {item.label === "Notifications" && unreadCount > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full min-w-4.5 h-4.5 flex items-center justify-center px-1">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </span>
+              )}
 
               {collapsed && (
                 <span
