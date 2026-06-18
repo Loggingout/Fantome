@@ -33,7 +33,10 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Analytics",
     icon: FileText,
-    path: "/admin/analytics",
+    children: [
+      { label: "Attendance & Payroll", path: "/admin/analytics" },
+      { label: "Task Performance", path: "/admin/analytics/tasks" },
+    ],
   },
   {
     label: "Employees",

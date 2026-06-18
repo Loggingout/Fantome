@@ -36,6 +36,7 @@ import EmployeeNotificationsPage from "./pages/employee/NotificationsPage";
 // Admin Modules
 import DashboardPage from "./pages/admin/dashboard/DashboardPage";
 import AnalyticsPage from "./pages/admin/analytics/AnalyticsPage";
+import TaskAnalyticsPage from "./pages/admin/analytics/TaskAnalyticsPage";
 import EmployeeManagementPage from "./pages/admin/employees/EmployeeManagementPage";
 import AddEmployeePage from "./pages/admin/employees/AddEmployeePage";
 import EmployeeRolesPage from "./pages/admin/employees/EmployeeRolesPage";
@@ -85,6 +86,7 @@ function App() {
         >
           <Route index element={<DashboardPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="analytics/tasks" element={<TaskAnalyticsPage />} />
           <Route path="employees" element={<EmployeeManagementPage />} />
           <Route path="employees/add" element={<AddEmployeePage />} />
           <Route path="employees/roles" element={<EmployeeRolesPage />} />
