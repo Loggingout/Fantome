@@ -6,12 +6,13 @@ import {
   lunchStart,
   lunchEnd,
   getAdminSummary,
+  getMyAttendance,
+  getMyPayroll,
 } from "../controllers/attendanceController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// All attendance routes require a logged-in user
 router.use(protect);
 
 // Admin-only
@@ -19,6 +20,8 @@ router.get("/admin/summary", adminOnly, getAdminSummary);
 
 // Employee routes
 router.get("/today", getToday);
+router.get("/my-attendance", getMyAttendance);
+router.get("/my-payroll", getMyPayroll);
 router.post("/clock-in", clockIn);
 router.post("/clock-out", clockOut);
 router.post("/lunch-start", lunchStart);

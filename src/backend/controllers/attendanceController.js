@@ -1,4 +1,5 @@
 import { Attendance } from "../models/Attendance.js";
+import { Employee } from "../models/Employee.js";
 
 // Helper: get today's date string "YYYY-MM-DD"
 const todayStr = () => new Date().toISOString().split("T")[0];
@@ -183,6 +184,87 @@ export const getAdminSummary = async (req, res) => {
     return res.status(200).json({ success: true, summary });
   } catch (err) {
     console.error("getAdminSummary Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// GET /api/attendance/my-attendance  — employee's own records (last 30 days)
+export const getMyAttendance = async (req, res) => {
+  try {
+    const records = await Attendance.find({ employee: req.user._id })
+      .sort({ date: -1 })
+      .limit(30);
+
+    const emp = await Employee.findById(req.user._id).select("hourlyRate");
+    const rate = emp?.hourlyRate ?? 0;
+
+    const summary = records.map((r) => {
+      let hoursWorked = 0;
+      if (r.clockIn && r.clockOut) {
+        let ms = r.clockOut.getTime() - r.clockIn.getTime();
+        if (r.lunchStart && r.lunchEnd)
+          ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
+        hoursWorked = Math.max(0, ms / 3_600_000);
+      }
+      return {
+        _id: r._id,
+        date: r.date,
+        clockIn: r.clockIn,
+        clockOut: r.clockOut,
+        status: r.status,
+        hoursWorked: Math.round(hoursWorked * 100) / 100,
+        payout: Math.round(hoursWorked * rate * 100) / 100,
+      };
+    });
+
+    return res.status(200).json({ success: true, records: summary, hourlyRate: rate });
+  } catch (err) {
+    console.error("getMyAttendance Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// GET /api/attendance/my-payroll  — employee pay history grouped by month
+export const getMyPayroll = async (req, res) => {
+  try {
+    const records = await Attendance.find({ employee: req.user._id }).sort({ date: -1 });
+    const emp = await Employee.findById(req.user._id).select("hourlyRate");
+    const rate = emp?.hourlyRate ?? 0;
+
+    // Group by YYYY-MM
+    const grouped = {};
+    for (const r of records) {
+      const key = r.date.substring(0, 7);
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(r);
+    }
+
+    const payroll = Object.entries(grouped)
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([key, recs]) => {
+        let totalHours = 0;
+        for (const r of recs) {
+          if (r.clockIn && r.clockOut) {
+            let ms = r.clockOut.getTime() - r.clockIn.getTime();
+            if (r.lunchStart && r.lunchEnd)
+              ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
+            totalHours += Math.max(0, ms / 3_600_000);
+          }
+        }
+        totalHours = Math.round(totalHours * 100) / 100;
+        const gross = Math.round(totalHours * rate * 100) / 100;
+        const net = Math.round(gross * 0.85 * 100) / 100;
+        const [y, m] = key.split("-");
+        const label = new Date(parseInt(y), parseInt(m) - 1, 1).toLocaleString("default", {
+          month: "long",
+          year: "numeric",
+        });
+        return { period: label, monthKey: key, daysWorked: recs.length, totalHours, gross, net, rate };
+      });
+
+    return res.status(200).json({ success: true, payroll, hourlyRate: rate });
+  } catch (err) {
+    console.error("getMyPayroll Error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
