@@ -2,30 +2,31 @@ import { Shift } from "../models/Shift.js";
 
 // ── ADMIN ──────────────────────────────────────────
 
-// POST /api/shifts  — admin creates a shift
+// POST /api/shifts  — admin creates shifts (one or many dates)
 export const createShift = async (req, res) => {
   try {
-    const { employee, role, date, startTime, endTime, notes } = req.body;
+    const { employee, role, dates, startTime, endTime, notes } = req.body;
 
-    if (!employee || !role || !date || !startTime || !endTime) {
+    if (!employee || !role || !dates?.length || !startTime || !endTime) {
       return res.status(400).json({
         success: false,
-        message: "employee, role, date, startTime, and endTime are required",
+        message: "employee, role, dates, startTime, and endTime are required",
       });
     }
 
-    const shift = await Shift.create({
+    // Create one Shift document per date
+    const docs = dates.map((date) => ({
       employee,
       role,
       date,
       startTime,
       endTime,
-      notes,
-    });
+      notes: notes || "",
+    }));
 
-    const populated = await shift.populate("employee", "name email role");
+    const inserted = await Shift.insertMany(docs);
 
-    return res.status(201).json({ success: true, shift: populated });
+    return res.status(201).json({ success: true, count: inserted.length });
   } catch (err) {
     console.error("createShift Error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
