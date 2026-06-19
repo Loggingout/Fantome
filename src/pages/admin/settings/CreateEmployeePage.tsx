@@ -7,6 +7,7 @@ export default function CreateEmployeePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("employee");
+  const [jobTitle, setJobTitle] = useState("");
   const [password, setPassword] = useState(""); // ⭐ NEW
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -30,6 +31,7 @@ export default function CreateEmployeePage() {
         name,
         email,
         role,
+        jobTitle: jobTitle || undefined,
         password,
       });
 
@@ -37,6 +39,7 @@ export default function CreateEmployeePage() {
       setName("");
       setEmail("");
       setRole("employee");
+      setJobTitle("");
       setPassword("");
     } catch (err: any) {
       const errorMsg =
@@ -96,6 +99,24 @@ export default function CreateEmployeePage() {
             >
               <option value="employee">Employee</option>
               <option value="admin">Admin</option>
+            </select>
+
+            <select
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
+            >
+              <option value="">Job Title (optional)</option>
+              <option value="Software Developer/Engineer">Software Developer/Engineer</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Systems Admin">Systems Admin</option>
+              <option value="Sales">Sales</option>
+              <option value="HR">HR</option>
+              <option value="Customer Service">Customer Service</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Legal & Compliance">Legal &amp; Compliance</option>
+              <option value="Operations">Operations</option>
+              <option value="Finance & Accounting">Finance &amp; Accounting</option>
             </select>
 
             <button

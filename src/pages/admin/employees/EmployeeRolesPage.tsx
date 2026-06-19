@@ -10,12 +10,27 @@ interface Employee {
   name: string;
   email: string;
   role: "admin" | "employee";
+  jobTitle?: string;
 }
+
+const JOB_TITLES = [
+  "Software Developer/Engineer",
+  "Marketing",
+  "Systems Admin",
+  "Sales",
+  "HR",
+  "Customer Service",
+  "Information Technology",
+  "Legal & Compliance",
+  "Operations",
+  "Finance & Accounting",
+];
 
 export default function EmployeeRolesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [updatingTitle, setUpdatingTitle] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Record<string, { text: string; ok: boolean }>>({});
 
   useEffect(() => {
@@ -36,7 +51,7 @@ export default function EmployeeRolesPage() {
       );
       setFeedback((prev) => ({
         ...prev,
-        [id]: { text: "Role updated — employee notified.", ok: true },
+        [id]: { text: "Access role updated.", ok: true },
       }));
     } catch (err: any) {
       setFeedback((prev) => ({
@@ -48,6 +63,31 @@ export default function EmployeeRolesPage() {
       }));
     } finally {
       setUpdating(null);
+    }
+  };
+
+  const handleJobTitleChange = async (id: string, newTitle: string) => {
+    setUpdatingTitle(id);
+    setFeedback((prev) => ({ ...prev, [`${id}-title`]: { text: "", ok: true } }));
+    try {
+      const res = await api.patch(`/admin/employees/${id}/job-title`, { jobTitle: newTitle });
+      setEmployees((prev) =>
+        prev.map((e) => (e._id === id ? { ...e, jobTitle: res.data.employee.jobTitle } : e))
+      );
+      setFeedback((prev) => ({
+        ...prev,
+        [`${id}-title`]: { text: "Job title saved.", ok: true },
+      }));
+    } catch (err: any) {
+      setFeedback((prev) => ({
+        ...prev,
+        [`${id}-title`]: {
+          text: err.response?.data?.message || "Failed to update title",
+          ok: false,
+        },
+      }));
+    } finally {
+      setUpdatingTitle(null);
     }
   };
 
@@ -67,8 +107,9 @@ export default function EmployeeRolesPage() {
                 <tr className="border-b border-neutral-800">
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Name</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Email</th>
-                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Current Role</th>
-                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Change Role</th>
+                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Access</th>
+                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Change Access</th>
+                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Job Title</th>
                   <th className="pb-3 text-neutral-500 font-medium">Status</th>
                 </tr>
               </thead>
@@ -99,17 +140,43 @@ export default function EmployeeRolesPage() {
                         <option value="admin">Admin</option>
                       </select>
                     </td>
-                    <td className="py-3">
-                      {updating === emp._id && (
+                    <td className="py-3 pr-6">
+                      <select
+                        value={emp.jobTitle ?? ""}
+                        onChange={(e) => handleJobTitleChange(emp._id, e.target.value)}
+                        disabled={updatingTitle === emp._id}
+                        className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-white text-sm disabled:opacity-50 cursor-pointer min-w-[200px]"
+                      >
+                        <option value="" disabled>
+                          — Select title —
+                        </option>
+                        {JOB_TITLES.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="py-3 min-w-[140px]">
+                      {(updating === emp._id || updatingTitle === emp._id) && (
                         <span className="text-neutral-500 text-xs">Saving…</span>
                       )}
                       {feedback[emp._id]?.text && updating !== emp._id && (
                         <span
-                          className={`text-xs ${
+                          className={`text-xs block ${
                             feedback[emp._id].ok ? "text-emerald-400" : "text-red-400"
                           }`}
                         >
                           {feedback[emp._id].text}
+                        </span>
+                      )}
+                      {feedback[`${emp._id}-title`]?.text && updatingTitle !== emp._id && (
+                        <span
+                          className={`text-xs block ${
+                            feedback[`${emp._id}-title`].ok ? "text-emerald-400" : "text-red-400"
+                          }`}
+                        >
+                          {feedback[`${emp._id}-title`].text}
                         </span>
                       )}
                     </td>

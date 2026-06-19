@@ -34,6 +34,22 @@ const employeeSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    jobTitle: {
+      type: String,
+      enum: [
+        "Software Developer/Engineer",
+        "Marketing",
+        "Systems Admin",
+        "Sales",
+        "HR",
+        "Customer Service",
+        "Information Technology",
+        "Legal & Compliance",
+        "Operations",
+        "Finance & Accounting",
+      ],
+      default: null,
+    },
   },
   { timestamps: true }
 );

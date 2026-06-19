@@ -7,7 +7,7 @@ import { Notification } from "../models/Notification.js";
 export const getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.find({ isActive: true }).select(
-      "name email role"
+      "name email role jobTitle"
     );
     return res.status(200).json({ success: true, employees });
   } catch (err) {
@@ -80,6 +80,45 @@ export const updateEmployeeRole = async (req, res) => {
   }
 };
 
+const JOB_TITLES = [
+  "Software Developer/Engineer",
+  "Marketing",
+  "Systems Admin",
+  "Sales",
+  "HR",
+  "Customer Service",
+  "Information Technology",
+  "Legal & Compliance",
+  "Operations",
+  "Finance & Accounting",
+];
+
+// PATCH /api/admin/employees/:id/job-title  — update employee job title
+export const updateJobTitle = async (req, res) => {
+  try {
+    const { jobTitle } = req.body;
+
+    if (!JOB_TITLES.includes(jobTitle)) {
+      return res.status(400).json({ success: false, message: "Invalid job title." });
+    }
+
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      { jobTitle },
+      { new: true }
+    ).select("name email role jobTitle");
+
+    if (!employee) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+
+    return res.status(200).json({ success: true, employee });
+  } catch (err) {
+    console.error("updateJobTitle Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // PATCH /api/admin/employees/:id/rate  — update employee hourly rate
 export const updateHourlyRate = async (req, res) => {
   try {
@@ -93,7 +132,7 @@ export const updateHourlyRate = async (req, res) => {
       req.params.id,
       { hourlyRate },
       { new: true }
-    ).select("name email role hourlyRate");
+    ).select("name email role jobTitle hourlyRate");
 
     if (!employee) {
       return res.status(404).json({ success: false, message: "Employee not found" });
