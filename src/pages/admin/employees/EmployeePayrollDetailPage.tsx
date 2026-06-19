@@ -34,9 +34,12 @@ export default function EmployeePayrollDetailPage() {
   const [payroll, setPayroll] = useState<MonthPayroll[]>([]);
   const [selected, setSelected] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [rateRefreshing, setRateRefreshing] = useState(false);
 
-  useEffect(() => {
+  const fetchPayroll = (quiet = false) => {
     if (!employeeId) return;
+    if (!quiet) setLoading(true);
+    else setRateRefreshing(true);
     api
       .get(`/attendance/admin/employee/${employeeId}/payroll`)
       .then((res) => {
@@ -44,7 +47,14 @@ export default function EmployeePayrollDetailPage() {
         setPayroll(res.data.payroll ?? []);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRateRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchPayroll();
   }, [employeeId]);
 
   const month = payroll[selected];
@@ -121,7 +131,21 @@ export default function EmployeePayrollDetailPage() {
         <EmployeeRate
           employeeId={employee._id}
           currentRate={employee.hourlyRate}
-          onSaved={(r) => setEmployee((prev) => prev ? { ...prev, hourlyRate: r } : prev)}
+          employeeName={employee.name}
+          onSaved={(newRate) => {
+            if (newRate === undefined) return;
+            // Immediately recalculate every month using the new rate — no network wait
+            setEmployee((prev) => prev ? { ...prev, hourlyRate: newRate } : prev);
+            setPayroll((prev) =>
+              prev.map((m) => {
+                const gross = Math.round(m.totalHours * newRate * 100) / 100;
+                const net   = Math.round(gross * 0.85 * 100) / 100;
+                return { ...m, gross, net };
+              })
+            );
+            // Background re-fetch for consistency
+            fetchPayroll(true);
+          }}
         />
       </div>
     </PageContainer>

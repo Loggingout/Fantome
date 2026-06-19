@@ -24,17 +24,20 @@ export default function AnalyticsPage() {
   const [ratesOpen, setRatesOpen] = useState(false);
 
   // Re-fetch when date range changes (server-side filtering for performance)
-  useEffect(() => {
-    setLoading(true);
+  const fetchRecords = (quiet = false) => {
+    if (!quiet) setLoading(true);
     const params = new URLSearchParams();
     if (filters.startDate) params.set("startDate", filters.startDate);
     if (filters.endDate) params.set("endDate", filters.endDate);
-
     api
       .get(`/attendance/admin/summary?${params}`)
       .then((res) => setRecords(res.data.summary ?? []))
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => { if (!quiet) setLoading(false); });
+  };
+
+  useEffect(() => {
+    fetchRecords();
   }, [filters.startDate, filters.endDate]);
 
   // Unique employees across all loaded records (not just filtered)
@@ -65,19 +68,20 @@ export default function AnalyticsPage() {
     });
   }, [records, filters.status, filters.search]);
 
-  // When a rate is saved via EmployeeRate, update all matching rows + recalculate payouts
-  const handleRateChange = (employeeId: string, rate: number) => {
+  // When a rate is saved via EmployeeRate, immediately update matching rows then re-fetch
+  const handleRateChange = (employeeId: string, newRate: number) => {
     setRecords((prev) =>
       prev.map((r) =>
         r.employee._id === employeeId
           ? {
               ...r,
-              employee: { ...r.employee, hourlyRate: rate },
-              payout: Math.round(r.hoursWorked * rate * 100) / 100,
+              employee: { ...r.employee, hourlyRate: newRate },
+              payout: Math.round(r.hoursWorked * newRate * 100) / 100,
             }
           : r
       )
     );
+    fetchRecords(true);
   };
 
   return (
