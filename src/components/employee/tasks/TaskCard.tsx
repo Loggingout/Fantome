@@ -20,6 +20,12 @@ const priorityColor: Record<string, string> = {
   high: "text-red-400",
 };
 
+const statusStyle: Record<string, { dot: string; border: string; label: string }> = {
+  pending:     { dot: "bg-amber-400",   border: "border-amber-500/40",  label: "Pending" },
+  "in-progress": { dot: "bg-blue-400", border: "border-blue-500/40",   label: "In Progress" },
+  completed:   { dot: "bg-emerald-400", border: "border-emerald-500/40", label: "Completed" },
+};
+
 export default function TaskCard({ task, onStatusChange }: Props) {
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col gap-2">
@@ -37,6 +43,14 @@ export default function TaskCard({ task, onStatusChange }: Props) {
       )}
 
       <div className="flex flex-wrap gap-3 text-xs mt-1">
+        <span className="flex items-center gap-1.5">
+          <span
+            className={`inline-block w-2 h-2 rounded-full shrink-0 ${
+              statusStyle[task.status]?.dot ?? "bg-neutral-500"
+            }`}
+          />
+          <span className="text-neutral-400 capitalize">{task.status.replace("-", " ")}</span>
+        </span>
         <span className={`capitalize ${priorityColor[task.priority]}`}>
           {task.priority} priority
         </span>
@@ -53,11 +67,15 @@ export default function TaskCard({ task, onStatusChange }: Props) {
       <select
         value={task.status}
         onChange={(e) => onStatusChange(task._id, e.target.value)}
-        className="mt-2 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-white text-sm"
+        className={`mt-2 bg-neutral-800 border rounded-lg px-3 py-2 text-white text-sm transition-colors ${
+          statusStyle[task.status]?.border ?? "border-neutral-700"
+        }`}
       >
-        <option value="pending">Pending</option>
-        <option value="in-progress">In Progress</option>
-        <option value="completed">Completed</option>
+        {(["pending", "in-progress", "completed"] as const).map((s) => (
+          <option key={s} value={s}>
+            {statusStyle[s].label}
+          </option>
+        ))}
       </select>
     </div>
   );

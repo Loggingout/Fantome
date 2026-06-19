@@ -24,6 +24,12 @@ export default function MyTaskList() {
     setTasks((ts) => ts.map((t) => (t._id === id ? { ...t, status } : t)));
     try {
       await api.patch(`/tasks/${id}/status`, { status });
+      // Remove completed tasks from the list after a short delay
+      if (status === "completed") {
+        setTimeout(() => {
+          setTasks((ts) => ts.filter((t) => t._id !== id));
+        }, 1200);
+      }
     } catch (err) {
       console.error("Update task status error:", err);
       // Revert to previous status on failure

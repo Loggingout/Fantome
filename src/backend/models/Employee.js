@@ -37,6 +37,7 @@ const employeeSchema = new mongoose.Schema(
     jobTitle: {
       type: String,
       enum: [
+        "Ceo",
         "Software Developer/Engineer",
         "Marketing",
         "Systems Admin",
@@ -47,6 +48,7 @@ const employeeSchema = new mongoose.Schema(
         "Legal & Compliance",
         "Operations",
         "Finance & Accounting",
+        "Intern",
       ],
       default: null,
     },

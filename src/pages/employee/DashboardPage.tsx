@@ -1,4 +1,5 @@
 import { motion, type Variants } from "framer-motion";
+import { Link } from "react-router-dom";
 import PageContainer, { SectionHeader, DashCard } from "../../components/layout/PageContainer";
 import MyTaskList from "../../components/employee/tasks/MyTaskList";
 import MyShifts from "../../components/employee/shifts/MyShifts";
@@ -82,15 +83,15 @@ export default function DashboardPage() {
             <h3 className="text-lg font-serif text-white mb-4">Quick Actions</h3>
 
             <div className="flex flex-col gap-3">
-              <a href="/employee/timeclock" className="bg-neutral-800 border border-neutral-700 rounded-xl py-3 text-center text-white hover:bg-neutral-700 transition">
+              <Link to="/employee/time-clock" className="bg-neutral-800 border border-neutral-700 rounded-xl py-3 text-center text-white hover:bg-neutral-700 transition">
                 Go to Time Clock
-              </a>
-              <a href="/employee/schedule" className="bg-neutral-800 border border-neutral-700 rounded-xl py-3 text-center text-white hover:bg-neutral-700 transition">
+              </Link>
+              <Link to="/employee/schedule" className="bg-neutral-800 border border-neutral-700 rounded-xl py-3 text-center text-white hover:bg-neutral-700 transition">
                 View Schedule
-              </a>
-              <a href="/employee/timeoff" className="bg-neutral-800 border border-neutral-700 rounded-xl py-3 text-center text-white hover:bg-neutral-700 transition">
+              </Link>
+              <Link to="/employee/time-off" className="bg-neutral-800 border border-neutral-700 rounded-xl py-3 text-center text-white hover:bg-neutral-700 transition">
                 Request Time Off
-              </a>
+              </Link>
             </div>
           </DashCard>
         </motion.div>

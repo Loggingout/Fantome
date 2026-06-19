@@ -1,5 +1,6 @@
 import { Task } from "../models/Task.js";
 import { Notification } from "../models/Notification.js";
+import { Employee } from "../models/Employee.js";
 
 // ── ADMIN ──────────────────────────────────────────
 
@@ -135,6 +136,19 @@ export const updateTaskStatus = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Task not found" });
+    }
+
+    // Notify all admins when a task is completed
+    if (status === "completed") {
+      const populated = await task.populate("assignedTo", "name");
+      const admins = await Employee.find({ role: "admin", isActive: true }).select("_id");
+      await Notification.insertMany(
+        admins.map((a) => ({
+          employee: a._id,
+          type: "general",
+          message: `Task "${task.title}" was marked as completed by ${populated.assignedTo?.name || "an employee"}.`,
+        }))
+      );
     }
 
     return res.status(200).json({ success: true, task });
