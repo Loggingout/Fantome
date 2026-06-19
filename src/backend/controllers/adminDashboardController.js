@@ -31,8 +31,7 @@ export const getDashboardStats = async (req, res) => {
 // GET /api/admin/dashboard/activity
 export const getActivity = async (req, res) => {
   try {
-    const [recentEmployees, recentTasks, activityLogs] = await Promise.all([
-      Employee.find({ isActive: true }).sort({ createdAt: -1 }).limit(3).select("name role createdAt"),
+    const [recentTasks, activityLogs] = await Promise.all([
       Task.find()
         .sort({ createdAt: -1 })
         .limit(3)
@@ -42,12 +41,6 @@ export const getActivity = async (req, res) => {
     ]);
 
     const activity = [
-      ...recentEmployees.map((e) => ({
-        id: `hire-${e._id}`,
-        type: "hire",
-        message: `${e.name} joined as ${e.role}`,
-        timestamp: e.createdAt,
-      })),
       ...recentTasks.map((t) => ({
         id: `task-${t._id}`,
         type: "update",

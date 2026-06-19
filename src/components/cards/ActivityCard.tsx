@@ -3,7 +3,7 @@ import api from "../../utils/api";
 
 interface ActivityItem {
   id: string;
-  type: "hire" | "update" | "role-change" | "login" | "leave-approved" | "leave-denied" | "employee-deleted";
+  type: "hire" | "update" | "role-change" | "login" | "leave-approved" | "leave-denied" | "employee-deleted" | "task-completed" | "job-title-update";
   message: string;
   timestamp: string;
 }
@@ -16,6 +16,8 @@ const typeColor: Record<string, string> = {
   "leave-approved": "text-emerald-400",
   "leave-denied": "text-red-400",
   "employee-deleted": "text-red-400",
+  "task-completed": "text-emerald-400",
+  "job-title-update": "text-blue-400",
 };
 
 function timeAgo(dateStr: string): string {

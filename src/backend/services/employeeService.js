@@ -5,6 +5,7 @@ export const createEmployeeService = async ({
   email,
   role,
   password,
+  jobTitle,
 }) => {
   // Check if employee already exists
   const existingEmployee = await Employee.findOne({
@@ -21,6 +22,7 @@ export const createEmployeeService = async ({
     email,
     role,
     password, // hashed automatically by schema
+    ...(jobTitle ? { jobTitle } : {}),
   });
 
   return {

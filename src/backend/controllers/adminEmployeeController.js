@@ -30,6 +30,14 @@ export const createEmployee = async (req, res) => {
 
     const result = await createEmployeeService(value);
 
+    const jobTitleLabel = result.employee.jobTitle || null;
+    await Activity.create({
+      type: "hire",
+      message: jobTitleLabel
+        ? `${result.employee.name} has been hired as ${jobTitleLabel}.`
+        : `${result.employee.name} has been hired.`,
+    });
+
     return res.status(201).json({
       success: true,
       message: "Employee created successfully",
@@ -142,6 +150,11 @@ export const updateJobTitle = async (req, res) => {
     if (!employee) {
       return res.status(404).json({ success: false, message: "Employee not found" });
     }
+
+    await Activity.create({
+      type: "job-title-update",
+      message: `${employee.name}'s job title was updated to ${jobTitle}.`,
+    });
 
     return res.status(200).json({ success: true, employee });
   } catch (err) {

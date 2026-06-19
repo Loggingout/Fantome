@@ -1,6 +1,7 @@
 import { Bell, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NotificationModal from "../modal/NotificationModal"; // adjust path
+import api from "../../utils/api";
 
 export default function DashboardHeader({
   pageTitle = "Dashboard",
@@ -8,6 +9,19 @@ export default function DashboardHeader({
 }) {
   const [searchFocused, setSearchFocused] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCount = () => {
+      api
+        .get("/notifications/mine")
+        .then((res) => setUnreadCount(res.data.unreadCount ?? 0))
+        .catch(() => {});
+    };
+    fetchCount();
+    const interval = setInterval(fetchCount, 30_000);
+    return () => clearInterval(interval);
+  }, []);
 
   const now = new Date();
   const dateString = now.toLocaleDateString("en-US", {
@@ -87,7 +101,9 @@ export default function DashboardHeader({
             "
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500" />
+            )}
           </button>
 
           {/* Divider */}
@@ -108,7 +124,7 @@ export default function DashboardHeader({
       {showNotifications && (
         <NotificationModal
           onClose={() => setShowNotifications(false)}
-          onRead={() => {}}
+          onRead={() => setUnreadCount(0)}
         />
       )}
     </>
