@@ -2,6 +2,7 @@ import { Employee } from "../models/Employee.js";
 import { Task } from "../models/Task.js";
 import { Shift } from "../models/Shift.js";
 import { Attendance } from "../models/Attendance.js";
+import { Activity } from "../models/Activity.js";
 
 // GET /api/admin/dashboard/stats
 export const getDashboardStats = async (req, res) => {
@@ -30,42 +31,38 @@ export const getDashboardStats = async (req, res) => {
 // GET /api/admin/dashboard/activity
 export const getActivity = async (req, res) => {
   try {
-    const [recentEmployees, recentTasks, recentShifts] = await Promise.all([
-      Employee.find().sort({ createdAt: -1 }).limit(3).select("name role createdAt"),
+    const [recentEmployees, recentTasks, activityLogs] = await Promise.all([
+      Employee.find({ isActive: true }).sort({ createdAt: -1 }).limit(3).select("name role createdAt"),
       Task.find()
         .sort({ createdAt: -1 })
         .limit(3)
         .populate("assignedTo", "name")
         .select("title assignedTo createdAt"),
-      Shift.find()
-        .sort({ createdAt: -1 })
-        .limit(3)
-        .populate("employee", "name")
-        .select("employee role date createdAt"),
+      Activity.find().sort({ createdAt: -1 }).limit(15),
     ]);
 
     const activity = [
       ...recentEmployees.map((e) => ({
-        id: e._id.toString(),
+        id: `hire-${e._id}`,
         type: "hire",
         message: `${e.name} joined as ${e.role}`,
         timestamp: e.createdAt,
       })),
       ...recentTasks.map((t) => ({
-        id: t._id.toString(),
+        id: `task-${t._id}`,
         type: "update",
         message: `Task "${t.title}" assigned to ${t.assignedTo?.name || "employee"}`,
         timestamp: t.createdAt,
       })),
-      ...recentShifts.map((s) => ({
-        id: s._id.toString(),
-        type: "role-change",
-        message: `Shift scheduled for ${s.employee?.name || "employee"} on ${s.date}`,
-        timestamp: s.createdAt,
+      ...activityLogs.map((a) => ({
+        id: a._id.toString(),
+        type: a.type,
+        message: a.message,
+        timestamp: a.createdAt,
       })),
     ]
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .slice(0, 8);
+      .slice(0, 10);
 
     return res.status(200).json({ success: true, activity });
   } catch (err) {

@@ -2,6 +2,7 @@ import { createEmployeeSchema } from "../validations/employeeValidation.js";
 import { createEmployeeService } from "../services/employeeService.js";
 import { Employee } from "../models/Employee.js";
 import { Notification } from "../models/Notification.js";
+import { Activity } from "../models/Activity.js";
 
 // GET /api/admin/employees  — list all employees
 export const getAllEmployees = async (req, res) => {
@@ -73,6 +74,11 @@ export const updateEmployeeRole = async (req, res) => {
       message: `Your role has been updated to ${role} by an administrator.`,
     });
 
+    await Activity.create({
+      type: "role-change",
+      message: `${employee.name}'s access was updated to ${role}.`,
+    });
+
     return res.status(200).json({ success: true, employee });
   } catch (err) {
     console.error("updateEmployeeRole Error:", err);
@@ -92,6 +98,31 @@ const JOB_TITLES = [
   "Operations",
   "Finance & Accounting",
 ];
+
+// DELETE /api/admin/employees/:id  — deactivate (soft-delete) employee
+export const deleteEmployee = async (req, res) => {
+  try {
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      { isActive: false },
+      { new: true }
+    ).select("name email role");
+
+    if (!employee) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+
+    await Activity.create({
+      type: "employee-deleted",
+      message: `${employee.name} (${employee.email}) was removed from the system.`,
+    });
+
+    return res.status(200).json({ success: true, message: "Employee removed" });
+  } catch (err) {
+    console.error("deleteEmployee Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 // PATCH /api/admin/employees/:id/job-title  — update employee job title
 export const updateJobTitle = async (req, res) => {

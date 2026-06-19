@@ -14,6 +14,7 @@ interface Employee {
 }
 
 const JOB_TITLES = [
+  "Ceo",
   "Software Developer/Engineer",
   "Marketing",
   "Systems Admin",
@@ -24,6 +25,7 @@ const JOB_TITLES = [
   "Legal & Compliance",
   "Operations",
   "Finance & Accounting",
+  "Intern",
 ];
 
 export default function EmployeeRolesPage() {

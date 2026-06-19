@@ -5,6 +5,7 @@ import {
   updateEmployeeRole,
   updateHourlyRate,
   updateJobTitle,
+  deleteEmployee,
 } from "../controllers/adminEmployeeController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -15,5 +16,6 @@ router.post("/", protect, adminOnly, createEmployee);
 router.patch("/:id/role", protect, adminOnly, updateEmployeeRole);
 router.patch("/:id/rate", protect, adminOnly, updateHourlyRate);
 router.patch("/:id/job-title", protect, adminOnly, updateJobTitle);
+router.delete("/:id", protect, adminOnly, deleteEmployee);
 
 export default router;

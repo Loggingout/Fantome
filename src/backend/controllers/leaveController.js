@@ -1,6 +1,7 @@
 import { LeaveRequest } from "../models/LeaveRequest.js";
 import { Notification } from "../models/Notification.js";
 import { Employee } from "../models/Employee.js";
+import { Activity } from "../models/Activity.js";
 
 // POST /api/leave  — employee submits a request
 export const submitLeaveRequest = async (req, res) => {
@@ -93,6 +94,11 @@ export const updateLeaveStatus = async (req, res) => {
       employee: request.employee._id,
       type: "general",
       message: `Your ${typeLabel} request (${request.startDate} → ${request.endDate}) was ${status}.${adminNote ? " Note: " + adminNote : ""}`,
+    });
+
+    await Activity.create({
+      type: status === "approved" ? "leave-approved" : "leave-denied",
+      message: `${request.employee.name}'s ${typeLabel} request was ${status}.`,
     });
 
     return res.status(200).json({ success: true, request });
