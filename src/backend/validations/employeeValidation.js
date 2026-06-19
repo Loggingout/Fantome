@@ -6,6 +6,7 @@ export const createEmployeeSchema = Joi.object({
   password: Joi.string().min(6).required(),
   role: Joi.string().valid("employee", "admin").default("employee"),
   jobTitle: Joi.string().valid(
+    "Ceo",
     "Software Developer/Engineer",
     "Marketing",
     "Systems Admin",
@@ -15,6 +16,7 @@ export const createEmployeeSchema = Joi.object({
     "Information Technology",
     "Legal & Compliance",
     "Operations",
-    "Finance & Accounting"
+    "Finance & Accounting",
+    "Intern"
   ).optional().allow(null, ""),
 });

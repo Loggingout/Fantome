@@ -95,6 +95,7 @@ export const updateEmployeeRole = async (req, res) => {
 };
 
 const JOB_TITLES = [
+  "Ceo",
   "Software Developer/Engineer",
   "Marketing",
   "Systems Admin",
@@ -105,6 +106,7 @@ const JOB_TITLES = [
   "Legal & Compliance",
   "Operations",
   "Finance & Accounting",
+  "Intern",
 ];
 
 // DELETE /api/admin/employees/:id  — deactivate (soft-delete) employee

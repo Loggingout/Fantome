@@ -107,6 +107,7 @@ export default function CreateEmployeePage() {
               className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
             >
               <option value="">Job Title (optional)</option>
+              <option value="Ceo">Ceo</option>
               <option value="Software Developer/Engineer">Software Developer/Engineer</option>
               <option value="Marketing">Marketing</option>
               <option value="Systems Admin">Systems Admin</option>
@@ -117,6 +118,7 @@ export default function CreateEmployeePage() {
               <option value="Legal & Compliance">Legal &amp; Compliance</option>
               <option value="Operations">Operations</option>
               <option value="Finance & Accounting">Finance &amp; Accounting</option>
+              <option value="Intern">Intern</option>
             </select>
 
             <button
