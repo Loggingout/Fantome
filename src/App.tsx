@@ -34,6 +34,7 @@ import EmployeePayHistoryPage from "./pages/employee/PayHistoryPage";
 import EmployeeMyPayoutPage from "./pages/employee/MyPayoutPage";
 import EmployeeNotificationsPage from "./pages/employee/NotificationsPage";
 import LeaveBalancePage from "./pages/employee/LeaveBalancePage";
+import MyLeaveRequestsPage from "./pages/employee/MyLeaveRequestsPage";
 
 // Admin Modules
 import DashboardPage from "./pages/admin/dashboard/DashboardPage";
@@ -51,7 +52,9 @@ import BlogManagementPage from "./pages/admin/blog/BlogManagementPage";
 import PermissionsPage from "./pages/admin/permissions/PermissionsPage";
 import CompanySettingsPage from "./pages/admin/settings/CompanySettingsPage";
 import AdminProfilePage from "./pages/admin/settings/AdminProfilePage";
-import LeaveRequestPage from "./pages/admin/leave/LeaveRequestPage";
+import LeaveDashboardPage from "./pages/admin/leave/LeaveDashboardPage";
+import LeaveRequestsPage from "./pages/admin/leave/LeaveRequestsPage";
+import LeavePoliciesPage from "./pages/admin/leave/LeavePoliciesPage";
 import LeaveBalancesPage from "./pages/admin/leave/LeaveBalancesPage";
 import SettingsIndex from "./pages/admin/settings/index";
 import SettingsProfile from "./pages/admin/settings/AdminProfilePage";
@@ -105,7 +108,9 @@ function App() {
           <Route path="permissions" element={<PermissionsPage />} />
           <Route path="settings" element={<CompanySettingsPage />} />
           <Route path="settings/profile" element={<AdminProfilePage />} />
-          <Route path="leave" element={<LeaveRequestPage />} />
+          <Route path="leave" element={<LeaveDashboardPage />} />
+          <Route path="leave/requests" element={<LeaveRequestsPage />} />
+          <Route path="leave/policies" element={<LeavePoliciesPage />} />
           <Route path="leave/balances" element={<LeaveBalancesPage />} />
           <Route path="settings" element={<SettingsIndex />} />
           <Route path="settings/profile" element={<SettingsProfile />} />
@@ -139,6 +144,7 @@ function App() {
           <Route path="my-payout" element={<EmployeeMyPayoutPage />} />
           <Route path="notifications" element={<EmployeeNotificationsPage />} />
           <Route path="leave-balance" element={<LeaveBalancePage />} />
+          <Route path="my-requests" element={<MyLeaveRequestsPage />} />
         </Route>
 
         {/* Catch-all */}

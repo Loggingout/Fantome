@@ -13,6 +13,7 @@ import {
   Wallet,
   DollarSign,
   Shield,
+  ClipboardList,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import api from "../../utils/api";
@@ -29,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Sick Leave", icon: HeartPulse, path: "/employee/sick-leave" },
   { label: "Time Clock", icon: Clock, path: "/employee/time-clock" },
   { label: "Time Off Request", icon: FilePlus2, path: "/employee/time-off" },
+  { label: "My Requests", icon: ClipboardList, path: "/employee/my-requests" },
   { label: "Pay History", icon: Wallet, path: "/employee/pay-history" },
   { label: "My Payout", icon: DollarSign, path: "/employee/my-payout" },
   { label: "Leave Balance", icon: Shield, path: "/employee/leave-balance" },
