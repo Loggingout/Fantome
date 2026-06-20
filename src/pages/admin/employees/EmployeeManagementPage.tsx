@@ -13,6 +13,7 @@ interface Employee {
   role: "admin" | "employee";
   jobTitle?: string;
   hireDate?: string | null;
+  hourlyRate?: number;
 }
 
 function fmtDate(iso?: string | null) {
@@ -40,6 +41,12 @@ export default function EmployeeManagementPage() {
   const [hireDateInput, setHireDateInput] = useState("");
   const [savingHire, setSavingHire] = useState<string | null>(null);
   const [hireFeedback, setHireFeedback] = useState<Record<string, string>>({});
+
+  // Pay rate editing state
+  const [editingRateId, setEditingRateId] = useState<string | null>(null);
+  const [rateInput, setRateInput] = useState("");
+  const [savingRate, setSavingRate] = useState<string | null>(null);
+  const [rateFeedback, setRateFeedback] = useState<Record<string, string>>({});
 
   useEffect(() => {
     api
@@ -70,6 +77,38 @@ export default function EmployeeManagementPage() {
   const cancelEditHire = () => {
     setEditingHireId(null);
     setHireDateInput("");
+  };
+
+  const startEditRate = (emp: Employee) => {
+    setEditingRateId(emp._id);
+    setRateInput(emp.hourlyRate != null ? String(emp.hourlyRate) : "");
+  };
+
+  const cancelEditRate = () => {
+    setEditingRateId(null);
+    setRateInput("");
+  };
+
+  const saveRate = async (id: string) => {
+    const val = parseFloat(rateInput);
+    if (isNaN(val) || val < 0) return;
+    setSavingRate(id);
+    try {
+      await api.patch(`/admin/employees/${id}/rate`, { hourlyRate: val });
+      setEmployees((prev) =>
+        prev.map((e) => (e._id === id ? { ...e, hourlyRate: val } : e))
+      );
+      setRateFeedback((prev) => ({ ...prev, [id]: "Saved" }));
+      setEditingRateId(null);
+      setTimeout(() => setRateFeedback((prev) => ({ ...prev, [id]: "" })), 2500);
+    } catch (err: any) {
+      setRateFeedback((prev) => ({
+        ...prev,
+        [id]: err.response?.data?.message || "Failed",
+      }));
+    } finally {
+      setSavingRate(null);
+    }
   };
 
   const saveHireDate = async (id: string) => {
@@ -116,6 +155,7 @@ export default function EmployeeManagementPage() {
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Access</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Job Title</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Hire Date</th>
+                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Pay Rate</th>
                   <th className="pb-3 text-neutral-500 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -182,6 +222,60 @@ export default function EmployeeManagementPage() {
                           {hireFeedback[emp._id] && (
                             <span className="text-emerald-400 text-xs">
                               {hireFeedback[emp._id]}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Pay Rate — inline editable */}
+                    <td className="py-3 pr-6 min-w-[160px]">
+                      {editingRateId === emp._id ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-neutral-500 text-xs">$</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.5"
+                            value={rateInput}
+                            onChange={(e) => setRateInput(e.target.value)}
+                            className="w-20 bg-neutral-800 border border-neutral-600 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:border-neutral-400"
+                          />
+                          <span className="text-neutral-600 text-xs">/hr</span>
+                          <button
+                            onClick={() => saveRate(emp._id)}
+                            disabled={savingRate === emp._id || rateInput === ""}
+                            className="p-1 text-emerald-400 hover:text-emerald-300 disabled:opacity-40 transition"
+                            title="Save"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={cancelEditRate}
+                            className="p-1 text-neutral-500 hover:text-white transition"
+                            title="Cancel"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 group">
+                          <span className="text-neutral-400">
+                            {emp.hourlyRate != null && emp.hourlyRate > 0
+                              ? `$${emp.hourlyRate.toFixed(2)}/hr`
+                              : <span className="text-neutral-600 italic">Not set</span>
+                            }
+                          </span>
+                          <button
+                            onClick={() => startEditRate(emp)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-neutral-500 hover:text-white transition"
+                            title="Edit pay rate"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          {rateFeedback[emp._id] && (
+                            <span className="text-emerald-400 text-xs">
+                              {rateFeedback[emp._id]}
                             </span>
                           )}
                         </div>

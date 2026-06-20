@@ -77,7 +77,7 @@ export const updateHireDate = async (req, res) => {
 export const getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.find({ isActive: true }).select(
-      "name email role jobTitle hireDate"
+      "name email role jobTitle hireDate hourlyRate"
     );
     return res.status(200).json({ success: true, employees });
   } catch (err) {
