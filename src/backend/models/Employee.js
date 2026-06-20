@@ -52,6 +52,10 @@ const employeeSchema = new mongoose.Schema(
       ],
       default: null,
     },
+    hireDate: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

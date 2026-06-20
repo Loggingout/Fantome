@@ -8,7 +8,7 @@ import { Activity } from "../models/Activity.js";
 export const getPayoutSchedule = async (req, res) => {
   try {
     const employees = await Employee.find({ isActive: true })
-      .select("name email jobTitle hourlyRate createdAt")
+      .select("name email jobTitle hourlyRate hireDate createdAt")
       .sort({ createdAt: -1 });
 
     const now = Date.now();
@@ -16,7 +16,8 @@ export const getPayoutSchedule = async (req, res) => {
     const CYCLE_DAYS = 14;
 
     const schedule = employees.map((emp) => {
-      const hireDate = new Date(emp.createdAt).getTime();
+      // Use explicit hireDate if set, otherwise fall back to createdAt
+      const hireDate = new Date(emp.hireDate ?? emp.createdAt).getTime();
       const daysSinceHire = Math.floor((now - hireDate) / MS_PER_DAY);
       const cyclesCompleted = Math.floor(daysSinceHire / CYCLE_DAYS);
       const nextPayoutMs = hireDate + (cyclesCompleted + 1) * CYCLE_DAYS * MS_PER_DAY;
@@ -28,7 +29,7 @@ export const getPayoutSchedule = async (req, res) => {
         email: emp.email,
         jobTitle: emp.jobTitle || null,
         hourlyRate: emp.hourlyRate,
-        hireDate: emp.createdAt,
+        hireDate: emp.hireDate ?? emp.createdAt,
         nextPayoutDate: new Date(nextPayoutMs),
         daysUntilPayout,
         cycleNumber: cyclesCompleted + 1,
@@ -45,11 +46,37 @@ export const getPayoutSchedule = async (req, res) => {
   }
 };
 
+// PATCH /api/admin/employees/:id/hire-date  — set or update employee hire date
+export const updateHireDate = async (req, res) => {
+  try {
+    const { hireDate } = req.body;
+
+    if (!hireDate || isNaN(new Date(hireDate).getTime())) {
+      return res.status(400).json({ success: false, message: "Invalid hire date." });
+    }
+
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      { hireDate: new Date(hireDate) },
+      { new: true }
+    ).select("name email role jobTitle hireDate");
+
+    if (!employee) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+
+    return res.status(200).json({ success: true, employee });
+  } catch (err) {
+    console.error("updateHireDate Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // GET /api/admin/employees  — list all employees
 export const getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.find({ isActive: true }).select(
-      "name email role jobTitle"
+      "name email role jobTitle hireDate"
     );
     return res.status(200).json({ success: true, employees });
   } catch (err) {

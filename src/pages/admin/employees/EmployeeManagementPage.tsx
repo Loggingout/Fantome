@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Pencil, Check, X } from "lucide-react";
 import api from "../../../utils/api";
 import PageContainer, {
   SectionHeader,
@@ -11,6 +12,21 @@ interface Employee {
   email: string;
   role: "admin" | "employee";
   jobTitle?: string;
+  hireDate?: string | null;
+}
+
+function fmtDate(iso?: string | null) {
+  if (!iso) return null;
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function toInputDate(iso?: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toISOString().split("T")[0];
 }
 
 export default function EmployeeManagementPage() {
@@ -18,6 +34,12 @@ export default function EmployeeManagementPage() {
   const [loading, setLoading] = useState(true);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+
+  // Hire date editing state
+  const [editingHireId, setEditingHireId] = useState<string | null>(null);
+  const [hireDateInput, setHireDateInput] = useState("");
+  const [savingHire, setSavingHire] = useState<string | null>(null);
+  const [hireFeedback, setHireFeedback] = useState<Record<string, string>>({});
 
   useEffect(() => {
     api
@@ -40,6 +62,41 @@ export default function EmployeeManagementPage() {
     }
   };
 
+  const startEditHire = (emp: Employee) => {
+    setEditingHireId(emp._id);
+    setHireDateInput(toInputDate(emp.hireDate));
+  };
+
+  const cancelEditHire = () => {
+    setEditingHireId(null);
+    setHireDateInput("");
+  };
+
+  const saveHireDate = async (id: string) => {
+    if (!hireDateInput) return;
+    setSavingHire(id);
+    try {
+      const res = await api.patch(`/admin/employees/${id}/hire-date`, {
+        hireDate: hireDateInput,
+      });
+      setEmployees((prev) =>
+        prev.map((e) =>
+          e._id === id ? { ...e, hireDate: res.data.employee.hireDate } : e
+        )
+      );
+      setHireFeedback((prev) => ({ ...prev, [id]: "Saved" }));
+      setEditingHireId(null);
+      setTimeout(() => setHireFeedback((prev) => ({ ...prev, [id]: "" })), 2500);
+    } catch (err: any) {
+      setHireFeedback((prev) => ({
+        ...prev,
+        [id]: err.response?.data?.message || "Failed to save",
+      }));
+    } finally {
+      setSavingHire(null);
+    }
+  };
+
   return (
     <PageContainer>
       <SectionHeader title="All Employees" />
@@ -58,6 +115,7 @@ export default function EmployeeManagementPage() {
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Email</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Access</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Job Title</th>
+                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Hire Date</th>
                   <th className="pb-3 text-neutral-500 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -80,6 +138,56 @@ export default function EmployeeManagementPage() {
                     <td className="py-3 pr-6 text-neutral-400">
                       {emp.jobTitle ?? <span className="text-neutral-600">—</span>}
                     </td>
+
+                    {/* Hire Date — inline editable */}
+                    <td className="py-3 pr-6 min-w-[180px]">
+                      {editingHireId === emp._id ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="date"
+                            value={hireDateInput}
+                            onChange={(e) => setHireDateInput(e.target.value)}
+                            className="bg-neutral-800 border border-neutral-600 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:border-neutral-400"
+                          />
+                          <button
+                            onClick={() => saveHireDate(emp._id)}
+                            disabled={savingHire === emp._id || !hireDateInput}
+                            className="p-1 text-emerald-400 hover:text-emerald-300 disabled:opacity-40 transition"
+                            title="Save"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={cancelEditHire}
+                            className="p-1 text-neutral-500 hover:text-white transition"
+                            title="Cancel"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 group">
+                          <span className="text-neutral-400">
+                            {fmtDate(emp.hireDate) ?? (
+                              <span className="text-neutral-600 italic">Not set</span>
+                            )}
+                          </span>
+                          <button
+                            onClick={() => startEditHire(emp)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-neutral-500 hover:text-white transition"
+                            title="Edit hire date"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          {hireFeedback[emp._id] && (
+                            <span className="text-emerald-400 text-xs">
+                              {hireFeedback[emp._id]}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </td>
+
                     <td className="py-3">
                       {confirmId === emp._id ? (
                         <div className="flex items-center gap-2">
