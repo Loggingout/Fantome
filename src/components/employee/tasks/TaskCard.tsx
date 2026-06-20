@@ -67,8 +67,11 @@ export default function TaskCard({ task, onStatusChange }: Props) {
       <select
         value={task.status}
         onChange={(e) => onStatusChange(task._id, e.target.value)}
+        disabled={task.status === "completed"}
         className={`mt-2 bg-neutral-800 border rounded-lg px-3 py-2 text-white text-sm transition-colors ${
-          statusStyle[task.status]?.border ?? "border-neutral-700"
+          task.status === "completed"
+            ? "opacity-50 cursor-not-allowed border-emerald-500/40"
+            : statusStyle[task.status]?.border ?? "border-neutral-700"
         }`}
       >
         {(["pending", "in-progress", "completed"] as const).map((s) => (

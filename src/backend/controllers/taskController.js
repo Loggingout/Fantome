@@ -128,7 +128,7 @@ export const updateTaskStatus = async (req, res) => {
     }
 
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, assignedTo: req.user._id },
+      { _id: req.params.id, assignedTo: req.user._id, status: { $ne: "completed" } },
       { status },
       { new: true }
     );
@@ -136,7 +136,7 @@ export const updateTaskStatus = async (req, res) => {
     if (!task) {
       return res
         .status(404)
-        .json({ success: false, message: "Task not found" });
+        .json({ success: false, message: "Task not found or already completed" });
     }
 
     // Notify all admins and log activity when a task is completed
