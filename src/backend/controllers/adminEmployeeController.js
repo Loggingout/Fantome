@@ -4,6 +4,47 @@ import { Employee } from "../models/Employee.js";
 import { Notification } from "../models/Notification.js";
 import { Activity } from "../models/Activity.js";
 
+// GET /api/admin/employees/payout-schedule  — bi-weekly payout dates per employee
+export const getPayoutSchedule = async (req, res) => {
+  try {
+    const employees = await Employee.find({ isActive: true })
+      .select("name email jobTitle hourlyRate createdAt")
+      .sort({ createdAt: -1 });
+
+    const now = Date.now();
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const CYCLE_DAYS = 14;
+
+    const schedule = employees.map((emp) => {
+      const hireDate = new Date(emp.createdAt).getTime();
+      const daysSinceHire = Math.floor((now - hireDate) / MS_PER_DAY);
+      const cyclesCompleted = Math.floor(daysSinceHire / CYCLE_DAYS);
+      const nextPayoutMs = hireDate + (cyclesCompleted + 1) * CYCLE_DAYS * MS_PER_DAY;
+      const daysUntilPayout = Math.ceil((nextPayoutMs - now) / MS_PER_DAY);
+
+      return {
+        _id: emp._id,
+        name: emp.name,
+        email: emp.email,
+        jobTitle: emp.jobTitle || null,
+        hourlyRate: emp.hourlyRate,
+        hireDate: emp.createdAt,
+        nextPayoutDate: new Date(nextPayoutMs),
+        daysUntilPayout,
+        cycleNumber: cyclesCompleted + 1,
+      };
+    });
+
+    // Sort by soonest payout first
+    schedule.sort((a, b) => a.daysUntilPayout - b.daysUntilPayout);
+
+    return res.status(200).json({ success: true, schedule });
+  } catch (err) {
+    console.error("getPayoutSchedule Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // GET /api/admin/employees  — list all employees
 export const getAllEmployees = async (req, res) => {
   try {

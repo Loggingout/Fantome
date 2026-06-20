@@ -45,6 +45,7 @@ import EmployeeTasksPage from "./pages/admin/employees/EmployeeTasksPage";
 import UpcomingShiftsPage from "./pages/admin/employees/UpcomingShiftsPage";
 import PayrollHistoryPage from "./pages/admin/employees/PayrollHostoryPage";
 import EmployeePayrollDetailPage from "./pages/admin/employees/EmployeePayrollDetailPage";
+import PayoutSchedulePage from "./pages/admin/employees/PayoutSchedulePage";
 import BlogManagementPage from "./pages/admin/blog/BlogManagementPage";
 import PermissionsPage from "./pages/admin/permissions/PermissionsPage";
 import CompanySettingsPage from "./pages/admin/settings/CompanySettingsPage";
@@ -97,6 +98,7 @@ function App() {
           <Route path="employees/shifts" element={<UpcomingShiftsPage />} />
           <Route path="employees/payroll" element={<PayrollHistoryPage />} />
           <Route path="employees/:employeeId/payroll" element={<EmployeePayrollDetailPage />} />
+          <Route path="employees/payout-schedule" element={<PayoutSchedulePage />} />
           <Route path="blog" element={<BlogManagementPage />} />
           <Route path="permissions" element={<PermissionsPage />} />
           <Route path="settings" element={<CompanySettingsPage />} />
