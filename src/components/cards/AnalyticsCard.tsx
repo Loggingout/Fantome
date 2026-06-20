@@ -40,7 +40,7 @@ export default function AnalyticsCard() {
 
   useEffect(() => {
     api
-      .get("/admin/analytics")
+      .get("/admin/dashboard/analytics")
       .then((res) => {
         setLabels(res.data.labels);
         setChartData(res.data.data);

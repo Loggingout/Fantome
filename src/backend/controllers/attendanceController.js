@@ -163,7 +163,9 @@ export const getAdminSummary = async (req, res) => {
       .populate("employee", "name email hourlyRate")
       .sort({ date: -1, createdAt: -1 });
 
-    const summary = records.map((r) => {
+    const summary = records
+      .filter((r) => r.employee != null)
+      .map((r) => {
       let hoursWorked = 0;
       if (r.clockIn && r.clockOut) {
         let ms = r.clockOut.getTime() - r.clockIn.getTime();

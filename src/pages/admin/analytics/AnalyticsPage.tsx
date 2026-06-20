@@ -45,6 +45,7 @@ export default function AnalyticsPage() {
     const seen = new Set<string>();
     const list: Array<{ _id: string; name: string; hourlyRate: number }> = [];
     for (const r of records) {
+      if (!r.employee) continue;
       if (!seen.has(r.employee._id)) {
         seen.add(r.employee._id);
         list.push({ _id: r.employee._id, name: r.employee.name, hourlyRate: r.employee.hourlyRate });
@@ -72,7 +73,7 @@ export default function AnalyticsPage() {
   const handleRateChange = (employeeId: string, newRate: number) => {
     setRecords((prev) =>
       prev.map((r) =>
-        r.employee._id === employeeId
+        r.employee?._id === employeeId
           ? {
               ...r,
               employee: { ...r.employee, hourlyRate: newRate },
