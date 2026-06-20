@@ -1,10 +1,24 @@
+import { useState, useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageContainer, { SectionHeader, DashCard } from "../../components/layout/PageContainer";
 import MyTaskList from "../../components/employee/tasks/MyTaskList";
 import MyShifts from "../../components/employee/shifts/MyShifts";
+import api from "../../utils/api";
+
+interface LeaveBalance {
+  ptoHours: number;
+  uptoHours: number;
+}
 
 export default function DashboardPage() {
+  const [leaveBalance, setLeaveBalance] = useState<LeaveBalance | null>(null);
+
+  useEffect(() => {
+    api.get("/leave-balance/mine")
+      .then((res) => setLeaveBalance(res.data.balance))
+      .catch(() => {});
+  }, []);
   const fadeUp: Variants = {
     hidden: { opacity: 0, y: 24 },
     visible: (i: number = 0) => ({
@@ -59,9 +73,18 @@ export default function DashboardPage() {
             </p>
 
             <div className="flex flex-col gap-2">
-              <p className="text-white"><span className="text-neutral-500">PTO:</span> 0 days</p>
-              <p className="text-white"><span className="text-neutral-500">Sick Leave:</span> 0 days</p>
+              <p className="text-white">
+                <span className="text-neutral-500">PTO:</span>{" "}
+                {leaveBalance ? `${leaveBalance.ptoHours} hrs (≈ ${Math.floor(leaveBalance.ptoHours / 8)}d)` : "—"}
+              </p>
+              <p className="text-white">
+                <span className="text-neutral-500">Sick Leave (UPTO):</span>{" "}
+                {leaveBalance ? `${leaveBalance.uptoHours} hrs (≈ ${Math.floor(leaveBalance.uptoHours / 8)}d)` : "—"}
+              </p>
             </div>
+            <Link to="/employee/leave-balance" className="block mt-4 text-xs text-neutral-500 hover:text-white transition">
+              View full balance →
+            </Link>
           </DashCard>
         </motion.div>
 

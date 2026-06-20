@@ -57,6 +57,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Leave Dashboard", path: "/admin/leave" },
       { label: "Requests", path: "/admin/leave/requests" },
+      { label: "Leave Balances", path: "/admin/leave/balances" },
       { label: "Policies", path: "/admin/leave/policies" },
     ],
   },

@@ -3,6 +3,7 @@ import { createEmployeeService } from "../services/employeeService.js";
 import { Employee } from "../models/Employee.js";
 import { Notification } from "../models/Notification.js";
 import { Activity } from "../models/Activity.js";
+import { LeaveBalance } from "../models/LeaveBalance.js";
 
 // GET /api/admin/employees/payout-schedule  — bi-weekly payout dates per employee
 export const getPayoutSchedule = async (req, res) => {
@@ -105,6 +106,9 @@ export const createEmployee = async (req, res) => {
         ? `${result.employee.name} has been hired as ${jobTitleLabel}.`
         : `${result.employee.name} has been hired.`,
     });
+
+    // Create default leave balance for new employee
+    await LeaveBalance.create({ employee: result.employee._id });
 
     return res.status(201).json({
       success: true,

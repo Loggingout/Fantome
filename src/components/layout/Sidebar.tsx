@@ -12,6 +12,7 @@ import {
   Bell,
   Wallet,
   DollarSign,
+  Shield,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import api from "../../utils/api";
@@ -30,6 +31,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Time Off Request", icon: FilePlus2, path: "/employee/time-off" },
   { label: "Pay History", icon: Wallet, path: "/employee/pay-history" },
   { label: "My Payout", icon: DollarSign, path: "/employee/my-payout" },
+  { label: "Leave Balance", icon: Shield, path: "/employee/leave-balance" },
   { label: "Notifications", icon: Bell, path: "/employee/notifications" },
 ];
 

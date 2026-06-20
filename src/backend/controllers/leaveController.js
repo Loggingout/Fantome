@@ -2,6 +2,22 @@ import { LeaveRequest } from "../models/LeaveRequest.js";
 import { Notification } from "../models/Notification.js";
 import { Employee } from "../models/Employee.js";
 import { Activity } from "../models/Activity.js";
+import { ensureBalance } from "./leaveBalanceController.js";
+
+// Calculate working hours (Mon–Fri, 8h/day) between two date strings
+function calcWorkingHours(startStr, endStr) {
+  let hours = 0;
+  const d = new Date(startStr);
+  const end = new Date(endStr);
+  d.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+  while (d <= end) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) hours += 8;
+    d.setDate(d.getDate() + 1);
+  }
+  return hours;
+}
 
 // POST /api/leave  — employee submits a request
 export const submitLeaveRequest = async (req, res) => {
@@ -95,6 +111,20 @@ export const updateLeaveStatus = async (req, res) => {
       type: "general",
       message: `Your ${typeLabel} request (${request.startDate} → ${request.endDate}) was ${status}.${adminNote ? " Note: " + adminNote : ""}`,
     });
+
+    // Deduct leave hours from balance when approved
+    if (status === "approved") {
+      const hours = calcWorkingHours(request.startDate, request.endDate);
+      const balance = await ensureBalance(request.employee._id);
+      if (request.type === "sick") {
+        balance.uptoHours = Math.max(0, balance.uptoHours - hours);
+        balance.uptoUsed += hours;
+      } else {
+        balance.ptoHours = Math.max(0, balance.ptoHours - hours);
+        balance.ptoUsed += hours;
+      }
+      await balance.save();
+    }
 
     await Activity.create({
       type: status === "approved" ? "leave-approved" : "leave-denied",
