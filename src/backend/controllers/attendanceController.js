@@ -7,10 +7,20 @@ const todayStr = () => new Date().toISOString().split("T")[0];
 // GET /api/attendance/today
 export const getToday = async (req, res) => {
   try {
-    const record = await Attendance.findOne({
+    // Check today's record first
+    let record = await Attendance.findOne({
       employee: req.user._id,
       date: todayStr(),
     });
+
+    // If no today record, check for an open (not clocked-out) session from a prior day
+    if (!record) {
+      record = await Attendance.findOne({
+        employee: req.user._id,
+        clockIn: { $exists: true, $ne: null },
+        clockOut: null,
+      }).sort({ clockIn: -1 });
+    }
 
     return res.status(200).json({ success: true, attendance: record || null });
   } catch (err) {
@@ -51,21 +61,17 @@ export const clockIn = async (req, res) => {
 // POST /api/attendance/clock-out
 export const clockOut = async (req, res) => {
   try {
+    // Find the most recent open session — may be from a prior day
     const record = await Attendance.findOne({
       employee: req.user._id,
-      date: todayStr(),
-    });
+      clockIn: { $exists: true, $ne: null },
+      clockOut: null,
+    }).sort({ clockIn: -1 });
 
-    if (!record?.clockIn) {
+    if (!record) {
       return res
         .status(400)
         .json({ success: false, message: "Not clocked in" });
-    }
-
-    if (record.clockOut) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Already clocked out" });
     }
 
     record.clockOut = new Date();
