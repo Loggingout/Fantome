@@ -15,6 +15,8 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import leaveRoutes from "./routes/leaveRoutes.js";
 import leaveBalanceRoutes from "./routes/leaveBalanceRoutes.js";
 
+import { startShiftReminderJob } from "./services/shiftReminderService.js";
+
 import { connectDB } from "./config/db.js";
 
 import {
@@ -68,4 +70,5 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`✓ Server running on port ${PORT}`);
   console.log(`✓ Listening on 0.0.0.0:${PORT}`);
   console.log("✓ CORS enabled for origins:", allowedOrigins);
+  startShiftReminderJob();
 });

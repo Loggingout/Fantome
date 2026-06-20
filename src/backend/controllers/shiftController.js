@@ -1,4 +1,16 @@
 import { Shift } from "../models/Shift.js";
+import { ScheduledNotification } from "../models/ScheduledNotification.js";
+
+const REMINDERS = [
+  { offsetMin: 60, label: "1 hour" },
+  { offsetMin: 30, label: "30 minutes" },
+  { offsetMin: 15, label: "15 minutes" },
+];
+
+// Build the shift start as a UTC Date from "YYYY-MM-DD" + "HH:MM"
+function shiftStartUTC(date, startTime) {
+  return new Date(`${date}T${startTime}:00.000Z`);
+}
 
 // ── ADMIN ──────────────────────────────────────────
 
@@ -25,6 +37,29 @@ export const createShift = async (req, res) => {
     }));
 
     const inserted = await Shift.insertMany(docs);
+
+    // Schedule 3 reminder notifications per shift (only for future shift starts)
+    const now = new Date();
+    const scheduledDocs = [];
+
+    for (const shift of inserted) {
+      const shiftStart = shiftStartUTC(shift.date, shift.startTime);
+      for (const { offsetMin, label } of REMINDERS) {
+        const scheduledFor = new Date(shiftStart.getTime() - offsetMin * 60 * 1000);
+        if (scheduledFor > now) {
+          scheduledDocs.push({
+            employee: shift.employee,
+            shift: shift._id,
+            message: `Reminder: Your shift starts in ${label} at ${shift.startTime}.`,
+            scheduledFor,
+          });
+        }
+      }
+    }
+
+    if (scheduledDocs.length > 0) {
+      await ScheduledNotification.insertMany(scheduledDocs);
+    }
 
     return res.status(201).json({ success: true, count: inserted.length });
   } catch (err) {
@@ -57,6 +92,9 @@ export const deleteShift = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Shift not found" });
     }
+
+    // Cancel any undelivered reminders for this shift
+    await ScheduledNotification.deleteMany({ shift: req.params.id, delivered: false });
 
     return res.status(200).json({ success: true, message: "Shift deleted" });
   } catch (err) {
