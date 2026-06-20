@@ -3,6 +3,7 @@ import {
   getDashboardStats,
   getActivity,
   getAnalytics,
+  getTaskAnalytics,
 } from "../controllers/adminDashboardController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -13,5 +14,6 @@ router.use(protect, adminOnly);
 router.get("/stats", getDashboardStats);
 router.get("/activity", getActivity);
 router.get("/analytics", getAnalytics);
+router.get("/task-analytics", getTaskAnalytics);
 
 export default router;
