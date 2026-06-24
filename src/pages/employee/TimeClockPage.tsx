@@ -27,7 +27,9 @@ export default function TimeClockPage() {
 
   const fetchToday = async () => {
     try {
-      const res = await api.get("/attendance/today");
+      // Send the browser's local date so getToday looks up the correct record
+      const localDate = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+      const res = await api.get(`/attendance/today?localDate=${localDate}`);
       if (res.data.attendance) {
         setAttendance(res.data.attendance);
       }

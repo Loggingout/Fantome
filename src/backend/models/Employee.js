@@ -56,6 +56,13 @@ const employeeSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    // IANA timezone identifier (e.g. "America/Denver" for MDT).
+    // Used for date-grouping in admin payroll reports and shift reminders.
+    // Defaults to "America/Denver" (MDT) since all current employees are in that zone.
+    timezone: {
+      type: String,
+      default: "America/Denver",
+    },
   },
   { timestamps: true }
 );

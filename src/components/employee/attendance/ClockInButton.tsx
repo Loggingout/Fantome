@@ -14,7 +14,10 @@ export default function ClockInButton({ disabled, onSuccess }: Props) {
     setLoading(true);
     setError("");
     try {
-      await api.post("/attendance/clock-in");
+      // Send the browser's local date so the server stamps the correct date
+      // regardless of the server's UTC clock
+      const localDate = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+      await api.post("/attendance/clock-in", { localDate });
       onSuccess();
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to clock in");

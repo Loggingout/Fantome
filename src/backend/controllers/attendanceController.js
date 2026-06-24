@@ -18,19 +18,18 @@ async function findOpenSession(employeeId) {
 // GET /api/attendance/today
 export const getToday = async (req, res) => {
   try {
-    // Check today's record first
+    // Use the client's local date if provided, fall back to server UTC date
+    const dateKey = req.query.localDate || todayStr();
+
+    // Check the local-date record first
     let record = await Attendance.findOne({
       employee: req.user._id,
-      date: todayStr(),
+      date: dateKey,
     });
 
-    // If no today record, check for an open (not clocked-out) session from a prior day
+    // If no record for today, fall back to any open (not clocked-out) session
     if (!record) {
-      record = await Attendance.findOne({
-        employee: req.user._id,
-        clockIn: { $exists: true, $ne: null },
-        clockOut: null,
-      }).sort({ clockIn: -1 });
+      record = await findOpenSession(req.user._id);
     }
 
     return res.status(200).json({ success: true, attendance: record || null });
@@ -51,9 +50,13 @@ export const clockIn = async (req, res) => {
         .json({ success: false, message: "Already clocked in" });
     }
 
+    // Use the client's local date so the record is stamped correctly
+    // for the employee's timezone, not the server's UTC date
+    const localDate = req.body.localDate || todayStr();
+
     const record = new Attendance({
       employee: req.user._id,
-      date: todayStr(),
+      date: localDate,
       clockIn: new Date(),
       status: "clocked-in",
     });
