@@ -63,6 +63,8 @@ import SettingsCreateEmployee from "./pages/admin/settings/CreateEmployeePage";
 import SettingsDeleteEmployee from "./pages/admin/settings/DeleteEmployeePage";
 import SettingsManageRoles from "./pages/admin/settings/ManageRolesPage";
 import SettingsSystem from "./pages/admin/settings/SystemsPreferencesPage";
+import ServicesManagementPage from "./pages/admin/services/ServicesManagementPage";
+import ServicesPricingPage from "./pages/admin/services/ServicesPricingPage";
 
 function App() {
   return (
@@ -119,6 +121,8 @@ function App() {
           <Route path="settings/delete-employee" element={<SettingsDeleteEmployee />} />
           <Route path="settings/manage-roles" element={<SettingsManageRoles />} />
           <Route path="settings/system" element={<SettingsSystem />} />
+          <Route path="services" element={<ServicesManagementPage />} />
+          <Route path="services/pricing" element={<ServicesPricingPage />} />
         </Route>
 
         {/* ============================

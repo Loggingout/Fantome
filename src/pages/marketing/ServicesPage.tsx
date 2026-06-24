@@ -8,52 +8,70 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Code, Palette, TrendingUp, Shield, Award, Zap, BarChart3 } from "lucide-react";
+import { Code, Palette, TrendingUp, Shield, Award, Zap, BarChart3, Star, Globe, Settings, Megaphone } from "lucide-react";
+
+// ── Icon map: maps the icon string stored in the DB to a lucide component ────
+const ICON_MAP: Record<string, React.ElementType> = {
+  Code, Palette, TrendingUp, Shield, Award, Zap, BarChart3, Star, Globe, Settings, Megaphone,
+};
+function SvcIcon({ name, className }: { name: string; className: string }) {
+  const Icon = ICON_MAP[name] ?? Star;
+  return <Icon className={className} />;
+}
+
+interface Service {
+  _id: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  priceUnit: string;
+  priceLabel: string;
+  features: string[];
+  icon: string;
+  colorClass: string;
+  badge: string;
+  isFeatured: boolean;
+}
+
+const ICON_COLORS: Record<string, string> = {
+  "web-development": "text-cyan-300",
+  "web-design": "text-violet-300",
+  "website-management": "text-cyan-300",
+  "marketing": "text-amber-300",
+};
+
+const API_BASE = "https://fantome.onrender.com/api";
 
 export default function ServicesPage() {
   const navigate = useNavigate();
   const [showRequestQuote, setShowRequestQuote] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [services, setServices] = useState<Service[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
       setShowRequestQuote(window.scrollY > 400);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const textCards = [
-    {
-      icon: <Code className="w-12 h-12 text-cyan-300 mb-4" />,
-      title: "Modern Website Development",
-      description:
-        "We build fast, modern web apps with clean UX, strong performance, and the right tools for your growth.",
-      colorClass: "bg-slate-800/80 border-slate-700",
-    },
-    {
-      icon: <Zap className="w-12 h-12 text-fuchsia-300 mb-4" />,
-      title: "Sleek Landing Pages",
-      description:
-        "Landing experiences designed to stop scrolling, convert visitors, and bring clarity to your offer.",
-      colorClass: "bg-slate-800/80 border-slate-700",
-    },
-    {
-      icon: <Palette className="w-12 h-12 text-violet-300 mb-4" />,
-      title: "Website Design Overhauls",
-      description:
-        "Refresh your website with a polished visual system that reflects your brand and makes every page feel premium.",
-      colorClass: "bg-slate-800/80 border-slate-700",
-    },
-    {
-      icon: <BarChart3 className="w-12 h-12 text-amber-300 mb-4" />,
-      title: "Marketing Campaign Management",
-      description:
-        "Strategic campaign planning, execution, and optimization to reach your target audience and drive measurable results.",
-      colorClass: "bg-slate-800/80 border-slate-700",
-    },
-  ];
+  // Fetch live services from the API (no auth required — public endpoint)
+  useEffect(() => {
+    fetch(`${API_BASE}/services`)
+      .then((r) => r.json())
+      .then((data) => { if (data.success) setServices(data.services); })
+      .catch(() => {}); // silently fall back to static content on error
+  }, []);
+
+  // Derive data from API (fall back to empty = static content renders instead)
+  const managementPlans = services.filter(
+    (s) => s.category === "website-management" || (s.category === "marketing" && s.price > 0)
+  );
+  const serviceCards = services.filter(
+    (s) => s.category !== "website-management" && !(s.category === "marketing" && s.price > 0)
+  );
 
   return (
     <div
@@ -149,18 +167,28 @@ export default function ServicesPage() {
         </motion.div>
 
         <div className="grid gap-8 mb-20 md:grid-cols-3">
-          {textCards.map((card) => (
+          {(serviceCards.length > 0 ? serviceCards : [
+            { _id: "s1", name: "Modern Website Development", description: "We build fast, modern web apps with clean UX, strong performance, and the right tools for your growth.", icon: "Code", colorClass: "bg-slate-800/80 border-slate-700", category: "web-development", price: 0, priceUnit: "", priceLabel: "", features: [], badge: "", isFeatured: false },
+            { _id: "s2", name: "Sleek Landing Pages", description: "Landing experiences designed to stop scrolling, convert visitors, and bring clarity to your offer.", icon: "Zap", colorClass: "bg-slate-800/80 border-slate-700", category: "web-design", price: 0, priceUnit: "", priceLabel: "", features: [], badge: "", isFeatured: false },
+            { _id: "s3", name: "Website Design Overhauls", description: "Refresh your website with a polished visual system that reflects your brand and makes every page feel premium.", icon: "Palette", colorClass: "bg-slate-800/80 border-slate-700", category: "web-design", price: 0, priceUnit: "", priceLabel: "", features: [], badge: "", isFeatured: false },
+            { _id: "s4", name: "Marketing Campaign Management", description: "Strategic campaign planning, execution, and optimization to reach your target audience and drive measurable results.", icon: "BarChart3", colorClass: "bg-slate-800/80 border-slate-700", category: "marketing", price: 220, priceUnit: "/month", priceLabel: "", features: [], badge: "", isFeatured: false },
+          ]).map((s, i) => (
             <motion.div
-              key={card.title}
-              className={`rounded-4xl border ${card.colorClass} p-8 shadow-[0_16px_65px_rgba(15,23,42,0.35)] transition-transform duration-300 hover:-translate-y-1`}
+              key={s._id}
+              className={`rounded-4xl border ${s.colorClass} p-8 shadow-[0_16px_65px_rgba(15,23,42,0.35)] transition-transform duration-300 hover:-translate-y-1`}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
             >
-              {card.icon}
-              <h3 className="text-2xl font-semibold mb-3 text-white">{card.title}</h3>
-              <p className="text-neutral-300 leading-relaxed">{card.description}</p>
+              <SvcIcon name={s.icon} className={`w-12 h-12 mb-4 ${ICON_COLORS[s.category] ?? "text-white"}`} />
+              <h3 className="text-2xl font-semibold mb-3 text-white">{s.name}</h3>
+              <p className="text-neutral-300 leading-relaxed">{s.description}</p>
+              {s.features.length > 0 && (
+                <ul className="mt-4 space-y-2 text-neutral-400 text-sm list-disc list-inside">
+                  {s.features.map((f) => <li key={f}>{f}</li>)}
+                </ul>
+              )}
             </motion.div>
           ))}
         </div>
@@ -177,75 +205,44 @@ export default function ServicesPage() {
         </div>
 
         <div className="grid gap-8 mb-16 md:grid-cols-3">
-          <motion.div
-            className="rounded-3xl border border-neutral-800 bg-neutral-900/80 p-8 shadow-[0_18px_70px_rgba(15,23,42,0.45)]"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Shield className="w-10 h-10 text-cyan-300 mb-4" />
-            <h4 className="text-2xl font-semibold mb-2 text-white">Silver</h4>
-            <p className="text-5xl font-bold mb-4 text-white">
-              $80 <span className="text-neutral-500 text-lg">/month</span>
-            </p>
-            <p className="text-neutral-300 mb-5 font-medium">No long-term contracts. Cancel anytime.</p>
-            <ul className="space-y-3 text-neutral-400 text-sm list-disc list-inside">
-              <li>Hosting & uptime monitoring</li>
-              <li>Security updates</li>
-              <li>Minor content changes</li>
-              <li>Email support</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            className="relative rounded-3xl border border-neutral-800 bg-linear-to-br from-violet-950/90 to-fuchsia-950/90 p-8 shadow-[0_18px_70px_rgba(124,58,237,0.2)]"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-          >
-            <div className="absolute -top-4 right-6 rounded-full bg-linear-to-r from-fuchsia-500 to-violet-500 px-4 py-1 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20">
-              Most Popular
-            </div>
-            <Award className="w-10 h-10 text-pink-300 mb-4" />
-            <h4 className="text-2xl font-semibold mb-2 text-white">Gold</h4>
-            <p className="text-5xl font-bold mb-4 text-white">
-              $100 <span className="text-neutral-300 text-lg">/month</span>
-            </p>
-            <p className="text-neutral-300 mb-5 font-medium">No long-term contracts. Cancel anytime.</p>
-            <ul className="space-y-3 text-neutral-300 text-sm list-disc list-inside">
-              <li>Everything in Silver</li>
-              <li>Priority updates</li>
-              <li>Performance monitoring</li>
-              <li>Monthly check-ins</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            className="rounded-3xl border border-neutral-800 bg-neutral-900/80 p-8 shadow-[0_18px_70px_rgba(15,23,42,0.45)]"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.16 }}
-          >
-            <BarChart3 className="w-10 h-10 text-amber-300 mb-4" />
-            <h4 className="text-2xl font-semibold mb-2 text-white">Marketing Campaign</h4>
-            <p className="text-5xl font-bold mb-4 text-white">
-              $220 <span className="text-neutral-500 text-lg">/month</span>
-            </p>
-            <p className="text-neutral-300 mb-5 font-medium">No long-term contracts. Cancel anytime.</p>
-            <ul className="space-y-3 text-neutral-400 text-sm list-disc list-inside">
-              <li>Campaign strategy & planning</li>
-              <li>Multi-channel execution</li>
-              <li>Performance analytics & reporting</li>
-              <li>Creative copywriting & assets</li>
-              <li>Monthly optimization & adjustments</li>
-            </ul>
-            <p className="text-neutral-300 italic text-xs mt-6 pt-6 border-t border-neutral-700">
-              <span className="font-semibold text-amber-300">Corporate packages available:</span> For enterprise solutions, reach out via email. Highly recommended.
-            </p>
-          </motion.div>
+          {(managementPlans.length > 0 ? managementPlans : [
+            { _id: "m1", name: "Silver", price: 80, priceUnit: "/month", priceLabel: "", icon: "Shield", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "", features: ["Hosting & uptime monitoring", "Security updates", "Minor content changes", "Email support"], category: "website-management", description: "", isFeatured: false },
+            { _id: "m2", name: "Gold", price: 100, priceUnit: "/month", priceLabel: "", icon: "Award", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "Most Popular", features: ["Everything in Silver", "Priority updates", "Performance monitoring", "Monthly check-ins"], category: "website-management", description: "", isFeatured: true },
+            { _id: "m3", name: "Marketing Campaign", price: 220, priceUnit: "/month", priceLabel: "", icon: "BarChart3", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "", features: ["Campaign strategy & planning", "Multi-channel execution", "Performance analytics & reporting", "Creative copywriting & assets", "Monthly optimization & adjustments"], category: "marketing", description: "", isFeatured: false },
+          ]).map((plan, i) => {
+            const isFeatured = plan.badge === "Most Popular" || plan.isFeatured;
+            return (
+              <motion.div
+                key={plan._id}
+                className={`relative rounded-3xl border ${isFeatured ? "border-neutral-800 bg-linear-to-br from-violet-950/90 to-fuchsia-950/90 shadow-[0_18px_70px_rgba(124,58,237,0.2)]" : "border-neutral-800 bg-neutral-900/80 shadow-[0_18px_70px_rgba(15,23,42,0.45)]"} p-8`}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+              >
+                {plan.badge && (
+                  <div className="absolute -top-4 right-6 rounded-full bg-linear-to-r from-fuchsia-500 to-violet-500 px-4 py-1 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20">
+                    {plan.badge}
+                  </div>
+                )}
+                <SvcIcon name={plan.icon} className={`w-10 h-10 mb-4 ${isFeatured ? "text-pink-300" : ICON_COLORS[plan.category] ?? "text-cyan-300"}`} />
+                <h4 className="text-2xl font-semibold mb-2 text-white">{plan.name}</h4>
+                <p className={`text-5xl font-bold mb-4 ${isFeatured ? "text-white" : "text-white"}`}>
+                  {plan.priceLabel ? (
+                    <span className="text-3xl">{plan.priceLabel}</span>
+                  ) : (
+                    <>${plan.price}<span className={`text-lg ${isFeatured ? "text-neutral-300" : "text-neutral-500"}`}>{plan.priceUnit}</span></>
+                  )}
+                </p>
+                {plan.description && <p className={`mb-5 font-medium ${isFeatured ? "text-neutral-300" : "text-neutral-300"}`}>{plan.description}</p>}
+                {plan.features.length > 0 && (
+                  <ul className={`space-y-3 text-sm list-disc list-inside ${isFeatured ? "text-neutral-300" : "text-neutral-400"}`}>
+                    {plan.features.map((f) => <li key={f}>{f}</li>)}
+                  </ul>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
 
         <motion.section

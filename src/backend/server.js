@@ -14,8 +14,10 @@ import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import leaveRoutes from "./routes/leaveRoutes.js";
 import leaveBalanceRoutes from "./routes/leaveBalanceRoutes.js";
+import serviceRoutes from "./routes/serviceRoutes.js";
 
 import { startShiftReminderJob } from "./services/shiftReminderService.js";
+import { seedServicesIfEmpty } from "./controllers/serviceController.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -49,6 +51,7 @@ app.use("/api/admin/dashboard", adminDashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/leave", leaveRoutes);
 app.use("/api/leave-balance", leaveBalanceRoutes);
+app.use("/api/services", serviceRoutes);
 
 // Health Route
 app.get("/", (req, res) => {
@@ -71,4 +74,5 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`✓ Listening on 0.0.0.0:${PORT}`);
   console.log("✓ CORS enabled for origins:", allowedOrigins);
   startShiftReminderJob();
+  seedServicesIfEmpty();
 });
