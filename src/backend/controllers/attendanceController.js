@@ -1,8 +1,19 @@
 import { Attendance } from "../models/Attendance.js";
 import { Employee } from "../models/Employee.js";
+import { Notification } from "../models/Notification.js";
 
 // Helper: get today's date string "YYYY-MM-DD"
 const todayStr = () => new Date().toISOString().split("T")[0];
+
+// Helper: find any open (not-yet-clocked-out) session for an employee
+// Used by clock-out, lunch-start, lunch-end to handle cross-day sessions
+async function findOpenSession(employeeId) {
+  return Attendance.findOne({
+    employee: employeeId,
+    clockIn: { $exists: true, $ne: null },
+    clockOut: null,
+  }).sort({ clockIn: -1 });
+}
 
 // GET /api/attendance/today
 export const getToday = async (req, res) => {
@@ -32,23 +43,20 @@ export const getToday = async (req, res) => {
 // POST /api/attendance/clock-in
 export const clockIn = async (req, res) => {
   try {
-    const existing = await Attendance.findOne({
-      employee: req.user._id,
-      date: todayStr(),
-    });
-
-    if (existing?.clockIn) {
+    // Block if any open session exists (today or cross-day)
+    const openSession = await findOpenSession(req.user._id);
+    if (openSession) {
       return res
         .status(400)
-        .json({ success: false, message: "Already clocked in today" });
+        .json({ success: false, message: "Already clocked in" });
     }
 
-    const record = existing
-      ? existing
-      : new Attendance({ employee: req.user._id, date: todayStr() });
-
-    record.clockIn = new Date();
-    record.status = "clocked-in";
+    const record = new Attendance({
+      employee: req.user._id,
+      date: todayStr(),
+      clockIn: new Date(),
+      status: "clocked-in",
+    });
     await record.save();
 
     return res.status(200).json({ success: true, attendance: record });
@@ -61,12 +69,7 @@ export const clockIn = async (req, res) => {
 // POST /api/attendance/clock-out
 export const clockOut = async (req, res) => {
   try {
-    // Find the most recent open session — may be from a prior day
-    const record = await Attendance.findOne({
-      employee: req.user._id,
-      clockIn: { $exists: true, $ne: null },
-      clockOut: null,
-    }).sort({ clockIn: -1 });
+    const record = await findOpenSession(req.user._id);
 
     if (!record) {
       return res
@@ -88,10 +91,8 @@ export const clockOut = async (req, res) => {
 // POST /api/attendance/lunch-start
 export const lunchStart = async (req, res) => {
   try {
-    const record = await Attendance.findOne({
-      employee: req.user._id,
-      date: todayStr(),
-    });
+    // Use open-session fallback so cross-day shifts work correctly
+    const record = await findOpenSession(req.user._id);
 
     if (!record?.clockIn) {
       return res
@@ -119,10 +120,8 @@ export const lunchStart = async (req, res) => {
 // POST /api/attendance/lunch-end
 export const lunchEnd = async (req, res) => {
   try {
-    const record = await Attendance.findOne({
-      employee: req.user._id,
-      date: todayStr(),
-    });
+    // Use open-session fallback so cross-day shifts work correctly
+    const record = await findOpenSession(req.user._id);
 
     if (!record?.lunchStart) {
       return res
@@ -366,6 +365,78 @@ export const getEmployeePayrollDetail = async (req, res) => {
     return res.status(200).json({ success: true, employee: emp, payroll, hourlyRate: rate });
   } catch (err) {
     console.error("getEmployeePayrollDetail Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// PATCH /api/attendance/:id/correct  — admin corrects a record's clock times
+export const correctAttendance = async (req, res) => {
+  try {
+    const { clockIn, clockOut, lunchStart, lunchEnd, reason } = req.body;
+
+    const record = await Attendance.findById(req.params.id);
+    if (!record) {
+      return res.status(404).json({ success: false, message: "Record not found" });
+    }
+
+    // Combine record.date with an "HH:MM" string to get a UTC Date
+    const makeUTC = (timeStr) => {
+      if (timeStr === null || timeStr === undefined || timeStr === "") return null;
+      return new Date(`${record.date}T${timeStr}:00.000Z`);
+    };
+
+    const updates = {};
+    if (clockIn !== undefined)    updates.clockIn    = makeUTC(clockIn);
+    if (clockOut !== undefined)   updates.clockOut   = makeUTC(clockOut);
+    if (lunchStart !== undefined) updates.lunchStart = makeUTC(lunchStart);
+    if (lunchEnd !== undefined)   updates.lunchEnd   = makeUTC(lunchEnd);
+
+    // Derive status from corrected clockOut
+    const effectiveClockOut = updates.clockOut !== undefined ? updates.clockOut : record.clockOut;
+    if (effectiveClockOut) updates.status = "clocked-out";
+
+    const updated = await Attendance.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
+      { new: true }
+    ).populate("employee", "name email hourlyRate");
+
+    // Notify the employee
+    const reasonText = reason?.trim() ? ` Reason: ${reason.trim()}.` : "";
+    await Notification.create({
+      employee: record.employee,
+      type: "general",
+      message: `An admin has corrected your attendance record for ${record.date}.${reasonText}`,
+    });
+
+    // Recalculate derived fields for the response
+    let hoursWorked = 0;
+    if (updated.clockIn && updated.clockOut) {
+      let ms = updated.clockOut.getTime() - updated.clockIn.getTime();
+      if (updated.lunchStart && updated.lunchEnd) {
+        ms -= updated.lunchEnd.getTime() - updated.lunchStart.getTime();
+      }
+      hoursWorked = Math.max(0, ms / 3_600_000);
+    }
+    const rate = updated.employee?.hourlyRate ?? 0;
+
+    return res.status(200).json({
+      success: true,
+      record: {
+        _id: updated._id,
+        employee: updated.employee,
+        date: updated.date,
+        clockIn: updated.clockIn,
+        clockOut: updated.clockOut,
+        lunchStart: updated.lunchStart,
+        lunchEnd: updated.lunchEnd,
+        status: updated.status,
+        hoursWorked: Math.round(hoursWorked * 100) / 100,
+        payout: Math.round(hoursWorked * rate * 100) / 100,
+      },
+    });
+  } catch (err) {
+    console.error("correctAttendance Error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

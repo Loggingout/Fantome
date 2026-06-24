@@ -1,3 +1,5 @@
+import { Pencil } from "lucide-react";
+
 export interface AttendanceRecord {
   _id: string;
   employee: {
@@ -18,6 +20,7 @@ export interface AttendanceRecord {
 
 interface Props {
   records: AttendanceRecord[];
+  onCorrect?: (record: AttendanceRecord) => void;
 }
 
 function formatTime(iso: string | null) {
@@ -35,7 +38,7 @@ const STATUS_STYLES: Record<string, string> = {
   "clocked-out": "bg-neutral-700/50 text-neutral-400 border border-neutral-700",
 };
 
-export default function AttendanceSummaryTable({ records }: Props) {
+export default function AttendanceSummaryTable({ records, onCorrect }: Props) {
   const totalHours = records.reduce((s, r) => s + r.hoursWorked, 0);
   const totalPayout = records.reduce((s, r) => s + r.payout, 0);
   const activeNow = records.filter(
@@ -90,6 +93,7 @@ export default function AttendanceSummaryTable({ records }: Props) {
               <th className="px-4 py-3 text-neutral-500 font-medium">Status</th>
               <th className="px-4 py-3 text-neutral-500 font-medium">Rate / hr</th>
               <th className="px-4 py-3 text-neutral-500 font-medium">Est. Payout</th>
+              {onCorrect && <th className="px-4 py-3 text-neutral-500 font-medium">Correct</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-800/60">
@@ -152,6 +156,19 @@ export default function AttendanceSummaryTable({ records }: Props) {
                       ${r.payout.toFixed(2)}
                     </span>
                   </td>
+
+                  {/* Correct button */}
+                  {onCorrect && (
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => onCorrect(r)}
+                        className="p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-neutral-700 transition"
+                        title="Correct clock times"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               );
             })}
@@ -174,6 +191,7 @@ export default function AttendanceSummaryTable({ records }: Props) {
               <td className="px-4 py-3 text-emerald-400 font-semibold">
                 ${totalPayout.toFixed(2)}
               </td>
+              {onCorrect && <td />}
             </tr>
           </tfoot>
         </table>

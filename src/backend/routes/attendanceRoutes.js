@@ -10,6 +10,7 @@ import {
   getEmployeePayrollDetail,
   getMyAttendance,
   getMyPayroll,
+  correctAttendance,
 } from "../controllers/attendanceController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -21,6 +22,7 @@ router.use(protect);
 router.get("/admin/summary", adminOnly, getAdminSummary);
 router.get("/admin/payroll", adminOnly, getAdminPayrollSummary);
 router.get("/admin/employee/:id/payroll", adminOnly, getEmployeePayrollDetail);
+router.patch("/:id/correct", adminOnly, correctAttendance);
 
 // Employee routes
 router.get("/today", getToday);

@@ -23,7 +23,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    // If we already have a cached user AND a token, render immediately from cache.
+    // The background /auth/me call will still verify and log out if the token is invalid.
+    const hasCachedUser = !!localStorage.getItem("user");
+    const hasToken = !!localStorage.getItem("token");
+    return !(hasCachedUser && hasToken);
+  });
 
   // Load user if token exists
   useEffect(() => {
