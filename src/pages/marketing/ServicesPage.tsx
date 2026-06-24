@@ -66,9 +66,9 @@ export default function ServicesPage() {
   }, []);
 
   // Derive data from API (fall back to empty = static content renders instead)
-  const managementPlans = services.filter(
-    (s) => s.category === "website-management" || (s.category === "marketing" && s.price > 0)
-  );
+  const managementPlans = services
+    .filter((s) => s.category === "website-management" || (s.category === "marketing" && s.price > 0))
+    .sort((a, b) => a.price - b.price);
   const serviceCards = services.filter(
     (s) => s.category !== "website-management" && !(s.category === "marketing" && s.price > 0)
   );
@@ -198,16 +198,17 @@ export default function ServicesPage() {
         </div>
 
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-white">Website Management</h2>
+          <h2 className="text-4xl font-bold text-white">Monthly Plans</h2>
           <p className="text-neutral-400 mt-3 max-w-2xl mx-auto">
-            Flexible management plans that keep your website secure, up to date, and performing at its best.
+            Flexible monthly plans for website management, marketing, and SEO — no long-term contracts.
           </p>
         </div>
 
-        <div className="grid gap-8 mb-16 md:grid-cols-3">
+        <div className="grid gap-8 mb-16 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {(managementPlans.length > 0 ? managementPlans : [
             { _id: "m1", name: "Silver", price: 80, priceUnit: "/month", priceLabel: "", icon: "Shield", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "", features: ["Hosting & uptime monitoring", "Security updates", "Minor content changes", "Email support"], category: "website-management", description: "", isFeatured: false },
             { _id: "m2", name: "Gold", price: 100, priceUnit: "/month", priceLabel: "", icon: "Award", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "Most Popular", features: ["Everything in Silver", "Priority updates", "Performance monitoring", "Monthly check-ins"], category: "website-management", description: "", isFeatured: true },
+            { _id: "m4", name: "Website Traffic Enhancement", price: 160, priceUnit: "/month", priceLabel: "", icon: "TrendingUp", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "", features: ["Keyword targeting", "Technical SEO", "Content strategy", "Monthly reporting", "Ongoing adjustments"], category: "marketing", description: "", isFeatured: false },
             { _id: "m3", name: "Marketing Campaign", price: 220, priceUnit: "/month", priceLabel: "", icon: "BarChart3", colorClass: "bg-neutral-900/80 border-neutral-800", badge: "", features: ["Campaign strategy & planning", "Multi-channel execution", "Performance analytics & reporting", "Creative copywriting & assets", "Monthly optimization & adjustments"], category: "marketing", description: "", isFeatured: false },
           ]).map((plan, i) => {
             const isFeatured = plan.badge === "Most Popular" || plan.isFeatured;
@@ -245,36 +246,6 @@ export default function ServicesPage() {
           })}
         </div>
 
-        <motion.section
-          className="rounded-4xl border border-neutral-800 bg-neutral-900/70 p-12 shadow-[0_20px_90px_rgba(15,23,42,0.45)]"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.12 }}
-        >
-          <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <TrendingUp className="w-12 h-12 text-pink-300 mb-4" />
-              <h3 className="text-3xl font-semibold text-white mb-3">Website Traffic Enhancement</h3>
-              <p className="text-neutral-300 mb-6 max-w-2xl leading-relaxed">
-                Keyword optimization, technical SEO, and content strategy work together to help your business show up where customers are already searching.
-              </p>
-              <ul className="space-y-3 text-neutral-400 text-sm list-disc list-inside">
-                <li>Keyword targeting that matches real customer search behavior</li>
-                <li>Technical SEO that helps search engines crawl and rank your site</li>
-                <li>Content strategy that positions your brand as the best solution</li>
-                <li>Monthly reporting on growth, rankings, and results</li>
-                <li>Ongoing adjustments for algorithm changes and competitor activity</li>
-              </ul>
-            </div>
-            <div className="text-center lg:text-right">
-              <p className="text-5xl font-bold bg-linear-to-r from-fuchsia-400 to-cyan-300 bg-clip-text text-transparent">
-                $160
-              </p>
-              <p className="text-neutral-500 text-lg">/month</p>
-            </div>
-          </div>
-        </motion.section>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-14">
