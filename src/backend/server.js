@@ -30,9 +30,6 @@ import { requestLogger } from "./middleware/logger.js";
 
 const app = express();
 
-// Connect Database
-connectDB();
-
 // Middleware
 app.use(corsMiddleware);
 app.use(express.json());
@@ -69,10 +66,22 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✓ Server running on port ${PORT}`);
-  console.log(`✓ Listening on 0.0.0.0:${PORT}`);
-  console.log("✓ CORS enabled for origins:", allowedOrigins);
-  startShiftReminderJob();
-  seedServicesIfEmpty();
-});
+// Start server only after DB is confirmed connected, then seed
+async function startServer() {
+  await connectDB();
+
+  try {
+    await seedServicesIfEmpty();
+  } catch (err) {
+    console.error("⚠ Service seed error:", err);
+  }
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✓ Server running on port ${PORT}`);
+    console.log(`✓ Listening on 0.0.0.0:${PORT}`);
+    console.log("✓ CORS enabled for origins:", allowedOrigins);
+    startShiftReminderJob();
+  });
+}
+
+startServer();

@@ -65,6 +65,7 @@ import SettingsManageRoles from "./pages/admin/settings/ManageRolesPage";
 import SettingsSystem from "./pages/admin/settings/SystemsPreferencesPage";
 import ServicesManagementPage from "./pages/admin/services/ServicesManagementPage";
 import ServicesPricingPage from "./pages/admin/services/ServicesPricingPage";
+import { Navigate } from "react-router-dom";
 
 function App() {
   return (
@@ -123,6 +124,8 @@ function App() {
           <Route path="settings/system" element={<SettingsSystem />} />
           <Route path="services" element={<ServicesManagementPage />} />
           <Route path="services/pricing" element={<ServicesPricingPage />} />
+          {/* Catch unregistered admin paths — redirect to dashboard instead of empty shell */}
+          <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
 
         {/* ============================
@@ -149,6 +152,8 @@ function App() {
           <Route path="notifications" element={<EmployeeNotificationsPage />} />
           <Route path="leave-balance" element={<LeaveBalancePage />} />
           <Route path="my-requests" element={<MyLeaveRequestsPage />} />
+          {/* Catch unregistered employee paths */}
+          <Route path="*" element={<Navigate to="/employee" replace />} />
         </Route>
 
         {/* Catch-all */}

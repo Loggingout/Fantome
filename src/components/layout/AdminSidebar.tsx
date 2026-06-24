@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -116,6 +116,24 @@ export default function AdminSidebar() {
   const location = useLocation();
   const { logout } = useUser();
 
+  // Auto-expand the group whose child matches the current URL
+  useEffect(() => {
+    const allItems = [...NAV_ITEMS, ...BOTTOM_ITEMS];
+    allItems.forEach((item) => {
+      if (
+        item.children?.some(
+          (child) =>
+            location.pathname === child.path ||
+            location.pathname.startsWith(child.path + "/")
+        )
+      ) {
+        setOpenGroups((prev) =>
+          prev.includes(item.label) ? prev : [...prev, item.label]
+        );
+      }
+    });
+  }, [location.pathname]);
+
   const isActive = (path?: string) =>
     path ? location.pathname === path : false;
 
@@ -227,9 +245,12 @@ export default function AdminSidebar() {
       {/* ── Top: Logo + Toggle ── */}
       <div className={`flex items-center px-4 py-5 ${collapsed ? "justify-center" : "justify-between"}`}>
         {!collapsed && (
-          <span className="text-white text-sm font-bold tracking-widest uppercase">
+          <button
+            onClick={() => navigate("/")}
+            className="text-white text-sm font-bold tracking-widest uppercase hover:text-neutral-300 transition"
+          >
             Fantome
-          </span>
+          </button>
         )}
         <button
           onClick={() => setCollapsed((prev) => !prev)}
@@ -298,7 +319,12 @@ export default function AdminSidebar() {
         {!collapsed && (
           <div className="overflow-hidden">
             <p className="text-white text-xs font-semibold truncate">Admin</p>
-            <p className="text-neutral-500 text-xs truncate">Fantome Technologies</p>
+            <button
+              onClick={() => navigate("/")}
+              className="text-neutral-500 text-xs truncate hover:text-neutral-300 transition text-left"
+            >
+              Fantome Technologies
+            </button>
           </div>
         )}
       </div>

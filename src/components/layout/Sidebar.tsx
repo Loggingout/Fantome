@@ -188,7 +188,12 @@ export default function Sidebar() {
         {!collapsed && (
           <div className="overflow-hidden">
             <p className="text-white text-xs font-semibold truncate">Employee</p>
-            <p className="text-neutral-500 text-xs truncate">Fantome Technologies</p>
+            <button
+              onClick={() => navigate("/")}
+              className="text-neutral-500 text-xs truncate hover:text-neutral-300 transition text-left"
+            >
+              Fantome Technologies
+            </button>
           </div>
         )}
       </div>

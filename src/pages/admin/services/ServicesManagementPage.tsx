@@ -52,8 +52,9 @@ export default function ServicesManagementPage() {
   const [featureInput, setFeatureInput] = useState("");
 
   const load = () => {
+    setLoading(true);
     api.get("/services/admin")
-      .then((res) => setServices(res.data.services))
+      .then((res) => setServices(res.data?.services ?? []))
       .catch(console.error)
       .finally(() => setLoading(false));
   };
@@ -152,16 +153,20 @@ export default function ServicesManagementPage() {
             <table className="w-full text-sm text-left">
               <thead>
                 <tr className="border-b border-neutral-800">
+                  <th className="pb-3 pr-4 text-neutral-500 font-medium">#</th>
                   <th className="pb-3 pr-4 text-neutral-500 font-medium">Name</th>
                   <th className="pb-3 pr-4 text-neutral-500 font-medium">Category</th>
                   <th className="pb-3 pr-4 text-neutral-500 font-medium">Price</th>
+                  <th className="pb-3 pr-4 text-neutral-500 font-medium">Icon</th>
+                  <th className="pb-3 pr-4 text-neutral-500 font-medium">Flags</th>
                   <th className="pb-3 pr-4 text-neutral-500 font-medium">Status</th>
                   <th className="pb-3 text-neutral-500 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-800/60">
-                {services.map((s) => (
+                {services.map((s, idx) => (
                   <tr key={s._id}>
+                    <td className="py-3.5 pr-4 text-neutral-600 text-xs">{s.sortOrder || idx + 1}</td>
                     <td className="py-3.5 pr-4">
                       <p className="text-white font-medium">{s.name}</p>
                       {s.badge && (
@@ -177,6 +182,19 @@ export default function ServicesManagementPage() {
                       <p className="text-neutral-300 font-medium">
                         {s.priceLabel || (s.price > 0 ? `$${s.price}${s.priceUnit}` : "Contact for quote")}
                       </p>
+                    </td>
+                    <td className="py-3.5 pr-4">
+                      <code className="text-xs text-neutral-500 bg-neutral-800 px-2 py-0.5 rounded">{s.icon || "—"}</code>
+                    </td>
+                    <td className="py-3.5 pr-4">
+                      <div className="flex gap-1.5">
+                        {s.isFeatured && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">Featured</span>
+                        )}
+                        {s.features.length > 0 && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-500">{s.features.length} features</span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3.5 pr-4">
                       <button onClick={() => toggleActive(s)} className="flex items-center gap-1.5 group">

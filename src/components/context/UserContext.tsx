@@ -48,9 +48,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         setUser(employee);
         localStorage.setItem("user", JSON.stringify(employee));
-      } catch {
-        clearAuthData();
-        setUser(null);
+      } catch (err: any) {
+        // Only clear auth if the server explicitly says the token is invalid.
+        // Network errors, timeouts, or server cold-starts (Render sleeping)
+        // should NOT log the user out — they still have a valid cached session.
+        if (err.response?.status === 401) {
+          clearAuthData();
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }
