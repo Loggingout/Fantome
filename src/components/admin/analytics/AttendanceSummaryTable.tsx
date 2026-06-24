@@ -7,6 +7,7 @@ export interface AttendanceRecord {
     name: string;
     email: string;
     hourlyRate: number;
+    timezone?: string;
   };
   date: string;
   clockIn: string | null;

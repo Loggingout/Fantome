@@ -162,7 +162,7 @@ export const getAdminSummary = async (req, res) => {
     }
 
     const records = await Attendance.find(query)
-      .populate("employee", "name email hourlyRate")
+      .populate("employee", "name email hourlyRate timezone")
       .sort({ date: -1, createdAt: -1 });
 
     const summary = records
