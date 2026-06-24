@@ -95,14 +95,43 @@ const DEFAULT_SERVICES = [
     isFeatured: true,
     sortOrder: 6,
   },
+  {
+    name: "Website Traffic Enhancement",
+    description:
+      "Keyword optimization, technical SEO, and content strategy work together to help your business show up where customers are already searching.",
+    category: "marketing",
+    price: 160,
+    priceUnit: "/month",
+    features: [
+      "Keyword targeting that matches real customer search behavior",
+      "Technical SEO that helps search engines crawl and rank your site",
+      "Content strategy that positions your brand as the best solution",
+      "Monthly reporting on growth, rankings, and results",
+      "Ongoing adjustments for algorithm changes and competitor activity",
+    ],
+    icon: "TrendingUp",
+    colorClass: "bg-slate-800/80 border-slate-700",
+    sortOrder: 7,
+  },
 ];
 
-// Auto-seed: run once if the collection is empty
+// Seed on startup: insert all services if collection is empty,
+// then insert any individual defaults that are missing (handles additions after initial seed).
 export async function seedServicesIfEmpty() {
   const count = await Service.countDocuments();
   if (count === 0) {
     await Service.insertMany(DEFAULT_SERVICES);
     console.log("✓ Services seeded with defaults");
+    return;
+  }
+
+  // Insert any default services that don't exist yet (by name)
+  for (const svc of DEFAULT_SERVICES) {
+    const exists = await Service.findOne({ name: svc.name });
+    if (!exists) {
+      await Service.create(svc);
+      console.log(`✓ Added missing default service: ${svc.name}`);
+    }
   }
 }
 
