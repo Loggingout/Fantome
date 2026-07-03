@@ -45,6 +45,7 @@ import AddEmployeePage from "./pages/admin/employees/AddEmployeePage";
 import EmployeeRolesPage from "./pages/admin/employees/EmployeeRolesPage";
 import EmployeeTasksPage from "./pages/admin/employees/EmployeeTasksPage";
 import UpcomingShiftsPage from "./pages/admin/employees/UpcomingShiftsPage";
+import OvertimeShiftsPage from "./pages/admin/employees/OvertimeShiftsPage";
 import PayrollHistoryPage from "./pages/admin/employees/PayrollHostoryPage";
 import EmployeePayrollDetailPage from "./pages/admin/employees/EmployeePayrollDetailPage";
 import PayoutSchedulePage from "./pages/admin/employees/PayoutSchedulePage";
@@ -104,6 +105,7 @@ function App() {
           <Route path="employees/roles" element={<EmployeeRolesPage />} />
           <Route path="employees/tasks" element={<EmployeeTasksPage />} />
           <Route path="employees/shifts" element={<UpcomingShiftsPage />} />
+          <Route path="employees/overtime" element={<OvertimeShiftsPage />} />
           <Route path="employees/payroll" element={<PayrollHistoryPage />} />
           <Route path="employees/:employeeId/payroll" element={<EmployeePayrollDetailPage />} />
           <Route path="employees/payout-schedule" element={<PayoutSchedulePage />} />

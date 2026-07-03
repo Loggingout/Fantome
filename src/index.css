@@ -1,5 +1,16 @@
 @import 'tailwindcss';
 
+/*
+  Prevent iOS Safari from auto-zooming the viewport when focusing form elements.
+  iOS zooms in when the focused element has font-size < 16px.
+  Using max(16px, 1em) keeps text visually consistent while satisfying the 16px threshold.
+*/
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
 /*Price Animation Keyframes*/
 @keyframes slideUpFade {
   from {

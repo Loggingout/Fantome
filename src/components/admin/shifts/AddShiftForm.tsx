@@ -13,15 +13,26 @@ interface Props {
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+// Format a Date object to "YYYY-MM-DD" using local year/month/day (not UTC)
+function toLocalDateString(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 // Returns all dates between start and end that fall on the given day indices
 function generateRecurringDates(start: string, end: string, days: number[]): string[] {
   if (!start || !end || !days.length) return [];
   const dates: string[] = [];
-  const current = new Date(start + "T00:00:00");
-  const endDate = new Date(end + "T00:00:00");
+  // Parse as local midnight by splitting the string — avoids UTC offset shifting
+  const [sy, sm, sd] = start.split("-").map(Number);
+  const [ey, em, ed] = end.split("-").map(Number);
+  const current = new Date(sy, sm - 1, sd);
+  const endDate = new Date(ey, em - 1, ed);
   while (current <= endDate) {
     if (days.includes(current.getDay())) {
-      dates.push(current.toISOString().split("T")[0]);
+      dates.push(toLocalDateString(current));
     }
     current.setDate(current.getDate() + 1);
   }

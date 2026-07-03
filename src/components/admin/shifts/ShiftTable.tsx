@@ -51,7 +51,11 @@ export default function ShiftTable({ shifts, onDeleted }: Props) {
               </td>
               <td className="py-3 pr-4">{shift.role}</td>
               <td className="py-3 pr-4">
-                {new Date(shift.date).toLocaleDateString()}
+                {/* Parse YYYY-MM-DD directly to avoid UTC-midnight timezone shift */}
+                {(() => {
+                  const [y, m, d] = shift.date.split("-").map(Number);
+                  return new Date(y, m - 1, d).toLocaleDateString();
+                })()}
               </td>
               <td className="py-3 pr-4">{shift.startTime}</td>
               <td className="py-3 pr-4">{shift.endTime}</td>

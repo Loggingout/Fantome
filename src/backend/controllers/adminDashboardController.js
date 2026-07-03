@@ -31,13 +31,16 @@ export const getDashboardStats = async (req, res) => {
 // GET /api/admin/dashboard/activity
 export const getActivity = async (req, res) => {
   try {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
     const [recentTasks, activityLogs] = await Promise.all([
-      Task.find()
+      Task.find({ createdAt: { $gte: oneWeekAgo } })
         .sort({ createdAt: -1 })
         .limit(3)
         .populate("assignedTo", "name")
         .select("title assignedTo createdAt"),
-      Activity.find().sort({ createdAt: -1 }).limit(15),
+      Activity.find({ createdAt: { $gte: oneWeekAgo } }).sort({ createdAt: -1 }).limit(15),
     ]);
 
     const activity = [

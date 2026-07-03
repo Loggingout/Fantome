@@ -36,11 +36,14 @@ export default function MyShifts() {
           <div className="flex items-center justify-between">
             <p className="text-white font-semibold">{shift.role}</p>
             <p className="text-neutral-400 text-sm">
-              {new Date(shift.date).toLocaleDateString(undefined, {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })}
+              {(() => {
+                const [y, m, d] = shift.date.split("-").map(Number);
+                return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                });
+              })()}
             </p>
           </div>
           <p className="text-neutral-400 text-sm mt-1">

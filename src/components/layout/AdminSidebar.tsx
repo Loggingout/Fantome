@@ -47,6 +47,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Employee Roles", path: "/admin/employees/roles" },
       { label: "Employee Tasks", path: "/admin/employees/tasks" },
       { label: "Upcoming Shifts", path: "/admin/employees/shifts" },
+      { label: "Overtime Shifts", path: "/admin/employees/overtime" },
       { label: "Payroll Overview", path: "/admin/employees/payroll" },
       { label: "Payout Schedule", path: "/admin/employees/payout-schedule" },
     ],
