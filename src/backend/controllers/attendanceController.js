@@ -169,8 +169,18 @@ export const getAdminSummary = async (req, res) => {
     }
 
     const records = await Attendance.find(query)
-      .populate("employee", "name email hourlyRate timezone")
+      .populate("employee", "name email hourlyRate timezone hireDate createdAt")
       .sort({ date: -1, createdAt: -1 });
+
+    // Cache each employee's CURRENT bi-weekly window so we don't recompute per row
+    const currentWindowCache = new Map();
+    const getCurrentWindow = (emp) => {
+      const id = emp._id.toString();
+      if (!currentWindowCache.has(id)) {
+        currentWindowCache.set(id, biweeklyWindow(emp.hireDate ?? emp.createdAt));
+      }
+      return currentWindowCache.get(id);
+    };
 
     const summary = records
       .filter((r) => r.employee != null)
@@ -184,6 +194,16 @@ export const getAdminSummary = async (req, res) => {
         hoursWorked = Math.max(0, ms / 3_600_000);
       }
       const rate = r.employee?.hourlyRate ?? 0;
+
+      // The bi-weekly window THIS record's date falls into (works for past periods too)
+      const hireDate = r.employee.hireDate ?? r.employee.createdAt;
+      const recordRefMs = new Date(`${r.date}T00:00:00.000Z`).getTime();
+      const { start: periodStart, end: periodEnd, periodIndex } = biweeklyWindow(hireDate, recordRefMs);
+
+      // Whether that window is the employee's CURRENT active pay period
+      const current = getCurrentWindow(r.employee);
+      const inBiweekPeriod = periodStart === current.start;
+
       return {
         _id: r._id,
         employee: r.employee,
@@ -195,6 +215,13 @@ export const getAdminSummary = async (req, res) => {
         status: r.status,
         hoursWorked: Math.round(hoursWorked * 100) / 100,
         payout: Math.round(hoursWorked * rate * 100) / 100,
+        inBiweekPeriod,
+        biweekStart: current.start,
+        biweekEnd: current.end,
+        periodStart,
+        periodEnd,
+        periodIndex,
+        periodKey: `${r.employee._id}_${periodStart}`,
       };
     });
 
@@ -286,18 +313,19 @@ export const getMyPayroll = async (req, res) => {
   }
 };
 
-// Helper: current bi-weekly pay window for a given hire date
-function biweeklyWindow(hireDate) {
+// Helper: bi-weekly pay window (14-day cycle anchored to hire date) that
+// contains the given reference timestamp. Defaults to "now" so existing
+// callers asking for the CURRENT period keep working unchanged.
+function biweeklyWindow(hireDate, refMs = Date.now()) {
   const MS_PER_DAY = 86_400_000;
   const CYCLE = 14;
-  const now = Date.now();
-  const hire = new Date(hireDate ?? now).getTime();
-  const daysSince = Math.floor((now - hire) / MS_PER_DAY);
+  const hire = new Date(hireDate ?? refMs).getTime();
+  const daysSince = Math.floor((refMs - hire) / MS_PER_DAY);
   const cyclesCompleted = Math.floor(daysSince / CYCLE);
   const startMs = hire + cyclesCompleted * CYCLE * MS_PER_DAY;
   const endMs   = startMs + CYCLE * MS_PER_DAY - 1;
   const toStr = (ms) => new Date(ms).toISOString().split("T")[0];
-  return { start: toStr(startMs), end: toStr(endMs) };
+  return { start: toStr(startMs), end: toStr(endMs), periodIndex: cyclesCompleted };
 }
 
 // GET /api/attendance/admin/payroll  — all employees' payroll totals (admin)

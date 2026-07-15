@@ -1,29 +1,30 @@
 import axios from "axios";
 
-// Detect environment
-const isCodespaces = Boolean(import.meta.env.CODESPACE_NAME);
+// Detect environment.
+// NOTE: Vite only exposes env vars prefixed with VITE_ (plus MODE/PROD/DEV/etc.)
+// to client code via import.meta.env — raw process vars like CODESPACE_NAME
+// are NEVER available in the browser, so we must detect Codespaces at runtime
+// from the actual page hostname instead of a build-time env var.
+const hostname = typeof window !== "undefined" ? window.location.hostname : "";
+const isCodespacesHost = hostname.endsWith(".app.github.dev");
 const isProduction = import.meta.env.PROD;
 
 // Build dynamic base URL
 let API_BASE: string | undefined = "";
 
-// 1. GitHub Codespaces
-if (isCodespaces) {
-  const { CODESPACE_NAME, GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN } = import.meta.env;
-
-  if (CODESPACE_NAME && GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN) {
-    API_BASE = `https://${CODESPACE_NAME}-5000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`;
-  }
+// 1. GitHub Codespaces — swap the forwarded frontend port for the backend port (5000)
+if (isCodespacesHost) {
+  API_BASE = `https://${hostname.replace(/-\d+\.app\.github\.dev$/, "-5000.app.github.dev")}`;
 }
 
 // 2. Production (Render, Vercel, etc.)
 else if (isProduction) {
-  API_BASE = import.meta.env.VITE_API_BASE || "";
+  API_BASE = import.meta.env.VITE_API_BASE || "https://fantome.onrender.com";
 }
 
-// 3. Local development fallback
+// 3. Local development fallback — talk to the local backend, not production
 else {
-  API_BASE = "https://fantome.onrender.com";
+  API_BASE = "http://localhost:5000";
 }
 
 // FINAL SAFETY NET — ensure API_BASE is ALWAYS a string

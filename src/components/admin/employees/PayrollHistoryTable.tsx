@@ -61,6 +61,7 @@ export default function PayrollHistoryTable() {
   const [summary, setSummary] = useState<EmployeeSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("month");
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,35 +82,53 @@ export default function PayrollHistoryTable() {
       </p>
     );
 
-  // Totals for the footer
+  // Apply name search filter
+  const filtered = search.trim()
+    ? summary.filter((r) =>
+        r.employee.name.toLowerCase().includes(search.toLowerCase()) ||
+        r.employee.email.toLowerCase().includes(search.toLowerCase())
+      )
+    : summary;
+
+  // Totals across filtered rows only
   const totalGross =
-    view === "month"    ? summary.reduce((s, r) => s + r.monthGross,   0) :
-    view === "biweekly" ? summary.reduce((s, r) => s + r.biweekGross,  0) :
-                          summary.reduce((s, r) => s + r.allTimeGross, 0);
+    view === "month"    ? filtered.reduce((s, r) => s + (Number(r.monthGross)   || 0), 0) :
+    view === "biweekly" ? filtered.reduce((s, r) => s + (Number(r.biweekGross)  || 0), 0) :
+                          filtered.reduce((s, r) => s + (Number(r.allTimeGross) || 0), 0);
   const totalNet =
-    view === "month"    ? summary.reduce((s, r) => s + r.monthNet,   0) :
-    view === "biweekly" ? summary.reduce((s, r) => s + r.biweekNet,  0) :
-                          summary.reduce((s, r) => s + r.allTimeNet, 0);
+    view === "month"    ? filtered.reduce((s, r) => s + (Number(r.monthNet)   || 0), 0) :
+    view === "biweekly" ? filtered.reduce((s, r) => s + (Number(r.biweekNet)  || 0), 0) :
+                          filtered.reduce((s, r) => s + (Number(r.allTimeNet) || 0), 0);
   const totalHours =
-    view === "month"    ? summary.reduce((s, r) => s + r.monthHours,   0) :
-    view === "biweekly" ? summary.reduce((s, r) => s + r.biweekHours,  0) :
-                          summary.reduce((s, r) => s + r.allTimeHours, 0);
+    view === "month"    ? filtered.reduce((s, r) => s + (Number(r.monthHours)   || 0), 0) :
+    view === "biweekly" ? filtered.reduce((s, r) => s + (Number(r.biweekHours)  || 0), 0) :
+                          filtered.reduce((s, r) => s + (Number(r.allTimeHours) || 0), 0);
 
   return (
     <div className="flex flex-col gap-4">
-      {/* View toggle */}
-      <div className="flex gap-1 rounded-xl border border-neutral-800 p-1 w-fit">
-        {(["month", "biweekly", "alltime"] as ViewMode[]).map((v) => (
-          <button
-            key={v}
-            onClick={() => setView(v)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
-              view === v ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-white"
-            }`}
-          >
-            {v === "month" ? "This Month" : v === "biweekly" ? "Bi-weekly" : "All Time"}
-          </button>
-        ))}
+      {/* Controls row: view toggle + search */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex gap-1 rounded-xl border border-neutral-800 p-1">
+          {(["month", "biweekly", "alltime"] as ViewMode[]).map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
+                view === v ? "bg-neutral-700 text-white" : "text-neutral-500 hover:text-white"
+              }`}
+            >
+              {v === "month" ? "This Month" : v === "biweekly" ? "Bi-weekly" : "All Time"}
+            </button>
+          ))}
+        </div>
+
+        <input
+          type="text"
+          placeholder="Search employee…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors w-full sm:w-56"
+        />
       </div>
 
       {view === "biweekly" && summary[0] && (
@@ -137,10 +156,16 @@ export default function PayrollHistoryTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-800/60">
-            {summary.map(({ employee: emp, daysWorked, daysEmployed, allTimeHours, allTimeGross, allTimeNet, monthHours, monthGross, monthNet, biweekHours, biweekGross, biweekNet, rate }) => {
-              const hours = view === "month" ? monthHours : view === "biweekly" ? biweekHours : allTimeHours;
-              const gross = view === "month" ? monthGross : view === "biweekly" ? biweekGross : allTimeGross;
-              const net   = view === "month" ? monthNet   : view === "biweekly" ? biweekNet   : allTimeNet;
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="px-4 py-10 text-center text-neutral-500 text-sm">
+                  No employees match &ldquo;{search}&rdquo;.
+                </td>
+              </tr>
+            ) : filtered.map(({ employee: emp, daysWorked, daysEmployed, allTimeHours, allTimeGross, allTimeNet, monthHours, monthGross, monthNet, biweekHours, biweekGross, biweekNet, rate }) => {
+              const hours = Number(view === "month" ? monthHours : view === "biweekly" ? biweekHours : allTimeHours) || 0;
+              const gross = Number(view === "month" ? monthGross : view === "biweekly" ? biweekGross : allTimeGross) || 0;
+              const net   = Number(view === "month" ? monthNet   : view === "biweekly" ? biweekNet   : allTimeNet)   || 0;
 
               return (
                 <tr key={emp._id} className={`hover:bg-neutral-800/30 transition-colors ${!emp.isActive ? "opacity-50" : ""}`}>
@@ -164,10 +189,18 @@ export default function PayrollHistoryTable() {
                     {hours.toFixed(2)}h
                   </td>
                   <td className="px-4 py-3 text-neutral-400">
-                    {rate > 0 ? `$${rate}/hr` : <span className="text-neutral-600 text-xs">not set</span>}
+                    {rate > 0 ? `$${rate}/hr` : <span className="text-amber-500 text-xs">Rate not set</span>}
                   </td>
-                  <td className="px-4 py-3 text-emerald-400 font-medium">${gross.toFixed(2)}</td>
-                  <td className="px-4 py-3 text-white">${net.toFixed(2)}</td>
+                  <td className="px-4 py-3">
+                    {rate > 0
+                      ? <span className="text-emerald-400 font-medium">${gross.toFixed(2)}</span>
+                      : <span className="text-neutral-600 text-xs italic">Set rate to calculate</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {rate > 0
+                      ? <span className="text-white">${net.toFixed(2)}</span>
+                      : <span className="text-neutral-600 text-xs">—</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => navigate(`/admin/employees/${emp._id}/payroll`)}
@@ -183,7 +216,7 @@ export default function PayrollHistoryTable() {
           {/* Totals footer */}
           <tfoot>
             <tr className="border-t border-neutral-700 bg-neutral-900/60">
-              <td className="px-4 py-3 text-neutral-400 font-medium" colSpan={4}>Total ({summary.length} employees)</td>
+              <td className="px-4 py-3 text-neutral-400 font-medium" colSpan={4}>Total ({filtered.length} employee{filtered.length !== 1 ? "s" : ""})</td>
               <td className="px-4 py-3 text-white font-semibold">{totalHours.toFixed(2)}h</td>
               <td className="px-4 py-3" />
               <td className="px-4 py-3 text-emerald-400 font-semibold">${totalGross.toFixed(2)}</td>
