@@ -19,4 +19,8 @@ export const createEmployeeSchema = Joi.object({
     "Finance & Accounting",
     "Intern"
   ).optional().allow(null, ""),
+  employmentType: Joi.string()
+    .valid("Full-time", "Part-time", "Seasonal", "Intern", "Not Employed")
+    .default("Full-time")
+    .optional(),
 });

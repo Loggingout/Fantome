@@ -14,6 +14,8 @@ interface Employee {
   jobTitle?: string;
   hireDate?: string | null;
   hourlyRate?: number;
+  employmentType?: string;
+  isActive?: boolean;
 }
 
 function fmtDate(iso?: string | null) {
@@ -47,6 +49,12 @@ export default function EmployeeManagementPage() {
   const [rateInput, setRateInput] = useState("");
   const [savingRate, setSavingRate] = useState<string | null>(null);
   const [rateFeedback, setRateFeedback] = useState<Record<string, string>>({});
+
+  // Employment type editing state
+  const [editingEmpTypeId, setEditingEmpTypeId] = useState<string | null>(null);
+  const [empTypeInput, setEmpTypeInput] = useState("");
+  const [savingEmpType, setSavingEmpType] = useState<string | null>(null);
+  const [empTypeFeedback, setEmpTypeFeedback] = useState<Record<string, string>>({});
 
   useEffect(() => {
     api
@@ -87,6 +95,38 @@ export default function EmployeeManagementPage() {
   const cancelEditRate = () => {
     setEditingRateId(null);
     setRateInput("");
+  };
+
+  const startEditEmpType = (emp: Employee) => {
+    setEditingEmpTypeId(emp._id);
+    setEmpTypeInput(emp.employmentType ?? "Full-time");
+  };
+
+  const cancelEditEmpType = () => {
+    setEditingEmpTypeId(null);
+    setEmpTypeInput("");
+  };
+
+  const saveEmpType = async (id: string) => {
+    if (!empTypeInput) return;
+    setSavingEmpType(id);
+    try {
+      const res = await api.patch(`/admin/employees/${id}/employment-type`, { employmentType: empTypeInput });
+      setEmployees((prev) =>
+        prev.map((e) =>
+          e._id === id
+            ? { ...e, employmentType: res.data.employee.employmentType, isActive: res.data.employee.isActive }
+            : e
+        )
+      );
+      setEmpTypeFeedback((prev) => ({ ...prev, [id]: "Saved" }));
+      setEditingEmpTypeId(null);
+      setTimeout(() => setEmpTypeFeedback((prev) => ({ ...prev, [id]: "" })), 2500);
+    } catch (err: any) {
+      setEmpTypeFeedback((prev) => ({ ...prev, [id]: err.response?.data?.message || "Failed" }));
+    } finally {
+      setSavingEmpType(null);
+    }
   };
 
   const saveRate = async (id: string) => {
@@ -153,6 +193,7 @@ export default function EmployeeManagementPage() {
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Name</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Email</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Access</th>
+                  <th className="pb-3 pr-6 text-neutral-500 font-medium">Employment Type</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Job Title</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Hire Date</th>
                   <th className="pb-3 pr-6 text-neutral-500 font-medium">Pay Rate</th>
@@ -175,12 +216,66 @@ export default function EmployeeManagementPage() {
                         {emp.role}
                       </span>
                     </td>
-                    <td className="py-3 pr-6 text-neutral-400">
-                      {emp.jobTitle ?? <span className="text-neutral-600">—</span>}
+                    <td className="py-3 pr-6 text-neutral-400">{emp.jobTitle ?? <span className="text-neutral-600">—</span>}</td>
+
+                    {/* Employment Type — inline editable */}
+                    <td className="py-3 pr-6 min-w-50">
+                      {editingEmpTypeId === emp._id ? (
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={empTypeInput}
+                            onChange={(e) => setEmpTypeInput(e.target.value)}
+                            className="bg-neutral-800 border border-neutral-600 rounded-lg px-2 py-1 text-white text-xs focus:outline-none"
+                          >
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Seasonal">Seasonal</option>
+                            <option value="Intern">Intern</option>
+                            <option value="Not Employed">Not Employed</option>
+                          </select>
+                          <button
+                            onClick={() => saveEmpType(emp._id)}
+                            disabled={savingEmpType === emp._id}
+                            className="p-1 text-emerald-400 hover:text-emerald-300 disabled:opacity-40 transition"
+                            title="Save"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button onClick={cancelEditEmpType} className="p-1 text-neutral-500 hover:text-white transition" title="Cancel">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 group">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            !emp.isActive || emp.employmentType === "Not Employed"
+                              ? "bg-red-900/40 text-red-400"
+                              : emp.employmentType === "Full-time"
+                              ? "bg-emerald-900/30 text-emerald-400"
+                              : emp.employmentType === "Part-time"
+                              ? "bg-blue-900/30 text-blue-400"
+                              : emp.employmentType === "Seasonal"
+                              ? "bg-amber-900/30 text-amber-400"
+                              : "bg-neutral-700 text-neutral-300"
+                          }`}>
+                            {emp.employmentType ?? "Full-time"}
+                          </span>
+                          <button
+                            onClick={() => startEditEmpType(emp)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-neutral-500 hover:text-white transition"
+                            title="Edit employment type"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          {empTypeFeedback[emp._id] && (
+                            <span className="text-emerald-400 text-xs">{empTypeFeedback[emp._id]}</span>
+                          )}
+                        </div>
+                      )}
                     </td>
 
                     {/* Hire Date — inline editable */}
-                    <td className="py-3 pr-6 min-w-[180px]">
+                    <td className="py-3 pr-6 min-w-45">
                       {editingHireId === emp._id ? (
                         <div className="flex items-center gap-2">
                           <input
@@ -229,7 +324,7 @@ export default function EmployeeManagementPage() {
                     </td>
 
                     {/* Pay Rate — inline editable */}
-                    <td className="py-3 pr-6 min-w-[160px]">
+                    <td className="py-3 pr-6 min-w-40">
                       {editingRateId === emp._id ? (
                         <div className="flex items-center gap-1.5">
                           <span className="text-neutral-500 text-xs">$</span>

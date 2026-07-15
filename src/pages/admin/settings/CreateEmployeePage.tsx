@@ -8,6 +8,7 @@ export default function CreateEmployeePage() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("employee");
   const [jobTitle, setJobTitle] = useState("");
+  const [employmentType, setEmploymentType] = useState("Full-time");
   const [password, setPassword] = useState(""); // ⭐ NEW
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -32,6 +33,7 @@ export default function CreateEmployeePage() {
         email,
         role,
         jobTitle: jobTitle || undefined,
+        employmentType,
         password,
       });
 
@@ -40,6 +42,7 @@ export default function CreateEmployeePage() {
       setEmail("");
       setRole("employee");
       setJobTitle("");
+      setEmploymentType("Full-time");
       setPassword("");
     } catch (err: any) {
       const errorMsg =
@@ -119,6 +122,18 @@ export default function CreateEmployeePage() {
               <option value="Operations">Operations</option>
               <option value="Finance & Accounting">Finance &amp; Accounting</option>
               <option value="Intern">Intern</option>
+            </select>
+
+            <select
+              value={employmentType}
+              onChange={(e) => setEmploymentType(e.target.value)}
+              className="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-white"
+            >
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Seasonal">Seasonal</option>
+              <option value="Intern">Intern</option>
+              <option value="Not Employed">Not Employed</option>
             </select>
 
             <button

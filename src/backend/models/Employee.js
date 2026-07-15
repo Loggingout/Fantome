@@ -63,6 +63,17 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       default: "America/Denver",
     },
+    // Employment type — controls access. "Not Employed" sets isActive: false.
+    employmentType: {
+      type: String,
+      enum: ["Full-time", "Part-time", "Seasonal", "Intern", "Not Employed"],
+      default: "Full-time",
+    },
+    // Date when employee was terminated / employment ended
+    terminatedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

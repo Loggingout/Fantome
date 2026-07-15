@@ -5,7 +5,14 @@ import { Notification } from "../models/Notification.js";
 // Helper: get today's date string "YYYY-MM-DD"
 const todayStr = () => new Date().toISOString().split("T")[0];
 
-// Helper: find any open (not-yet-clocked-out) session for an employee
+// Helper: calculate worked hours from an attendance record (deducts lunch)
+function calcHours(r) {
+  if (!r.clockIn || !r.clockOut) return 0;
+  let ms = r.clockOut.getTime() - r.clockIn.getTime();
+  if (r.lunchStart && r.lunchEnd) ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
+  return Math.max(0, ms / 3_600_000);
+}
+
 // Used by clock-out, lunch-start, lunch-end to handle cross-day sessions
 async function findOpenSession(employeeId) {
   return Attendance.findOne({
@@ -279,38 +286,97 @@ export const getMyPayroll = async (req, res) => {
   }
 };
 
+// Helper: current bi-weekly pay window for a given hire date
+function biweeklyWindow(hireDate) {
+  const MS_PER_DAY = 86_400_000;
+  const CYCLE = 14;
+  const now = Date.now();
+  const hire = new Date(hireDate ?? now).getTime();
+  const daysSince = Math.floor((now - hire) / MS_PER_DAY);
+  const cyclesCompleted = Math.floor(daysSince / CYCLE);
+  const startMs = hire + cyclesCompleted * CYCLE * MS_PER_DAY;
+  const endMs   = startMs + CYCLE * MS_PER_DAY - 1;
+  const toStr = (ms) => new Date(ms).toISOString().split("T")[0];
+  return { start: toStr(startMs), end: toStr(endMs) };
+}
+
 // GET /api/attendance/admin/payroll  — all employees' payroll totals (admin)
 export const getAdminPayrollSummary = async (req, res) => {
   try {
-    const records = await Attendance.find({})
-      .populate("employee", "name email hourlyRate")
-      .sort({ date: -1 });
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const MS_PER_DAY = 86_400_000;
 
-    const empMap = new Map();
-    for (const r of records) {
-      if (!r.employee) continue;
-      const id = r.employee._id.toString();
-      if (!empMap.has(id)) empMap.set(id, { employee: r.employee, records: [] });
-      empMap.get(id).records.push(r);
+    // Fetch all employees (active + inactive for historical data)
+    const employees = await Employee.find({}).select(
+      "name email hourlyRate hireDate employmentType isActive createdAt"
+    );
+
+    // Fetch all attendance records
+    const allRecords = await Attendance.find({}).select(
+      "employee date clockIn clockOut lunchStart lunchEnd"
+    );
+
+    // Index records by employee id
+    const recordsByEmp = new Map();
+    for (const r of allRecords) {
+      const id = r.employee.toString();
+      if (!recordsByEmp.has(id)) recordsByEmp.set(id, []);
+      recordsByEmp.get(id).push(r);
     }
 
-    const summary = Array.from(empMap.values()).map(({ employee, records: recs }) => {
-      let totalHours = 0;
-      const rate = employee.hourlyRate ?? 0;
+    const summary = employees.map((emp) => {
+      const rate = emp.hourlyRate ?? 0;
+      const recs = recordsByEmp.get(emp._id.toString()) ?? [];
+      const hireDate = emp.hireDate ?? emp.createdAt;
+      const { start: bwStart, end: bwEnd } = biweeklyWindow(hireDate);
+
+      // Days employed
+      const daysEmployed = Math.floor((Date.now() - new Date(hireDate).getTime()) / MS_PER_DAY);
+
+      let allTimeHours = 0;
+      let monthHours   = 0;
+      let biweekHours  = 0;
+
       for (const r of recs) {
-        if (r.clockIn && r.clockOut) {
-          let ms = r.clockOut.getTime() - r.clockIn.getTime();
-          if (r.lunchStart && r.lunchEnd) ms -= r.lunchEnd.getTime() - r.lunchStart.getTime();
-          totalHours += Math.max(0, ms / 3_600_000);
-        }
+        const h = calcHours(r);
+        allTimeHours += h;
+        if (r.date.startsWith(currentMonthKey)) monthHours += h;
+        if (r.date >= bwStart && r.date <= bwEnd)  biweekHours += h;
       }
-      const gross = Math.round(totalHours * rate * 100) / 100;
+
+      const round2 = (n) => Math.round(n * 100) / 100;
+
+      const allTimeGross = round2(allTimeHours * rate);
+      const monthGross   = round2(monthHours   * rate);
+      const biweekGross  = round2(biweekHours  * rate);
+
       return {
-        employee,
+        employee: {
+          _id: emp._id,
+          name: emp.name,
+          email: emp.email,
+          hourlyRate: rate,
+          employmentType: emp.employmentType ?? "Full-time",
+          isActive: emp.isActive,
+          hireDate,
+        },
+        // All-time totals
         daysWorked: recs.length,
-        totalHours: Math.round(totalHours * 100) / 100,
-        gross,
-        net: Math.round(gross * 0.85 * 100) / 100,
+        daysEmployed,
+        allTimeHours:  round2(allTimeHours),
+        allTimeGross,
+        allTimeNet:    round2(allTimeGross * 0.85),
+        // Current month
+        monthHours:    round2(monthHours),
+        monthGross,
+        monthNet:      round2(monthGross  * 0.85),
+        // Current bi-weekly period
+        biweekHours:   round2(biweekHours),
+        biweekGross,
+        biweekNet:     round2(biweekGross * 0.85),
+        biweekStart:   bwStart,
+        biweekEnd:     bwEnd,
         rate,
       };
     });

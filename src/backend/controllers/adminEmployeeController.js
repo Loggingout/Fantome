@@ -76,12 +76,62 @@ export const updateHireDate = async (req, res) => {
 // GET /api/admin/employees  — list all employees
 export const getAllEmployees = async (req, res) => {
   try {
-    const employees = await Employee.find({ isActive: true }).select(
-      "name email role jobTitle hireDate hourlyRate"
+    const employees = await Employee.find().select(
+      "name email role jobTitle hireDate hourlyRate employmentType isActive"
     );
     return res.status(200).json({ success: true, employees });
   } catch (err) {
     console.error("getAllEmployees Error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Seasonal", "Intern", "Not Employed"];
+
+// PATCH /api/admin/employees/:id/employment-type
+export const updateEmploymentType = async (req, res) => {
+  try {
+    const { employmentType } = req.body;
+
+    if (!EMPLOYMENT_TYPES.includes(employmentType)) {
+      return res.status(400).json({ success: false, message: "Invalid employment type." });
+    }
+
+    const isTerminating = employmentType === "Not Employed";
+    const update = {
+      employmentType,
+      isActive: !isTerminating,
+      ...(isTerminating && { terminatedAt: new Date() }),
+      ...(!isTerminating && { terminatedAt: null }),
+    };
+
+    const employee = await Employee.findByIdAndUpdate(req.params.id, update, { new: true })
+      .select("name email role jobTitle employmentType isActive terminatedAt");
+
+    if (!employee) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+
+    if (isTerminating) {
+      await Activity.create({
+        type: "employee-deleted",
+        message: `${employee.name}'s employment has ended. Access revoked.`,
+      });
+    } else {
+      await Notification.create({
+        employee: employee._id,
+        type: "general",
+        message: `Your employment type has been updated to ${employmentType}.`,
+      });
+      await Activity.create({
+        type: "update",
+        message: `${employee.name}'s employment type was updated to ${employmentType}.`,
+      });
+    }
+
+    return res.status(200).json({ success: true, employee });
+  } catch (err) {
+    console.error("updateEmploymentType Error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

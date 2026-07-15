@@ -19,6 +19,11 @@ export const protect = async (req, res, next) => {
         return res.status(401).json({ message: "User not found" });
       }
 
+      // Block terminated employees even if their token is still valid
+      if (!req.user.isActive) {
+        return res.status(401).json({ message: "Your account has been deactivated. Please contact your administrator." });
+      }
+
       next();
     } catch (err) {
       console.error("Auth Error:", err);
