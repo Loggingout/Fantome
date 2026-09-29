@@ -12,9 +12,9 @@ const isProduction = import.meta.env.PROD;
 // Build dynamic base URL
 let API_BASE: string | undefined = "";
 
-// 1. GitHub Codespaces — swap the forwarded frontend port for the backend port (5000)
+// 1. GitHub Codespaces — use Vite's same-origin proxy to reach the local backend
 if (isCodespacesHost) {
-  API_BASE = `https://${hostname.replace(/-\d+\.app\.github\.dev$/, "-5000.app.github.dev")}`;
+  API_BASE = "";
 }
 
 // 2. Production (Render, Vercel, etc.)
@@ -27,8 +27,8 @@ else {
   API_BASE = "http://localhost:5000";
 }
 
-// FINAL SAFETY NET — ensure API_BASE is ALWAYS a string
-if (!API_BASE || typeof API_BASE !== "string") {
+// An empty base is intentional in Codespaces: requests use Vite's same-origin proxy.
+if (typeof API_BASE !== "string") {
   API_BASE = "https://fantome.onrender.com";
 }
 
@@ -40,6 +40,7 @@ if (API_BASE && API_BASE.endsWith("/api")) {
 // Create axios instance
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
+  timeout: 15000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

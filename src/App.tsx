@@ -1,4 +1,3 @@
-import { AnimatePresence } from "motion/react";
 import { Routes, Route } from "react-router-dom";
 
 import ScrollToTop from "./components/scroll/ScrollToTop";
@@ -74,7 +73,7 @@ import { Navigate } from "react-router-dom";
 
 function App() {
   return (
-    <AnimatePresence>
+    <>
       <ScrollToTop />
 
       <Routes>
@@ -169,7 +168,7 @@ function App() {
         {/* Catch-all */}
         <Route path="*" element={<FourOFourPage />} />
       </Routes>
-    </AnimatePresence>
+    </>
   );
 }
 

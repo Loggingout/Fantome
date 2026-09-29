@@ -25,14 +25,32 @@ function isCodespacesOrigin(origin) {
   return origin.endsWith(".app.github.dev");
 }
 
+function isLocalDevelopmentOrigin(origin) {
+  try {
+    const { hostname, protocol } = new URL(origin);
+    return (
+      ["http:", "https:"].includes(protocol) &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(hostname)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const corsMiddleware = (req, res, next) => {
   const origin = req.headers.origin;
 
   console.log("Request Origin:", origin);
 
+  // Same-origin and server-to-server requests may not include an Origin header.
+  if (!origin) {
+    return next();
+  }
+
   const isAllowed =
     allowedOrigins.includes(origin) ||
-    isCodespacesOrigin(origin);
+    isCodespacesOrigin(origin) ||
+    isLocalDevelopmentOrigin(origin);
 
   if (isAllowed) {
     res.setHeader("Access-Control-Allow-Origin", origin);
