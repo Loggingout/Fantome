@@ -5,6 +5,9 @@ export const allowedOrigins = [
   "http://localhost:5000",
   "https://fantome.onrender.com",
 
+  "https://bookish-space-barnacle-pj74r5x54j7gc7rq9-5173.app.github.dev",
+  "https://bookish-space-barnacle-pj74r5x54j7gc7rq9-5000.app.github.dev",
+
   "https://fantometechnologies.vercel.app",
   "https://www.fantometechnologies.vercel.app",
   "http://fantometechnologies.com",

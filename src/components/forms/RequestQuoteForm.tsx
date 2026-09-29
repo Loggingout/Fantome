@@ -11,12 +11,12 @@ export default function RequestQuoteForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const basePrices: Record<string, number> = {
-    "Landing Page": 250,
-    "Business Website": 670,
-    "Website Redesign": 300,
+    "Landing Page": 450,
+    "Business Website": 1670,
+    "Website Redesign": 700,
   };
 
-  const pricePerPage = 75;
+  const pricePerPage = 275;
 
   const estimatedPrice =
     websiteType && pages

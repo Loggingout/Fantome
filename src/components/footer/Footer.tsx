@@ -26,58 +26,138 @@ export default function Footer() {
               <h4 className="font-semibold text-gray-900 mb-3">Company</h4>
               <ul className="space-y-2 text-gray-600">
                 <li>
-                  <Link to="/about" className="hover:text-purple-600">
-                    About
+                  <Link to="/about" className="hover:text-red-600">
+                    About Us
                   </Link>
                 </li>
                 <li>
-                  <Link to="/services" className="hover:text-purple-600">
-                    Services
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Blog
                   </Link>
                 </li>
                 <li>
-                  <Link to="/FourOFour" className="hover:text-purple-600">
+                  <Link to="/donations" className="hover:text-red-600">
+                    Donations
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="hover:text-red-600">
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <Link to="/testimonials" className="hover:text-purple-600">
-                    Read Testimonials
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Growth and Impact
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Join the Team
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Making a Difference
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Newsletter
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    The Mission
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Services</h4>
+              <h4 className="font-semibold text-gray-900 mb-3">Ecosystem</h4>
               <ul className="space-y-2 text-gray-600">
                 <li>
-                  <Link to="/services" className="hover:text-purple-600">
-                    Web Development
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Aviation
                   </Link>
                 </li>
                 <li>
-                  <Link to="/services" className="hover:text-purple-600">
-                    Landing Pages
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Entertainment
                   </Link>
                 </li>
                 <li>
-                  <Link to="/services" className="hover:text-purple-600">
-                    Website Redesigns
+                  <Link to="/" className="hover:text-red-600">
+                    IaaS
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    PaaS
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    SaaS
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Status
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Email</h4>
+              <h4 className="font-semibold text-gray-900 mb-3">Legal</h4>
               <ul className="space-y-2 text-gray-600">
                 <li>
-                  <Link
-                    to="mailto:fantometechnologies@gmail.com"
-                    className="hover:text-purple-600"
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Ecosystem policies
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/FourOFour" className="hover:text-red-600">
+                    Data Protection
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-3">
+                Ecosystem Platforms
+              </h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>
+                  <a
+                    href="https://mysterymansion.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-red-600"
                   >
-                    fantometechnologies@gmail.com
+                    Mystery Mansion
+                  </a>
+                </li>
+                <li>
+                  <Link to="/" className="hover:text-red-600">
+                    Redacted
+                  </Link>
+                </li>
+                <li>
+                  <Link to="" className="hover:text-red-600">
+                    Redacted
                   </Link>
                 </li>
               </ul>

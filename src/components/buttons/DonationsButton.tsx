@@ -1,12 +1,12 @@
-interface ServiceButtonProps {
+interface DonationsButtonProps {
   onClick?: () => void;
   isActive?: boolean;
 }
 
-export default function ServiceButton({
+export default function DonationsButton ({
   onClick,
   isActive = false,
-}: ServiceButtonProps) {
+}: DonationsButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -21,7 +21,7 @@ export default function ServiceButton({
         ${isActive ? "text-white" : "text-gray-300 hover:text-neutral-500"}
       `}
     >
-      Services
+      Ecosystem
       {isActive && (
         <span className="absolute -bottom-1 left-0 right-0 h-[2px] rounded-full bg-red-500" />
       )}

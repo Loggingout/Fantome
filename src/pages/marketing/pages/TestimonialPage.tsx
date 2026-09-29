@@ -1,9 +1,9 @@
-import Navbar from "../../components/header/Navbar";
+import Navbar from "../../../components/header/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import BookingForm from "../../components/forms/BookingForm";
-import Footer from "../../components/footer/Footer";
-import ReturnHomeButton from "../../components/buttons/ReturnHomeButton";
+import BookingForm from "../../../components/forms/BookingForm";
+import Footer from "../../../components/footer/Footer";
+import ReturnHomeButton from "../../../components/buttons/ReturnHomeButton";
 import { motion } from "framer-motion";
 
 const PASTEL_COLORS = [

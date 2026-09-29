@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 
-import Navbar from "../../components/header/Navbar";
-import RequestQuoteForm from "../../components/forms/RequestQuoteForm";
-import ReturnHomeButton from "../../components/buttons/ReturnHomeButton";
-import BookingForm from "../../components/forms/BookingForm";
-import Footer from "../../components/footer/Footer";
+import Navbar from "../../../components/header/Navbar";
+import RequestQuoteForm from "../../../components/forms/RequestQuoteForm";
+import ReturnHomeButton from "../../../components/buttons/ReturnHomeButton";
+import BookingForm from "../../../components/forms/BookingForm";
+import Footer from "../../../components/footer/Footer";
 
 export default function RequestQuotePage() {
   const navigate = useNavigate();
