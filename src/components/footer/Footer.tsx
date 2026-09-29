@@ -51,12 +51,12 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/FourOFour" className="hover:text-red-600">
+                  <Link to="/join-the-team" className="hover:text-red-600">
                     Join the Team
                   </Link>
                 </li>
                 <li>
-                  <Link to="/FourOFour" className="hover:text-red-600">
+                  <Link to="/making-a-difference" className="hover:text-red-600">
                     Making a Difference
                   </Link>
                 </li>
@@ -66,7 +66,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/FourOFour" className="hover:text-red-600">
+                  <Link to="/the-mission" className="hover:text-red-600">
                     The Mission
                   </Link>
                 </li>

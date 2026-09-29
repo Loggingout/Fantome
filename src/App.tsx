@@ -5,14 +5,14 @@ import ScrollToTop from "./components/scroll/ScrollToTop";
 // Marketing Pages
 import LandingPage from "./pages/marketing/pages/LandingPage";
 import AboutUsPage from "./pages/marketing/pages/AboutUsPage";
-import ServicePage from "./pages/marketing/pages/ServicesPage";
-import RequestQuotePage from "./pages/marketing/pages/RequestQuotePage";
 import FourOFourPage from "./pages/errors/FourOFourPage";
-import TestimonialPage from "./pages/marketing/pages/TestimonialPage";
 import BlogPage from "./pages/blog/BlogPage";
 import EcosystemPage from "./pages/marketing/pages/EcosystemPage";
 import PlatformsPage from "./pages/marketing/pages/PlatformsPage";
 import DonationsPage from "./pages/marketing/pages/DonationsPage";
+import TheMissionPage from "./pages/marketing/pages/TheMissionPage";
+import JoinTheTeamPage from "./pages/marketing/pages/JoinTheTeamPage";
+import MakingADifferencePage from "./pages/marketing/pages/MakingADifferencePage";
 
 // Auth
 import LoginPage from "./pages/auth/LoginPage";
@@ -81,15 +81,15 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutUsPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/services" element={<ServicePage />} />
-        <Route path="/request-quote" element={<RequestQuotePage />} />
         <Route path="/FourOFour" element={<FourOFourPage />} />
-        <Route path="/testimonials" element={<TestimonialPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/ecosystem" element={<EcosystemPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
         <Route path="/donations" element={<DonationsPage />} />
+        <Route path="/the-mission" element={<TheMissionPage />} />
+        <Route path="/join-the-team" element={<JoinTheTeamPage />} />
+        <Route path="/making-a-difference" element={<MakingADifferencePage />} />
 
         {/* ============================
             ADMIN ROUTES (Protected)

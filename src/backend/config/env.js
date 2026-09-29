@@ -22,15 +22,15 @@ console.log(
 );
 
 console.log(
-  "EMAIL_USER exists?",
-  process.env.EMAIL_USER
+  "UNO_API_KEY exists?",
+  process.env.UNO_API_KEY
     ? "YES ✓"
     : "NO ✗"
 );
 
 console.log(
-  "EMAIL_PASS exists?",
-  process.env.EMAIL_PASS
+  "EMAIL_FROM exists?",
+  process.env.EMAIL_FROM
     ? "YES ✓"
     : "NO ✗"
 );
