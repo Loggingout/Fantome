@@ -1,9 +1,13 @@
 // src/components/blog/BlogSearch.tsx
-import React, { useState } from "react";
+import React from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 
-export default function BlogSearch() {
-  const [query, setQuery] = useState("");
+interface BlogSearchProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export default function BlogSearch({ value, onChange }: BlogSearchProps) {
 
   return (
     <div
@@ -19,8 +23,8 @@ export default function BlogSearch() {
 
       {/* Input */}
       <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         placeholder="Search articles..."
         className="
           flex-1 bg-transparent text-white text-sm sm:text-base
@@ -29,9 +33,10 @@ export default function BlogSearch() {
       />
 
       {/* Clear Button */}
-      {query.length > 0 && (
+      {value.length > 0 && (
         <button
-          onClick={() => setQuery("")}
+          onClick={() => onChange("")}
+          aria-label="Clear search"
           className="text-neutral-500 hover:text-neutral-300 transition"
         >
           <FiX className="text-lg" />

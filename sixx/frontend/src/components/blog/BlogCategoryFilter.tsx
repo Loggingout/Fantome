@@ -1,18 +1,15 @@
 // src/components/blog/BlogCategoryFilter.tsx
-import React, { useState } from "react";
+interface BlogCategoryFilterProps {
+  categories: string[];
+  activeCategory: string;
+  onChange: (category: string) => void;
+}
 
-const CATEGORIES = [
-  "All",
-  "Technology",
-  "Design",
-  "Business",
-  "AI",
-  "Development",
-  "Culture",
-];
-
-export default function BlogCategoryFilter() {
-  const [active, setActive] = useState("All");
+export default function BlogCategoryFilter({
+  categories,
+  activeCategory,
+  onChange,
+}: BlogCategoryFilterProps) {
 
   return (
     <div
@@ -22,13 +19,13 @@ export default function BlogCategoryFilter() {
       "
       style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
     >
-      {CATEGORIES.map((cat) => {
-        const isActive = active === cat;
+      {categories.map((cat) => {
+        const isActive = activeCategory === cat;
 
         return (
           <button
             key={cat}
-            onClick={() => setActive(cat)}
+            onClick={() => onChange(cat)}
             className={`
               whitespace-nowrap px-4 py-2 rounded-xl text-sm
               border transition

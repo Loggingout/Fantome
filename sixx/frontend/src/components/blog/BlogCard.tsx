@@ -1,8 +1,7 @@
-// src/components/blog/BlogCard.tsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import type { BlogPost } from "../../types/blog";
 
-export default function BlogCard({ post }: { post: any }) {
+export default function BlogCard({ post }: { post: BlogPost }) {
   const navigate = useNavigate();
 
   return (
@@ -20,7 +19,7 @@ export default function BlogCard({ post }: { post: any }) {
       {/* Image */}
       <div className="relative w-full h-44 sm:h-48 md:h-52">
         <img
-          src={post.image}
+          src={post.image || "/new-logo.png"}
           alt={post.title}
           className="w-full h-full object-cover"
         />
@@ -35,7 +34,11 @@ export default function BlogCard({ post }: { post: any }) {
         <div className="flex items-center gap-3 text-xs text-neutral-500">
           <span className="uppercase tracking-widest">{post.category}</span>
           <span className="text-neutral-600">•</span>
-          <span>{post.date}</span>
+          <span>
+            {post.publishedAt || post.createdAt
+              ? new Date(post.publishedAt ?? post.createdAt ?? "").toLocaleDateString()
+              : "Recently published"}
+          </span>
         </div>
 
         {/* Title */}

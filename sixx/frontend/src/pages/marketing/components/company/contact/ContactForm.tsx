@@ -1,6 +1,36 @@
+import { useState } from "react";
 import { Send } from "lucide-react";
+import { submitContactInquiry } from "../../../../../services/marketingService";
 
 export default function ContactForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    setIsSubmitting(true);
+    setFeedback(null);
+
+    try {
+      const message = await submitContactInquiry({
+        firstName: String(values.get("firstName") ?? ""),
+        lastName: String(values.get("lastName") ?? ""),
+        email: String(values.get("email") ?? ""),
+        inquiryType: String(values.get("inquiryType") ?? "") as "general" | "business" | "platform" | "careers",
+        subject: String(values.get("subject") ?? ""),
+        message: String(values.get("message") ?? ""),
+      });
+      form.reset();
+      setFeedback({ type: "success", message });
+    } catch (error) {
+      setFeedback({ type: "error", message: error instanceof Error ? error.message : "Unable to send your message right now." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact-form" className="max-w-6xl mx-auto px-6 py-20">
       <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 items-start">
@@ -26,12 +56,7 @@ export default function ContactForm() {
         </div>
 
         <div className="rounded-3xl border border-neutral-800 bg-neutral-900 p-6 sm:p-8">
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-            }}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label
@@ -239,6 +264,7 @@ export default function ContactForm() {
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="
                 inline-flex
                 w-full
@@ -260,9 +286,14 @@ export default function ContactForm() {
                 hover:bg-neutral-700
               "
             >
-              Send Message
-              <Send className="h-4 w-4" />
+              {isSubmitting ? "Sending..." : "Send Message"}
+              {!isSubmitting && <Send className="h-4 w-4" />}
             </button>
+            {feedback && (
+              <p role={feedback.type === "error" ? "alert" : "status"} className={`text-sm ${feedback.type === "error" ? "text-red-300" : "text-emerald-300"}`}>
+                {feedback.message}
+              </p>
+            )}
           </form>
         </div>
       </div>

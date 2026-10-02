@@ -3,6 +3,7 @@ import { ArrowRight, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { newsletterSignup } from "../../../data/newsletter.data";
+import { subscribeToBlogUpdates } from "../../../../../services/marketingService";
 
 const fadeUp = {
   hidden: {
@@ -21,9 +22,22 @@ const fadeUp = {
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSubmitting(true);
+    setFeedback(null);
+    try {
+      const message = await subscribeToBlogUpdates(email);
+      setFeedback({ type: "success", message });
+      setEmail("");
+    } catch (error) {
+      setFeedback({ type: "error", message: error instanceof Error ? error.message : "Unable to subscribe right now." });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -103,6 +117,7 @@ export default function NewsletterSignup() {
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="
                 inline-flex
                 items-center
@@ -123,10 +138,15 @@ export default function NewsletterSignup() {
                 hover:bg-neutral-700
               "
             >
-              {newsletterSignup.buttonLabel}
-              <ArrowRight className="h-4 w-4" />
+              {isSubmitting ? "Subscribing..." : newsletterSignup.buttonLabel}
+              {!isSubmitting && <ArrowRight className="h-4 w-4" />}
             </button>
           </div>
+          {feedback && (
+            <p role={feedback.type === "error" ? "alert" : "status"} className={`mt-3 text-sm ${feedback.type === "error" ? "text-red-300" : "text-emerald-300"}`}>
+              {feedback.message}
+            </p>
+          )}
         </form>
       </motion.div>
     </section>

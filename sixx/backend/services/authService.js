@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Employee } from "../models/Employee.js";
+import JWT_SECRET from "../config/jwt.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
 const JWT_EXPIRE = "7d";
 
 export const authServices = {

@@ -8,6 +8,7 @@ import NewsletterPage from "./pages/marketing/pages/NewsletterPage";
 import AboutUsPage from "./pages/marketing/pages/AboutUsPage";
 import FourOFourPage from "./pages/errors/FourOFourPage";
 import BlogPage from "./pages/blog/BlogPage";
+import BlogArticlePage from "./pages/blog/BlogArticlePage";
 import EcosystemPage from "./pages/marketing/pages/EcosystemPage";
 import PlatformsPage from "./pages/marketing/pages/PlatformsPage";
 import DonationsPage from "./pages/marketing/pages/DonationsPage";
@@ -55,6 +56,9 @@ import PayrollHistoryPage from "./pages/admin/employees/PayrollHostoryPage";
 import EmployeePayrollDetailPage from "./pages/admin/employees/EmployeePayrollDetailPage";
 import PayoutSchedulePage from "./pages/admin/employees/PayoutSchedulePage";
 import BlogManagementPage from "./pages/admin/blog/BlogManagementPage";
+import BlogDraftsPage from "./pages/blog/BlogDraftsPage";
+import ScheduledBlogsPage from "./pages/admin/blog/ScheduledBlogsPage";
+import ViewBlogsPage from "./pages/admin/blog/ViewBlogsPage";
 import PermissionsPage from "./pages/admin/permissions/PermissionsPage";
 import CompanySettingsPage from "./pages/admin/settings/CompanySettingsPage";
 import AdminProfilePage from "./pages/admin/settings/AdminProfilePage";
@@ -85,6 +89,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/FourOFour" element={<FourOFourPage />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:id" element={<BlogArticlePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/ecosystem" element={<EcosystemPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
@@ -122,6 +127,10 @@ function App() {
           <Route path="employees/:employeeId/payroll" element={<EmployeePayrollDetailPage />} />
           <Route path="employees/payout-schedule" element={<PayoutSchedulePage />} />
           <Route path="blog" element={<BlogManagementPage />} />
+          <Route path="blog/drafts" element={<BlogDraftsPage />} />
+          <Route path="blog/:id/edit" element={<BlogManagementPage />} />
+          <Route path="blog/view" element={<ViewBlogsPage />} />
+          <Route path="blog/scheduled" element={<ScheduledBlogsPage />} />
           <Route path="permissions" element={<PermissionsPage />} />
           <Route path="settings" element={<CompanySettingsPage />} />
           <Route path="settings/profile" element={<AdminProfilePage />} />
@@ -137,6 +146,7 @@ function App() {
           <Route path="settings/manage-roles" element={<SettingsManageRoles />} />
           <Route path="settings/system" element={<SettingsSystem />} />
           <Route path="status" element={<StatusManagementPage />} />
+
           {/* Catch unregistered admin paths — redirect to dashboard instead of empty shell */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>

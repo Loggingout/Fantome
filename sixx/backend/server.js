@@ -9,6 +9,8 @@ import taskRoutes from "./routes/taskRoutes.js";
 import shiftRoutes from "./routes/shiftRoutes.js";
 import overtimeShiftRoutes from "./routes/overtimeShiftRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
+import newsletterRoutes from "./routes/newsletterRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import leaveRoutes from "./routes/leaveRoutes.js";
@@ -17,7 +19,9 @@ import statusRoutes from "./routes/statusRoutes.js";
 import adminStatusRoutes from "./routes/adminStatusRoutes.js";
 
 import { startShiftReminderJob } from "./services/shiftReminderService.js";
+import { startBlogPublisher } from "./services/blogPublisherService.js";
 import { seedStatusPlatforms } from "./controllers/statusController.js";
+import { initializeBlogNewsletter } from "./controllers/newsletterController.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -32,7 +36,7 @@ const app = express();
 
 // Middleware
 app.use(corsMiddleware);
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 app.use(requestLogger);
 
 // Routes
@@ -43,6 +47,8 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/shifts", shiftRoutes);
 app.use("/api/overtime-shifts", overtimeShiftRoutes);
 app.use("/api/blog", blogRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+app.use("/api/contact", contactRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/leave", leaveRoutes);
@@ -70,12 +76,14 @@ async function startServer() {
   await connectDB();
 
   await seedStatusPlatforms();
+  await initializeBlogNewsletter();
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`✓ Server running on port ${PORT}`);
     console.log(`✓ Listening on 0.0.0.0:${PORT}`);
     console.log("✓ CORS enabled for origins:", allowedOrigins);
     startShiftReminderJob();
+    startBlogPublisher();
   });
 }
 

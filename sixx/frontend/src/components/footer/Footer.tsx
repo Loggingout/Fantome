@@ -30,7 +30,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/FourOFour" className="hover:text-red-600">
+                  <Link to="/blog" className="hover:text-red-600">
                     Blog
                   </Link>
                 </li>

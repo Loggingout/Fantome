@@ -29,8 +29,22 @@ console.log(
 );
 
 console.log(
+  "JWT_SECRET exists?",
+  process.env.JWT_SECRET || process.env.T_SECRET
+    ? "YES ✓"
+    : "NO ✗"
+);
+
+console.log(
   "EMAIL_FROM exists?",
   process.env.EMAIL_FROM
+    ? "YES ✓"
+    : "NO ✗"
+);
+
+console.log(
+  "EMAIL_TO exists?",
+  process.env.EMAIL_TO
     ? "YES ✓"
     : "NO ✗"
 );

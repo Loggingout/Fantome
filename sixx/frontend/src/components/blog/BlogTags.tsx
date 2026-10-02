@@ -1,22 +1,10 @@
 // src/components/blog/BlogTags.tsx
-import React, { useState } from "react";
+interface BlogTagsProps {
+  tags: string[];
+  onSelect: (tag: string) => void;
+}
 
-const TAGS = [
-  "UI/UX",
-  "AI",
-  "Engineering",
-  "Design",
-  "Business",
-  "Culture",
-  "Frontend",
-  "Backend",
-  "Branding",
-  "Strategy",
-];
-
-export default function BlogTags() {
-  const [active, setActive] = useState<string | null>(null);
-
+export default function BlogTags({ tags, onSelect }: BlogTagsProps) {
   return (
     <div
       className="
@@ -25,22 +13,16 @@ export default function BlogTags() {
       "
       style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
     >
-      {TAGS.map((tag) => {
-        const isActive = active === tag;
-
+      {tags.map((tag) => {
         return (
           <button
             key={tag}
-            onClick={() => setActive(isActive ? null : tag)}
+            onClick={() => onSelect(tag)}
             className={`
               px-4 py-2 rounded-xl text-sm
               border transition
               whitespace-nowrap
-              ${
-                isActive
-                  ? "bg-white text-black border-white"
-                  : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white"
-              }
+              bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white
             `}
           >
             #{tag}

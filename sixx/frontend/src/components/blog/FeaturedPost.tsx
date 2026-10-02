@@ -1,21 +1,10 @@
-// src/components/blog/FeaturedPost.tsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import type { BlogPost } from "../../types/blog";
 
-export default function FeaturedPost() {
+export default function FeaturedPost({ post }: { post: BlogPost | null }) {
   const navigate = useNavigate();
 
-  // Mock featured post (replace with real data later)
-  const post = {
-    id: "featured-1",
-    title: "How Fantome Builds Modern, High‑Performance Web Experiences",
-    excerpt:
-      "Discover the design principles, engineering patterns, and creative philosophy behind Fantome’s next‑generation digital experiences.",
-    image:
-      "https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&w=1200&q=80",
-    category: "Technology",
-    date: "May 20, 2026",
-  };
+  if (!post) return null;
 
   return (
     <div
@@ -30,7 +19,7 @@ export default function FeaturedPost() {
       {/* Image */}
       <div className="relative w-full h-56 sm:h-72 md:h-80 lg:h-96">
         <img
-          src={post.image}
+          src={post.image || "/new-logo.png"}
           alt={post.title}
           className="w-full h-full object-cover"
         />
@@ -45,7 +34,11 @@ export default function FeaturedPost() {
         <div className="flex items-center gap-3 text-xs text-neutral-500">
           <span className="uppercase tracking-widest">{post.category}</span>
           <span className="text-neutral-600">•</span>
-          <span>{post.date}</span>
+          <span>
+            {post.publishedAt || post.createdAt
+              ? new Date(post.publishedAt ?? post.createdAt ?? "").toLocaleDateString()
+              : "Recently published"}
+          </span>
         </div>
 
         {/* Title */}

@@ -57,8 +57,9 @@ const NAV_ITEMS: NavItem[] = [
     icon: FileText ,
     children: [
       { label: "Create Blog", path: "/admin/blog" },
-      { label: "View Blogs", path: "/" },
-      { label: "Scheduled Blogs", path: "/" },
+      { label: "Drafted Blogs", path: "/admin/blog/drafts" },
+      { label: "View Blogs", path: "/admin/blog/view" },
+      { label: "Scheduled Blogs", path: "/admin/blog/scheduled" },
       
     ],
   },

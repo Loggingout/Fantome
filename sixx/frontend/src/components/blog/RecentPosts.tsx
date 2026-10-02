@@ -1,26 +1,7 @@
-// src/components/blog/RecentPosts.tsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import type { BlogPost } from "../../types/blog";
 
-const RECENT_POSTS = [
-  {
-    id: "1",
-    title: "Designing for the Future: Fantome’s UI Philosophy",
-    date: "May 18, 2026",
-  },
-  {
-    id: "2",
-    title: "AI and Creativity: Blending Art with Engineering",
-    date: "May 15, 2026",
-  },
-  {
-    id: "3",
-    title: "Building Scalable Web Apps with Modern Architecture",
-    date: "May 10, 2026",
-  },
-];
-
-export default function RecentPosts() {
+export default function RecentPosts({ posts }: { posts: BlogPost[] }) {
   const navigate = useNavigate();
 
   return (
@@ -28,7 +9,7 @@ export default function RecentPosts() {
       className="flex flex-col gap-5"
       style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
     >
-      {RECENT_POSTS.map((post) => (
+      {posts.slice(0, 5).map((post) => (
         <button
           key={post.id}
           onClick={() => navigate(`/blog/${post.id}`)}
@@ -50,7 +31,9 @@ export default function RecentPosts() {
 
           {/* Date */}
           <span className="text-neutral-500 text-xs">
-            {post.date}
+            {post.publishedAt || post.createdAt
+              ? new Date(post.publishedAt ?? post.createdAt ?? "").toLocaleDateString()
+              : "Recently published"}
           </span>
 
           {/* Divider */}
