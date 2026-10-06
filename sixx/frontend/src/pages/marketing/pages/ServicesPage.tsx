@@ -93,7 +93,7 @@ export default function ServicesPage() {
 
         <meta
           property="og:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <meta
@@ -113,7 +113,7 @@ export default function ServicesPage() {
 
         <meta
           name="twitter:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <link

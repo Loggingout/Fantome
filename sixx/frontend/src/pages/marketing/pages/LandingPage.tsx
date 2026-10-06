@@ -41,11 +41,11 @@ const LandingPage = () => {
         <meta property="og:description" content="Fast, conversion-focused websites built for local businesses. Get more calls, leads, and customers with Fantome Technologies." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fantometechnologies.com" />
-        <meta property="og:image" content="https://fantometechnologies.com/New%20Logo.png" />
+        <meta property="og:image" content="https://fantometechnologies.com/new-logo.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Fantome Technologies | Web Development & Design Studio" />
         <meta name="twitter:description" content="Fast, conversion-focused websites built for local businesses. Get more calls, leads, and customers with Fantome Technologies." />
-        <meta name="twitter:image" content="https://fantometechnologies.com/New%20Logo.png" />
+        <meta name="twitter:image" content="https://fantometechnologies.com/new-logo.png" />
         <link rel="canonical" href="https://fantometechnologies.com" />
       </Helmet>
 

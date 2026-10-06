@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /employee/
+Disallow: /login
+
+Sitemap: https://fantometechnologies.com/sitemap.xml

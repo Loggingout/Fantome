@@ -79,7 +79,7 @@ export default function StatusPage() {
 
         <meta
           property="og:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <meta name="twitter:card" content="summary_large_image" />
@@ -96,7 +96,7 @@ export default function StatusPage() {
 
         <meta
           name="twitter:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <link

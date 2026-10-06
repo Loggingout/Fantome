@@ -42,7 +42,7 @@ export default function ContactPage() {
 
         <meta
           property="og:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <meta name="twitter:card" content="summary_large_image" />
@@ -59,7 +59,7 @@ export default function ContactPage() {
 
         <meta
           name="twitter:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <link

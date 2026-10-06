@@ -1,8 +1,7 @@
 
-import { Helmet } from "react-helmet-async";
-
 import Navbar from "../../../components/header/Navbar";
 import Footer from "../../../components/footer/Footer";
+import SEOHead from "../../../components/SEOHead";
 
 import EcosystemHero from "../components/ecosystem/EcosystemHero";
 import EcosystemIntro from "../components/ecosystem/EcosystemIntro";
@@ -13,13 +12,7 @@ import EcosystemVision from "../components/ecosystem/EcosystemVision";
 export default function EcosystemPage() {
   return (
     <>
-      <Helmet>
-        <title>Ecosystem | Fantome Technologies</title>
-        <meta
-          name="description"
-          content="Explore the industries, technologies, and platforms that make up the Fantome Technologies ecosystem."
-        />
-      </Helmet>
+      <SEOHead title="Ecosystem" description="Explore the companies, products, and platforms connected through the Fantome Technologies ecosystem." path="/ecosystem" />
 
       <Navbar />
 

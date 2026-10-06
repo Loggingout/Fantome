@@ -47,7 +47,7 @@ export default function Homepage() {
 
         <meta
           property="og:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <meta name="twitter:card" content="summary_large_image" />
@@ -64,13 +64,23 @@ export default function Homepage() {
 
         <meta
           name="twitter:image"
-          content="https://fantometechnologies.com/New%20Logo.png"
+          content="https://fantometechnologies.com/new-logo.png"
         />
 
         <link
           rel="canonical"
           href="https://fantometechnologies.com/"
         />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Fantome Technologies",
+            url: "https://fantometechnologies.com/",
+            logo: "https://fantometechnologies.com/new-logo.png",
+            description: "Fantome Technologies builds and operates digital products and platforms for consumers.",
+          })}
+        </script>
       </Helmet>
 
       <main>

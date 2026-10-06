@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
-import { Helmet } from "react-helmet-async";
 
 import Navbar from "../../components/header/Navbar";
 import Footer from "../../components/footer/Footer";
 import { getPublicBlogPost } from "../../services/blogService";
 import type { BlogPost } from "../../types/blog";
+import SEOHead from "../../components/SEOHead";
 
 export default function BlogArticlePage() {
   const { id = "" } = useParams();
@@ -40,10 +40,30 @@ export default function BlogArticlePage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      <Helmet>
-        <title>{post ? `${post.title} | Fantome Technologies` : "Blog | Fantome Technologies"}</title>
-        {post?.excerpt && <meta name="description" content={post.excerpt} />}
-      </Helmet>
+      <SEOHead
+        title={post?.title ?? "Blog article"}
+        description={post?.excerpt || "Read the latest article from Fantome Technologies."}
+        path={post ? `/blog/${post.id}` : "/blog"}
+        image={post?.image || undefined}
+        type="article"
+        noIndex={!post}
+        structuredData={post ? {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          description: post.excerpt,
+          image: post.image ? [post.image] : undefined,
+          datePublished: post.publishedAt || undefined,
+          dateModified: post.updatedAt || post.publishedAt || undefined,
+          author: { "@type": "Organization", name: post.author || "Fantome Technologies" },
+          publisher: {
+            "@type": "Organization",
+            name: "Fantome Technologies",
+            logo: { "@type": "ImageObject", url: "https://fantometechnologies.com/new-logo.png" },
+          },
+          mainEntityOfPage: `https://fantometechnologies.com/blog/${post.id}`,
+        } : undefined}
+      />
       <Navbar />
       <main className="mx-auto min-h-[60vh] max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
         <Link to="/blog" className="mb-8 inline-flex text-sm text-neutral-400 transition hover:text-white">← All articles</Link>
@@ -53,7 +73,7 @@ export default function BlogArticlePage() {
           <p role="alert" className="mt-8 rounded-xl border border-neutral-800 bg-neutral-900 p-6 text-neutral-300">{error ?? "Article unavailable."}</p>
         ) : (
           <article className="mx-auto max-w-3xl">
-            {post.image && <img src={post.image} alt={post.title} className="mb-8 aspect-[16/9] w-full rounded-xl border border-neutral-800 object-cover" />}
+            {post.image && <img src={post.image} alt={post.title} className="mb-8 aspect-video w-full rounded-xl border border-neutral-800 object-cover" />}
             <div className="mb-4 flex flex-wrap items-center gap-3 text-xs uppercase tracking-widest text-neutral-500">
               <span className="text-red-400">{post.category}</span>
               <span aria-hidden="true">·</span>

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import SEOHead from "../../components/SEOHead";
 import Navbar from "../../components/header/Navbar";
 import Footer from "../../components/footer/Footer";
 import BookingForm from "../../components/forms/BookingForm";
@@ -29,6 +30,7 @@ export default function LoginPage() {
       className="min-h-screen bg-neutral-950 text-white flex flex-col"
       style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
     >
+      <SEOHead title="Employee Login" description="Employee sign-in for the Fantome Technologies admin and team portal." path="/login" noIndex />
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
         {/* Navbar */}
         <Navbar
