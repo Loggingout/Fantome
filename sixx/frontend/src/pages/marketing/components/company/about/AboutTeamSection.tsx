@@ -66,7 +66,7 @@ export default function AboutTeamSection() {
           <div className="absolute bottom-6 left-6 right-6">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-neutral-950/70 px-3 py-1.5 text-xs tracking-widest uppercase text-neutral-300 backdrop-blur-sm">
               <Users className="h-3.5 w-3.5" />
-              Our People
+              Our CEO
             </span>
           </div>
         </motion.div>

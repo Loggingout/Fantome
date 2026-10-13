@@ -46,7 +46,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Analytics",
     icon: ChartPie ,
     children: [
-      { label: "Website analytics", path: "/" },
+      { label: "Website analytics", path: "/admin/analytics/website" },
       { label: "Opened Blog Posts Analytics", path: "/" },
       { label: "Newsletter Analytics", path: "/" },
       

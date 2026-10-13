@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import ScrollToTop from "./components/scroll/ScrollToTop";
+import { WebsiteVisitTracker } from "./utils/websiteAnalytics";
 
 // Marketing Pages
 import Homepage from "./pages/marketing/pages/Homepage";
@@ -74,6 +75,7 @@ import SettingsDeleteEmployee from "./pages/admin/settings/DeleteEmployeePage";
 import SettingsManageRoles from "./pages/admin/settings/ManageRolesPage";
 import SettingsSystem from "./pages/admin/settings/SystemsPreferencesPage";
 import StatusManagementPage from "./pages/admin/status/StatusManagementPage";
+import WebsiteAnalyticsPage from "./pages/admin/analytics/WebsiteAnalyticsPage";
 import ContactPage from "./pages/marketing/pages/ContactPage";
 import { Navigate } from "react-router-dom";
 
@@ -81,6 +83,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <WebsiteVisitTracker />
 
       <Routes>
         {/* Marketing Routes */}
@@ -117,6 +120,7 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="analytics/tasks" element={<TaskAnalyticsPage />} />
+          <Route path="analytics/website" element={<WebsiteAnalyticsPage />} />
           <Route path="employees" element={<EmployeeManagementPage />} />
           <Route path="employees/add" element={<AddEmployeePage />} />
           <Route path="employees/roles" element={<EmployeeRolesPage />} />

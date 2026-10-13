@@ -38,6 +38,10 @@ const STATUS_OPTIONS: Array<{
     label: "Service Outage",
   },
   {
+    value: "being_developed",
+    label: "Being Developed",
+  },
+  {
     value: "unknown",
     label: "Status Unknown",
   },

@@ -13,6 +13,7 @@ const statusStyles = {
   degraded: "border-amber-900/50 bg-amber-950/30 text-amber-300",
   maintenance: "border-blue-900/50 bg-blue-950/30 text-blue-300",
   outage: "border-red-900/50 bg-red-950/30 text-red-300",
+  being_developed: "border-violet-900/50 bg-violet-950/30 text-violet-300",
   unknown: "border-neutral-800 bg-neutral-950 text-neutral-500",
 };
 

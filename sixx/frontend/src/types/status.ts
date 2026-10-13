@@ -3,6 +3,7 @@ export type PlatformStatus =
   | "degraded"
   | "maintenance"
   | "outage"
+  | "being_developed"
   | "unknown";
 
 export interface PlatformStatusRecord {
@@ -29,5 +30,6 @@ export interface StatusCounts {
   degraded: number;
   maintenance: number;
   outage: number;
+  beingDeveloped: number;
   unknown: number;
 }

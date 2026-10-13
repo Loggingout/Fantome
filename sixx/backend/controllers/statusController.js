@@ -5,6 +5,7 @@ const STATUS_LABELS = {
   degraded: "Degraded Performance",
   maintenance: "Maintenance",
   outage: "Service Outage",
+  being_developed: "Being Developed",
   unknown: "Status Unknown",
 };
 
@@ -18,6 +19,15 @@ const DEFAULT_PLATFORMS = [
     description:
       "A platform developed and operated within the Fantome Technologies ecosystem.",
     status: "unknown",
+    enabled: true,
+  },
+  {
+    slug: "isittrue-news",
+    name: "IsItTrueNews",
+    category: "SaaS Platform",
+    description:
+      "A platform developed and operated within the Fantome Technologies ecosystem. Built to reshape how the truth is discovered, verified, and shared around the world.",
+    status: "being_developed",
     enabled: true,
   },
 ];

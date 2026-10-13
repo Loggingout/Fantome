@@ -150,9 +150,14 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:text-red-600">
-                    Redacted
-                  </Link>
+                  <a
+                    href="https://isittruenews.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-red-600"
+                  >
+                    IsItTrueNews
+                  </a>
                 </li>
                 <li>
                   <Link to="" className="hover:text-red-600">

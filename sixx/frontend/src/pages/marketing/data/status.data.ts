@@ -5,6 +5,7 @@ import {
   CircleDashed,
   CircleX,
   Wrench,
+  Code2,
 } from "lucide-react";
 
 export type PlatformStatus =
@@ -12,6 +13,7 @@ export type PlatformStatus =
   | "degraded"
   | "maintenance"
   | "outage"
+  | "being_developed"
   | "unknown";
 
 export interface PlatformStatusRecord {
@@ -56,6 +58,12 @@ export const statusDefinitions: Record<
     description:
       "The platform is currently experiencing an interruption in service.",
     icon: CircleX,
+  },
+  being_developed: {
+    label: "Being Developed",
+    description:
+      "The platform is currently being built and developed.",
+    icon: Code2,
   },
   unknown: {
     label: "Status Unknown",

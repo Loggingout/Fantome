@@ -8,7 +8,7 @@ const statusPlatformSchema = new mongoose.Schema(
     description: { type: String, default: "" },
     status: {
       type: String,
-      enum: ["operational", "degraded", "maintenance", "outage", "unknown"],
+      enum: ["operational", "degraded", "maintenance", "outage", "being_developed", "unknown"],
       default: "unknown",
     },
     message: { type: String, default: "" },

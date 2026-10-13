@@ -11,12 +11,18 @@ export const aboutInfoItems = [
 {
 icon: Building2,
 title: "Who We Are",
-text: "Fantome Technologies is a technology company focused on building, operating, and scaling products within our own ecosystem.",
+text: `Fantome Technologies is a Denver-based technology company with deep Colorado roots. For 26 years, this has been our home, and we continue to grow, build, and innovate right here in the state that shaped us. Our headquarters will remain in Colorado as we expand our vision and impact.
+
+We believe talent deserves opportunity. That's why we're focused on creating pathways for individuals who may have been overlooked by traditional hiring practices. Whether you're developing your skills, advancing your career without the corporate red tape, or seeking your first opportunity to gain experience and momentum, Fantome Technologies is committed to helping you move forward with confidence.`,
 },
 {
 icon: Calendar,
 title: "Founded",
-text: "Fantome Technologies was founded in December 2024 with a long-term focus on building technology products that can grow with the people who use them.",
+text: `Fantome Technologies was founded in December 2024 with a simple belief: technology should work for people, not the other way around. While many startups are built around trends, hype, or quick exits, we're focused on building products that can grow and evolve with the people who rely on them.
+
+This company was born from failure, struggle, and the lessons that come from refusing to give up. Our CEO learned through personal experience that life's obstacles don't define you; your willingness to keep moving forward does. Tired of chasing what the system promised but rarely delivered, he chose to create a company with a different purpose: one that genuinely serves people and creates opportunities where others see limitations.
+
+Fantome Technologies exists to prove that innovation, determination, and people-first values can build something meaningful that lasts.`,
 },
 {
 icon: Layers3,

@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   CircleDashed,
+  Code2,
   Wrench,
   XCircle,
 } from "lucide-react";
@@ -32,6 +33,9 @@ function getStatusCounts(
     ).length,
     outage: platforms.filter(
       (platform) => platform.status === "outage",
+    ).length,
+    beingDeveloped: platforms.filter(
+      (platform) => platform.status === "being_developed",
     ).length,
     unknown: platforms.filter(
       (platform) => platform.status === "unknown",
@@ -64,6 +68,11 @@ const statItems = [
     key: "outage",
     label: "Outages",
     icon: XCircle,
+  },
+  {
+    key: "beingDeveloped",
+    label: "Being Developed",
+    icon: Code2,
   },
   {
     key: "unknown",

@@ -20,9 +20,20 @@ export const platforms: Platform[] = [
     description:
       "NSFW: A platform developed and operated within the Fantome Technologies ecosystem. Built to provide intimate connections for people across the world.",
     status: "Live",
-    category: "SaaS Platform",
+    category: "PaaS Platform",
     icon: Building2,
     url: "https://mysterymansion.app",
+    external: true,
+  },
+  {
+    id: "isittrue-news",
+    name: "IsItTrueNews",
+    description:
+      "A platform developed and operated within the Fantome Technologies ecosystem. Built to reshape how the truth is discovered, verified, and shared around the world.",
+    status: "Live",
+    category: "SaaS Platform",
+    icon: Building2,
+    url: "https://isittruenews.com",
     external: true,
   },
 ];

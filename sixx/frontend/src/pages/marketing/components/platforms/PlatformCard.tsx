@@ -2,7 +2,8 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
-import type { Platform } from "../../data/platforms.data";
+import type { Platform } from "../../data/platform.data";
+import { trackPlatformLinkClick } from "../../../../utils/websiteAnalytics";
 
 interface PlatformCardProps {
   platform: Platform;
@@ -53,6 +54,7 @@ export default function PlatformCard({
             href={platform.url}
             target={platform.external ? "_blank" : undefined}
             rel={platform.external ? "noopener noreferrer" : undefined}
+            onClick={() => trackPlatformLinkClick(platform)}
             className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-950 transition-colors hover:text-neutral-500"
           >
             Visit Platform

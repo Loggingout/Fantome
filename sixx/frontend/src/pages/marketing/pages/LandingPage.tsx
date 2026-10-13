@@ -31,19 +31,19 @@ const LandingPage = () => {
       transition={{ duration: 0.6 }}
     >
       <Helmet>
-        <title>Fantome Technologies | Web Development & Design Studio</title>
+        <title>Fantome Technologies | Landing Page</title>
         <meta
           name="description"
           content="Fast, conversion-focused websites built for local businesses. Get more calls, leads, and customers with Fantome Technologies."
         />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Fantome Technologies | Web Development & Design Studio" />
+        <meta property="og:title" content="Fantome Technologies | Landing Page" />
         <meta property="og:description" content="Fast, conversion-focused websites built for local businesses. Get more calls, leads, and customers with Fantome Technologies." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fantometechnologies.com" />
         <meta property="og:image" content="https://fantometechnologies.com/new-logo.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Fantome Technologies | Web Development & Design Studio" />
+        <meta name="twitter:title" content="Fantome Technologies | Landing Page" />
         <meta name="twitter:description" content="Fast, conversion-focused websites built for local businesses. Get more calls, leads, and customers with Fantome Technologies." />
         <meta name="twitter:image" content="https://fantometechnologies.com/new-logo.png" />
         <link rel="canonical" href="https://fantometechnologies.com" />
