@@ -79,9 +79,11 @@ export default function AboutInfoGrid() {
                   {title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-relaxed text-neutral-400">
-                  {text}
-                </p>
+                <div className="mt-3 space-y-4 text-sm leading-relaxed text-neutral-400">
+                  {text.split(/\n\s*\n/).map((paragraph, paragraphIndex) => (
+                    <p key={paragraphIndex}>{paragraph.trim()}</p>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.article>

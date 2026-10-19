@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+import BlogArticleBody from "../../blog/BlogArticleBody";
 
 interface BlogArticlePreviewProps {
   title: string;
@@ -32,10 +32,9 @@ export default function BlogArticlePreview({
           {title || "Untitled article"}
         </h1>
         {excerpt && <p className="mt-5 text-lg leading-relaxed text-neutral-400">{excerpt}</p>}
-        <div
-          className="mt-9 text-base leading-8 text-neutral-300 [&_a]:text-red-300 [&_a]:underline [&_blockquote]:my-6 [&_blockquote]:border-l-2 [&_blockquote]:border-red-700 [&_blockquote]:pl-4 [&_blockquote]:italic [&_h2]:mb-4 [&_h2]:mt-9 [&_h2]:text-3xl [&_h2]:font-semibold [&_h2]:text-white [&_h3]:mb-3 [&_h3]:mt-7 [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:text-white [&_img]:my-8 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg [&_li]:mb-2 [&_ol]:mb-6 [&_ol]:list-decimal [&_ol]:pl-7 [&_p]:mb-5 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-7"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
-        />
+        <div className="mt-9">
+          <BlogArticleBody content={content} />
+        </div>
       </div>
     </article>
   );
