@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Logo from "/new-logo.png";
+import Logo from "../../assets/fantome.png";
 
 export default function Footer() {
   return (
@@ -178,7 +178,7 @@ export default function Footer() {
           <div className="flex items-center justify-center sm:justify-end gap-2">
             <span className="text-sm text-gray-500">Powered by</span>
             <img
-              src="/new-logo.png"
+              src={Logo}
               alt="Fantome Technologies"
               className="h-5 w-auto opacity-90"
             />

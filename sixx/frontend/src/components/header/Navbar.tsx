@@ -3,7 +3,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import LoginButton from "../buttons/LoginButton";
-import Logo from "/new-logo.png";
+import Logo from "../../assets/fantome.png";
 
 interface NavbarProps {
   onBookNow?: () => void;
