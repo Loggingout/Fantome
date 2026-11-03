@@ -62,7 +62,7 @@ export const authController = {
   // Get current employee profile
   getCurrentEmployee: async (req, res) => {
     try {
-      const employeeId = req.employee.id;
+      const employeeId = req.user._id;
 
       const result =
         await authServices.getEmployeeById(

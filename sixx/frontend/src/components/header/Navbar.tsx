@@ -4,6 +4,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import LoginButton from "../buttons/LoginButton";
 import Logo from "../../assets/fantome.png";
+import { useUser } from "../context/UserContext";
 
 interface NavbarProps {
   onBookNow?: () => void;
@@ -36,6 +37,9 @@ export default function Navbar({
   const navRef = useRef<HTMLElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useUser();
+  const loginLabel = user ? "Dashboard" : "Company Login";
+  const loginPath = user ? (user.role === "admin" ? "/admin" : "/employee") : "/login";
 
   const mainItems: NavbarItem[] = [
     { label: "About Us", to: "/about"},
@@ -156,7 +160,7 @@ export default function Navbar({
         </div>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <LoginButton onClick={() => navigate("/login")} />
+          <LoginButton label={loginLabel} onClick={() => navigate(loginPath)} />
         </div>
 
         <button
@@ -205,9 +209,10 @@ export default function Navbar({
 
             <div className="px-2 py-2">
               <LoginButton
+                label={loginLabel}
                 onClick={() => {
                   closeMenus();
-                  navigate("/login");
+                  navigate(loginPath);
                 }}
               />
             </div>

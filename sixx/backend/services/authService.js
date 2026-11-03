@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Employee } from "../models/Employee.js";
 import JWT_SECRET from "../config/jwt.js";
 
-const JWT_EXPIRE = "7d";
+const JWT_EXPIRE = "30d";
 
 export const authServices = {
   // Generate JWT Token

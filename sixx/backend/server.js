@@ -18,6 +18,8 @@ import leaveRoutes from "./routes/leaveRoutes.js";
 import leaveBalanceRoutes from "./routes/leaveBalanceRoutes.js";
 import statusRoutes from "./routes/statusRoutes.js";
 import adminStatusRoutes from "./routes/adminStatusRoutes.js";
+import careersRoutes from "./routes/careersRoutes.js";
+import adminCareersRoutes from "./routes/adminCareersRoutes.js";
 
 import { startShiftReminderJob } from "./services/shiftReminderService.js";
 import { startBlogPublisher } from "./services/blogPublisherService.js";
@@ -57,6 +59,8 @@ app.use("/api/leave", leaveRoutes);
 app.use("/api/leave-balance", leaveBalanceRoutes);
 app.use("/api/status", statusRoutes);
 app.use("/api/admin/status", adminStatusRoutes);
+app.use("/api/careers", careersRoutes);
+app.use("/api/admin/careers", adminCareersRoutes);
 
 // Health Route
 app.get("/", (req, res) => {

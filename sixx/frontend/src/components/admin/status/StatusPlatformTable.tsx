@@ -1,4 +1,4 @@
-import { Pencil, RefreshCw } from "lucide-react";
+import { Pencil, Plus, RefreshCw } from "lucide-react";
 
 import type { PlatformStatusRecord } from "../../../types/status";
 
@@ -6,6 +6,7 @@ interface StatusPlatformTableProps {
   platforms: PlatformStatusRecord[];
   onEdit: (platform: PlatformStatusRecord) => void;
   onRefresh?: () => void;
+  onAdd?: () => void;
 }
 
 const statusStyles = {
@@ -21,6 +22,7 @@ export default function StatusPlatformTable({
   platforms,
   onEdit,
   onRefresh,
+  onAdd,
 }: StatusPlatformTableProps) {
   return (
     <section
@@ -42,6 +44,18 @@ export default function StatusPlatformTable({
             Platform Status
           </h2>
         </div>
+
+        <div className="flex gap-3">
+          {onAdd && (
+            <button
+              type="button"
+              onClick={onAdd}
+              className="inline-flex w-fit items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-neutral-200"
+            >
+              <Plus className="h-4 w-4" />
+              Add Platform
+            </button>
+          )}
 
         {onRefresh && (
           <button
@@ -69,6 +83,7 @@ export default function StatusPlatformTable({
             Refresh
           </button>
         )}
+        </div>
       </div>
 
       {platforms.length === 0 ? (
@@ -108,6 +123,19 @@ export default function StatusPlatformTable({
                   <p className="mt-1 text-sm text-neutral-500">
                     {platform.description}
                   </p>
+
+                  {platform.incidents?.find(
+                    (incident) => incident.status !== "resolved",
+                  ) && (
+                    <p className="mt-2 text-xs text-amber-300">
+                      Active incident:{" "}
+                      {
+                        platform.incidents.find(
+                          (incident) => incident.status !== "resolved",
+                        )?.title
+                      }
+                    </p>
+                  )}
                 </div>
 
                 <div className="text-sm text-neutral-400">

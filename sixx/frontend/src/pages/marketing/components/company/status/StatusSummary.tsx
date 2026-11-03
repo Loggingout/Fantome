@@ -1,109 +1,140 @@
 import { motion } from "framer-motion";
-import { Activity } from "lucide-react";
-
-import type {
-  PlatformStatusRecord,
-  PlatformStatus,
-} from "../../../data/status.data";
 import {
-  statusDefinitions,
-  statusPageContent,
-} from "../../../data/status.data";
+  CheckCircle2,
+  AlertTriangle,
+  Wrench,
+  XCircle,
+  CircleDashed,
+  Code2,
+} from "lucide-react";
+
+import type { PlatformStatusRecord } from "../../../../../types/status";
 
 interface StatusSummaryProps {
   platforms: PlatformStatusRecord[];
+  isLoading?: boolean;
 }
 
-const statusOrder: PlatformStatus[] = [
-  "outage",
-  "degraded",
-  "maintenance",
-  "unknown",
-  "operational",
-];
+const statusPresentation = {
+  operational: {
+    label: "All Systems Operational",
+    icon: CheckCircle2,
+    color: "text-emerald-500",
+    background: "bg-emerald-500/10",
+  },
+  degraded: {
+    label: "Performance Issues Detected",
+    icon: AlertTriangle,
+    color: "text-amber-500",
+    background: "bg-amber-500/10",
+  },
+  maintenance: {
+    label: "Scheduled Maintenance",
+    icon: Wrench,
+    color: "text-blue-500",
+    background: "bg-blue-500/10",
+  },
+  outage: {
+    label: "Service Disruption Detected",
+    icon: XCircle,
+    color: "text-red-500",
+    background: "bg-red-500/10",
+  },
+  unknown: {
+    label: "Status Currently Unavailable",
+    icon: CircleDashed,
+    color: "text-neutral-500",
+    background: "bg-neutral-800",
+  },
+  being_developed: {
+    label: "Platforms In Development",
+    icon: Code2,
+    color: "text-violet-400",
+    background: "bg-violet-500/10",
+  },
+};
 
 function getOverallStatus(
   platforms: PlatformStatusRecord[],
-): PlatformStatus {
+): keyof typeof statusPresentation {
   if (platforms.length === 0) {
     return "unknown";
   }
 
-  for (const status of statusOrder) {
-    if (platforms.some((platform) => platform.status === status)) {
-      return status;
-    }
-  }
+  const priority: Array<keyof typeof statusPresentation> = [
+    "outage",
+    "degraded",
+    "maintenance",
+    "unknown",
+    "being_developed",
+    "operational",
+  ];
 
-  return "unknown";
+  return (
+    priority.find((status) =>
+      platforms.some((platform) => platform.status === status),
+    ) ?? "unknown"
+  );
 }
 
 export default function StatusSummary({
   platforms,
+  isLoading = false,
 }: StatusSummaryProps) {
-  const { summary } = statusPageContent;
   const overallStatus = getOverallStatus(platforms);
-  const definition = statusDefinitions[overallStatus];
-  const Icon = definition.icon;
+  const presentation = statusPresentation[overallStatus];
+  const Icon = presentation.icon;
+
+  const label = isLoading
+    ? "Checking Ecosystem Status..."
+    : presentation.label;
+
+  const description = isLoading
+    ? "Retrieving live platform information"
+    : `${platforms.length} monitored platform${platforms.length === 1 ? "" : "s"}`;
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-16">
+    <section className="mx-auto mt-8 w-full max-w-[850px] px-5 sm:px-8">
       <motion.div
         className="
-          rounded-3xl
+          flex
+          min-h-[92px]
+          items-center
+          gap-4
+          rounded-xl
           border
-          border-neutral-800
+          border-neutral-700
           bg-neutral-900
-          p-8
-          sm:p-10
+          px-6
+          py-6
+          shadow-[0_12px_35px_rgba(0,0,0,0.35)]
+          sm:px-9
         "
-        initial={{ opacity: 0, y: 28 }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-          transition: {
-            duration: 0.6,
-            ease: [0.42, 0, 0.58, 1],
-          },
-        }}
-        viewport={{ once: true, amount: 0.2 }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.15 }}
+        aria-live="polite"
       >
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-2xl">
-            <span className="text-xs tracking-widest uppercase text-neutral-500">
-              {summary.eyebrow}
-            </span>
+        <span
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+            isLoading ? "bg-neutral-800" : presentation.background
+          }`}
+        >
+          <Icon
+            className={`h-6 w-6 ${
+              isLoading ? "text-neutral-500" : presentation.color
+            }`}
+          />
+        </span>
 
-            <h2 className="mt-3 text-3xl sm:text-4xl font-semibold text-white">
-              {summary.title}
-            </h2>
+        <div className="min-w-0">
+          <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
+            {label}
+          </h2>
 
-            <p className="mt-4 text-sm sm:text-base leading-relaxed text-neutral-400">
-              {summary.description}
-            </p>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-950 px-5 py-4">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900">
-              <Icon className="h-5 w-5 text-neutral-300" />
-            </div>
-
-            <div>
-              <p className="text-xs uppercase tracking-widest text-neutral-600">
-                Ecosystem
-              </p>
-
-              <p className="mt-1 text-sm font-semibold text-white">
-                {definition.label}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 flex items-center gap-2 text-xs text-neutral-600">
-          <Activity className="h-3.5 w-3.5" />
-          {platforms.length} platform
-          {platforms.length === 1 ? "" : "s"} monitored
+          <p className="mt-1 text-xs text-neutral-500">
+            {description}
+          </p>
         </div>
       </motion.div>
     </section>

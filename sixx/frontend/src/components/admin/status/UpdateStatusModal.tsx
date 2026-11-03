@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 import type {
+  IncidentStatus,
   PlatformStatus,
   PlatformStatusRecord,
   StatusUpdatePayload,
@@ -56,14 +57,25 @@ export default function UpdateStatusModal({
 }: UpdateStatusModalProps) {
   const [status, setStatus] = useState<PlatformStatus>("unknown");
   const [message, setMessage] = useState("");
+  const [incidentTitle, setIncidentTitle] = useState("");
+  const [incidentMessage, setIncidentMessage] = useState("");
+  const [incidentStatus, setIncidentStatus] =
+    useState<IncidentStatus>("investigating");
 
   useEffect(() => {
     if (!platform) {
       return;
     }
 
+    const activeIncident = platform.incidents?.find(
+      (incident) => incident.status !== "resolved",
+    );
+
     setStatus(platform.status);
     setMessage(platform.message ?? "");
+    setIncidentTitle(activeIncident?.title ?? "");
+    setIncidentMessage(activeIncident?.message ?? "");
+    setIncidentStatus(activeIncident?.status ?? "investigating");
   }, [platform]);
 
   useEffect(() => {
@@ -96,6 +108,14 @@ export default function UpdateStatusModal({
     await onSubmit({
       status,
       message: message.trim() || undefined,
+      incident:
+        incidentTitle.trim() || incidentMessage.trim()
+          ? {
+              title: incidentTitle.trim() || undefined,
+              message: incidentMessage.trim(),
+              status: incidentStatus,
+            }
+          : undefined,
     });
   };
 
@@ -241,6 +261,43 @@ export default function UpdateStatusModal({
                 disabled:opacity-50
               "
             />
+          </div>
+
+          <div className="space-y-4 rounded-xl border border-neutral-800 p-4">
+            <p className="text-xs uppercase tracking-widest text-neutral-500">
+              Incident
+            </p>
+
+            <input
+              value={incidentTitle}
+              onChange={(event) => setIncidentTitle(event.target.value)}
+              disabled={isSaving}
+              placeholder="Incident title"
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none placeholder:text-neutral-600 focus:border-neutral-600"
+            />
+
+            <textarea
+              value={incidentMessage}
+              onChange={(event) => setIncidentMessage(event.target.value)}
+              disabled={isSaving}
+              rows={3}
+              placeholder="Incident message displayed on the status page."
+              className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none placeholder:text-neutral-600 focus:border-neutral-600"
+            />
+
+            <select
+              value={incidentStatus}
+              onChange={(event) =>
+                setIncidentStatus(event.target.value as IncidentStatus)
+              }
+              disabled={isSaving}
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-neutral-600"
+            >
+              <option value="investigating">Investigating</option>
+              <option value="identified">Identified</option>
+              <option value="monitoring">Monitoring</option>
+              <option value="resolved">Resolved</option>
+            </select>
           </div>
 
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import SEOHead from "../../components/SEOHead";
@@ -6,6 +6,7 @@ import Navbar from "../../components/header/Navbar";
 import Footer from "../../components/footer/Footer";
 import BookingForm from "../../components/forms/BookingForm";
 import LoginForm from "../../components/auth/LoginForm";
+import { useUser } from "../../components/context/UserContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -19,6 +20,11 @@ const fadeUp = {
 export default function LoginPage() {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
+  const { user } = useUser();
+
+  if (user) {
+    return <Navigate to={user.role === "admin" ? "/admin" : "/employee"} replace />;
+  }
 
   const handleLogin = (email: string, password: string) => {
     // Wire your auth logic here

@@ -60,7 +60,7 @@ export const newsletterFaqs = [
   {
     question: "What will I receive?",
     answer:
-      "You’ll receive an email only when a new Fantome Technologies blog post is published.",
+      "You’ll receive an email when a new Fantome Technologies blog post is published or a platform’s status changes.",
   },
   {
     question: "How often will emails be sent?",

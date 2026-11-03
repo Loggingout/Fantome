@@ -66,7 +66,10 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Careers",
     icon: IdCardLanyard,
-    path: "/",
+    children: [
+      { label: "Job Listings", path: "/admin/careers" },
+      { label: "Applicants", path: "/admin/careers/applicants" },
+    ],
   },
   {
     label: "Employees",

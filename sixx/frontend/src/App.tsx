@@ -17,6 +17,7 @@ import TheMissionPage from "./pages/marketing/pages/TheMissionPage";
 import JoinTheTeamPage from "./pages/marketing/pages/JoinTheTeamPage";
 import MakingADifferencePage from "./pages/marketing/pages/MakingADifferencePage";
 import StatusPage from "./pages/marketing/pages/StatusPage";
+import StatusHistoryPage from "./pages/marketing/pages/StatusHistoryPage";
 import GrowthAndImpactPage from "./pages/marketing/pages/GrowthAndImpactPage";
 
 // Auth
@@ -75,6 +76,8 @@ import SettingsDeleteEmployee from "./pages/admin/settings/DeleteEmployeePage";
 import SettingsManageRoles from "./pages/admin/settings/ManageRolesPage";
 import SettingsSystem from "./pages/admin/settings/SystemsPreferencesPage";
 import StatusManagementPage from "./pages/admin/status/StatusManagementPage";
+import CareersManagementPage from "./pages/admin/careers/CareersManagementPage";
+import ApplicantsPage from "./pages/admin/careers/ApplicantsPage";
 import WebsiteAnalyticsPage from "./pages/admin/analytics/WebsiteAnalyticsPage";
 import ContactPage from "./pages/marketing/pages/ContactPage";
 import { Navigate } from "react-router-dom";
@@ -102,6 +105,7 @@ function App() {
         <Route path="/making-a-difference" element={<MakingADifferencePage />} />
         <Route path="/newsletter" element={<NewsletterPage />} />
         <Route path="/status" element={<StatusPage />} />
+        <Route path="/status/history" element={<StatusHistoryPage />} />
         <Route path="/growth-and-impact" element={<GrowthAndImpactPage />} />
 
         {/* ============================
@@ -150,6 +154,8 @@ function App() {
           <Route path="settings/manage-roles" element={<SettingsManageRoles />} />
           <Route path="settings/system" element={<SettingsSystem />} />
           <Route path="status" element={<StatusManagementPage />} />
+          <Route path="careers" element={<CareersManagementPage />} />
+          <Route path="careers/applicants" element={<ApplicantsPage />} />
 
           {/* Catch unregistered admin paths — redirect to dashboard instead of empty shell */}
           <Route path="*" element={<Navigate to="/admin" replace />} />

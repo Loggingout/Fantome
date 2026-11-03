@@ -1,48 +1,64 @@
 import { motion } from "framer-motion";
-
-import { statusPageContent } from "../../../data/status.data";
-
-const fadeUp = {
-  hidden: {
-    opacity: 0,
-    y: 28,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.42, 0, 0.58, 1],
-    },
-  },
-};
+import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 
 export default function StatusHero() {
-  const { hero } = statusPageContent;
-
   return (
-    <motion.section
-      className="max-w-6xl mx-auto px-6 pt-24 pb-16 text-center"
-      initial="hidden"
-      animate="visible"
-      variants={fadeUp}
-    >
-      <span className="inline-block mb-5 px-4 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400 text-xs tracking-widest uppercase">
-        {hero.eyebrow}
-      </span>
+    <header className="rounded-t-[28px] border-b border-neutral-800 bg-neutral-950 px-6 py-7 text-white sm:px-10">
+      <motion.div
+        className="mx-auto flex max-w-5xl items-center justify-between gap-5"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Link
+          to="/"
+          className="group flex items-center gap-3"
+          aria-label="Fantome Technologies homepage"
+        >
+          <img
+            src="/new-logo.png"
+            alt="Fantome Technologies"
+            className="h-10 w-auto object-contain"
+          />
 
-      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white mb-6">
-        Ecosystem{" "}
-        <span className="text-neutral-400 font-normal italic">
-          Status
-        </span>
-      </h1>
+          <div className="hidden sm:block">
+            <p className="text-sm font-semibold tracking-wide text-white">
+              Fantome Technologies
+            </p>
 
-      <p className="text-neutral-400 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-        {hero.description}
-      </p>
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+              Ecosystem Status
+            </p>
+          </div>
+        </Link>
 
-      <div className="mt-12 mx-auto w-16 h-px bg-neutral-700" />
-    </motion.section>
+        <Link
+          to="/newsletter"
+          className="
+            inline-flex
+            items-center
+            gap-2
+            rounded-lg
+            border
+            border-neutral-700
+            bg-neutral-900
+            px-4
+            py-2.5
+            text-xs
+            font-semibold
+            text-neutral-300
+            transition-all
+            duration-300
+            hover:border-neutral-600
+            hover:bg-neutral-800
+            hover:text-white
+          "
+        >
+          Get Updates
+          <ArrowUpRight className="h-3.5 w-3.5" />
+        </Link>
+      </motion.div>
+    </header>
   );
 }

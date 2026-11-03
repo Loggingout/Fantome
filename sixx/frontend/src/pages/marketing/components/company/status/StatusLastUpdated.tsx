@@ -1,4 +1,5 @@
-import { RefreshCw } from "lucide-react";
+import { ArrowUpRight, Clock3 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface StatusLastUpdatedProps {
   lastUpdated?: string;
@@ -10,27 +11,37 @@ export default function StatusLastUpdated({
   isLoading = false,
 }: StatusLastUpdatedProps) {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-6 pb-16">
-      <div className="flex flex-col gap-3 border-t border-neutral-800 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-neutral-600">
-            Status Feed
+    <footer className="mx-auto max-w-5xl border-t border-neutral-800 px-5 py-7 sm:px-8">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-5">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-xs font-medium text-neutral-400 transition hover:text-white"
+          >
+            <ArrowUpRight className="h-4 w-4" />
+            Visit Website
+          </Link>
+        </div>
+
+        <div className="flex flex-col gap-2 sm:items-end">
+          <p className="text-xs text-neutral-500">
+            Powered by{" "}
+            <span className="font-semibold text-neutral-300">
+              Fantome Technologies
+            </span>
           </p>
 
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="inline-flex items-center gap-2 text-[11px] text-neutral-600">
+            <Clock3 className="h-3 w-3" />
+
             {isLoading
-              ? "Retrieving current ecosystem status..."
+              ? "Retrieving status..."
               : lastUpdated
                 ? `Last updated ${lastUpdated}`
-                : "Waiting for live status data."}
+                : "Update time unavailable"}
           </p>
         </div>
-
-        <div className="flex items-center gap-2 text-xs text-neutral-600">
-          <RefreshCw className="h-3.5 w-3.5" />
-          Backend monitored
-        </div>
       </div>
-    </section>
+    </footer>
   );
 }

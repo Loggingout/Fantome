@@ -5,6 +5,32 @@ import {
   Users,
 } from "lucide-react";
 
+// Job listing types
+export type JobEmploymentType =
+  | "Full-time"
+  | "Part-time"
+  | "Contract"
+  | "Internship"
+  | "Temporary";
+
+export type JobWorkplaceType =
+  | "Remote"
+  | "Hybrid"
+  | "On-site";
+
+export interface JobListing {
+  id: string;
+  title: string;
+  department: string;
+  employmentType: JobEmploymentType;
+  workplaceType: JobWorkplaceType;
+  location: string;
+  summary: string;
+  applicationUrl?: string;
+  applicationLabel?: string;
+}
+
+// Hero
 export const joinTheTeamHero = {
   eyebrow: "Join the Team",
   title: "Build With Fantome Technologies",
@@ -12,6 +38,7 @@ export const joinTheTeamHero = {
     "Be part of the people building, operating, securing, and growing the technology ecosystem behind Fantome Technologies.",
 };
 
+// Introduction
 export const joinTheTeamIntro = {
   eyebrow: "People Behind the Ecosystem",
   title: "More Than a Job",
@@ -19,6 +46,7 @@ export const joinTheTeamIntro = {
     "Fantome Technologies is building an ecosystem of technology products, platforms, infrastructure, and ideas. That work depends on people who want to contribute to what we're building and grow alongside it.",
 };
 
+// Areas of opportunity
 export const joinTheTeamOpportunities = [
   {
     icon: Code2,
@@ -46,6 +74,7 @@ export const joinTheTeamOpportunities = [
   },
 ];
 
+// Team values
 export const joinTheTeamValues = [
   {
     title: "Build",
@@ -66,3 +95,6 @@ export const joinTheTeamValues = [
     tag: "03",
   },
 ];
+
+// Open job listings
+export const joinTheTeamJobs: JobListing[] = [];

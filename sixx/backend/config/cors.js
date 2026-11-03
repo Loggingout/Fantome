@@ -63,6 +63,7 @@ export const corsMiddleware = (req, res, next) => {
       "Access-Control-Allow-Headers",
       "Content-Type,Authorization,Accept"
     );
+    res.setHeader("Access-Control-Expose-Headers", "X-Refreshed-Token");
 
     if (req.method === "OPTIONS") {
       return res.sendStatus(200);

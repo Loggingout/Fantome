@@ -3,13 +3,16 @@ import { useCallback, useEffect, useState } from "react";
 import StatusOverview from "../../../components/admin/status/StatusOverview";
 import StatusPlatformTable from "../../../components/admin/status/StatusPlatformTable";
 import UpdateStatusModal from "../../../components/admin/status/UpdateStatusModal";
+import AddPlatformModal from "../../../components/admin/status/AddPlatformModal";
 
 import type {
+  CreatePlatformPayload,
   PlatformStatusRecord,
   StatusUpdatePayload,
 } from "../../../types/status";
 
 import {
+  createPlatform,
   getPlatformStatuses,
   updatePlatformStatus,
 } from "../../../services/statusService";
@@ -23,6 +26,7 @@ export default function StatusManagementPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadStatuses = useCallback(async () => {
@@ -47,6 +51,28 @@ export default function StatusManagementPage() {
   useEffect(() => {
     void loadStatuses();
   }, [loadStatuses]);
+
+  const handleCreatePlatform = async (
+    payload: CreatePlatformPayload,
+  ) => {
+    try {
+      setError(null);
+      setIsSaving(true);
+
+      const created = await createPlatform(payload);
+
+      setPlatforms((current) => [...current, created]);
+      setIsAddOpen(false);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to add platform.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleUpdateStatus = async (
     payload: StatusUpdatePayload,
@@ -123,9 +149,21 @@ export default function StatusManagementPage() {
             platforms={platforms}
             onEdit={setSelectedPlatform}
             onRefresh={() => void loadStatuses()}
+            onAdd={() => setIsAddOpen(true)}
           />
         </>
       )}
+
+      <AddPlatformModal
+        isOpen={isAddOpen}
+        onClose={() => {
+          if (!isSaving) {
+            setIsAddOpen(false);
+          }
+        }}
+        onSubmit={handleCreatePlatform}
+        isSaving={isSaving}
+      />
 
       <UpdateStatusModal
         isOpen={Boolean(selectedPlatform)}

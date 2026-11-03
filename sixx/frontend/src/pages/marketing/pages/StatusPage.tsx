@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 
-import Navbar from "../../../components/header/Navbar";
-import Footer from "../../../components/footer/Footer";
-
 import StatusHero from "../components/company/status/StatusHero";
 import StatusSummary from "../components/company/status/StatusSummary";
 import StatusIncidentBanner from "../components/company/status/StatusIncidentBanner";
@@ -23,7 +20,10 @@ export default function StatusPage() {
 
     getPublicPlatformStatuses()
       .then((records) => {
-        if (isCurrent) setPlatforms(records);
+        if (isCurrent) {
+          setPlatforms(records);
+          setError(null);
+        }
       })
       .catch(() => {
         if (isCurrent) {
@@ -31,7 +31,9 @@ export default function StatusPage() {
         }
       })
       .finally(() => {
-        if (isCurrent) setIsLoading(false);
+        if (isCurrent) {
+          setIsLoading(false);
+        }
       });
 
     return () => {
@@ -41,21 +43,34 @@ export default function StatusPage() {
 
   const latestUpdatedAt = platforms
     .map((platform) => platform.updatedAt)
-    .filter((updatedAt): updatedAt is string => Boolean(updatedAt))
-    .sort((left, right) => Date.parse(right) - Date.parse(left))[0];
+    .filter(
+      (updatedAt): updatedAt is string =>
+        Boolean(updatedAt) &&
+        !Number.isNaN(Date.parse(updatedAt)),
+    )
+    .sort(
+      (left, right) =>
+        Date.parse(right) - Date.parse(left),
+    )[0];
 
   const lastUpdated = latestUpdatedAt
-    ? new Date(latestUpdatedAt).toLocaleString()
+    ? new Date(latestUpdatedAt).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })
     : undefined;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
+    <div className="min-h-screen bg-neutral-950 px-4 py-6 text-white sm:px-6 sm:py-10">
       <Helmet>
         <title>Status | Fantome Technologies</title>
 
         <meta
           name="description"
-          content="View the current status of platforms and services within the Fantome Technologies ecosystem."
+          content="View the current status, uptime history, and recent incidents across the Fantome Technologies ecosystem."
         />
 
         <meta name="robots" content="index, follow" />
@@ -67,7 +82,7 @@ export default function StatusPage() {
 
         <meta
           property="og:description"
-          content="View the current status of platforms and services within the Fantome Technologies ecosystem."
+          content="View the current status, uptime history, and recent incidents across the Fantome Technologies ecosystem."
         />
 
         <meta property="og:type" content="website" />
@@ -91,7 +106,7 @@ export default function StatusPage() {
 
         <meta
           name="twitter:description"
-          content="View the current status of platforms and services within the Fantome Technologies ecosystem."
+          content="View the current status, uptime history, and recent incidents across the Fantome Technologies ecosystem."
         />
 
         <meta
@@ -105,30 +120,51 @@ export default function StatusPage() {
         />
       </Helmet>
 
-      <Navbar />
-
-      <main>
+      <div
+        className="
+          mx-auto
+          max-w-6xl
+          overflow-hidden
+          rounded-[28px]
+          border
+          border-neutral-800
+          bg-neutral-900
+          shadow-[0_20px_70px_rgba(0,0,0,0.4)]
+        "
+      >
         <StatusHero />
 
-        {error && (
-          <div
-            role="status"
-            className="mx-auto max-w-6xl px-6 pt-6 text-sm text-amber-300"
-          >
-            {error}
+        <main>
+          <StatusSummary
+            platforms={platforms}
+            isLoading={isLoading}
+          />
+
+          {error && (
+            <div className="mx-auto mt-6 max-w-5xl px-5 sm:px-8">
+              <div
+                role="alert"
+                className="rounded-xl border border-amber-900/40 bg-amber-950/20 px-5 py-4"
+              >
+                <p className="text-sm text-amber-300">
+                  {error}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <StatusPlatformGrid platforms={platforms} />
+
+          <StatusIncidentBanner platforms={platforms} />
+
+          <div className="px-5 sm:px-8">
+            <StatusLastUpdated
+              lastUpdated={lastUpdated}
+              isLoading={isLoading}
+            />
           </div>
-        )}
-
-        <StatusSummary platforms={platforms} />
-
-        <StatusIncidentBanner platforms={platforms} />
-
-        <StatusPlatformGrid platforms={platforms} />
-
-        <StatusLastUpdated lastUpdated={lastUpdated} isLoading={isLoading} />
-      </main>
-
-      <Footer />
+        </main>
+      </div>
     </div>
   );
 }

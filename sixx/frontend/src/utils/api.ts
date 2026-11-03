@@ -59,6 +59,15 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Sliding session: the backend sends a fresh token to active users.
+api.interceptors.response.use((response) => {
+  const refreshed = response.headers?.["x-refreshed-token"];
+  if (refreshed && localStorage.getItem("token")) {
+    localStorage.setItem("token", refreshed);
+  }
+  return response;
+});
+
 // Token helpers
 export const setAuthToken = (token: string) => {
   if (token) localStorage.setItem("token", token);

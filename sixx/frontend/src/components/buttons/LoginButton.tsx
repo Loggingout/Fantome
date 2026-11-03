@@ -2,9 +2,10 @@ import { LogIn } from "lucide-react";
 
 interface LoginButtonProps {
   onClick: () => void;
+  label?: string;
 }
 
-export default function LoginButton({ onClick }: LoginButtonProps) {
+export default function LoginButton({ onClick, label = "Company Login" }: LoginButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -21,7 +22,7 @@ export default function LoginButton({ onClick }: LoginButtonProps) {
       "
     >
       <LogIn className="w-4 h-4" />
-      <span>Company Login</span>
+      <span>{label}</span>
     </button>
   );
 }

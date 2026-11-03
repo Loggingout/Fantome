@@ -16,7 +16,7 @@ export default function PlatformsVision() {
           </p>
 
           <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            One platform is only the beginning.
+          Two platforms are only the beginning.
           </h2>
 
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-neutral-400">
