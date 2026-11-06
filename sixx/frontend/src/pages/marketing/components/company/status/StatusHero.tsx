@@ -4,9 +4,9 @@ import { ArrowUpRight } from "lucide-react";
 
 export default function StatusHero() {
   return (
-    <header className="rounded-t-[28px] border-b border-neutral-800 bg-neutral-950 px-6 py-7 text-white sm:px-10">
+    <header className="border-b border-neutral-800 bg-neutral-950 px-4 py-5 text-white sm:rounded-t-[28px] sm:px-10 sm:py-7">
       <motion.div
-        className="mx-auto flex max-w-5xl items-center justify-between gap-5"
+        className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 sm:gap-5"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -19,7 +19,7 @@ export default function StatusHero() {
           <img
             src="/new-logo.png"
             alt="Fantome Technologies"
-            className="h-10 w-auto object-contain"
+            className="h-9 w-auto object-contain sm:h-10"
           />
 
           <div className="hidden sm:block">
@@ -37,13 +37,14 @@ export default function StatusHero() {
           to="/newsletter"
           className="
             inline-flex
+            shrink-0
             items-center
             gap-2
             rounded-lg
             border
             border-neutral-700
             bg-neutral-900
-            px-4
+            px-3
             py-2.5
             text-xs
             font-semibold
@@ -53,6 +54,7 @@ export default function StatusHero() {
             hover:border-neutral-600
             hover:bg-neutral-800
             hover:text-white
+            sm:px-4
           "
         >
           Get Updates

@@ -13,6 +13,7 @@ import type {
 
 import {
   createPlatform,
+  deletePlatformStatus,
   getPlatformStatuses,
   updatePlatformStatus,
 } from "../../../services/statusService";
@@ -27,6 +28,7 @@ export default function StatusManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const loadStatuses = useCallback(async () => {
@@ -110,6 +112,27 @@ export default function StatusManagementPage() {
     }
   };
 
+  const handleDeletePlatform = async (platform: PlatformStatusRecord) => {
+    if (!window.confirm(`Delete the status for "${platform.name}"? This also removes its incident history.`)) {
+      return;
+    }
+
+    try {
+      setError(null);
+      setDeletingId(platform.id);
+      await deletePlatformStatus(platform.id);
+      setPlatforms((current) => current.filter((item) => item.id !== platform.id));
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to delete platform status.",
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -148,6 +171,8 @@ export default function StatusManagementPage() {
           <StatusPlatformTable
             platforms={platforms}
             onEdit={setSelectedPlatform}
+            onDelete={(platform) => void handleDeletePlatform(platform)}
+            deletingId={deletingId}
             onRefresh={() => void loadStatuses()}
             onAdd={() => setIsAddOpen(true)}
           />

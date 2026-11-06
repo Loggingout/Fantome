@@ -79,6 +79,7 @@ import StatusManagementPage from "./pages/admin/status/StatusManagementPage";
 import CareersManagementPage from "./pages/admin/careers/CareersManagementPage";
 import ApplicantsPage from "./pages/admin/careers/ApplicantsPage";
 import WebsiteAnalyticsPage from "./pages/admin/analytics/WebsiteAnalyticsPage";
+import NewsletterAnalyticsPage from "./pages/admin/analytics/NewsletterAnalyticsPage";
 import ContactPage from "./pages/marketing/pages/ContactPage";
 import { Navigate } from "react-router-dom";
 
@@ -125,6 +126,7 @@ function App() {
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="analytics/tasks" element={<TaskAnalyticsPage />} />
           <Route path="analytics/website" element={<WebsiteAnalyticsPage />} />
+          <Route path="newsletter" element={<NewsletterAnalyticsPage />} />
           <Route path="employees" element={<EmployeeManagementPage />} />
           <Route path="employees/add" element={<AddEmployeePage />} />
           <Route path="employees/roles" element={<EmployeeRolesPage />} />

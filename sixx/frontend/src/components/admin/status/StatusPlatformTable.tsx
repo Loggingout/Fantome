@@ -1,4 +1,5 @@
-import { Pencil, Plus, RefreshCw } from "lucide-react";
+import { ExternalLink, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import type { PlatformStatusRecord } from "../../../types/status";
 
@@ -7,6 +8,8 @@ interface StatusPlatformTableProps {
   onEdit: (platform: PlatformStatusRecord) => void;
   onRefresh?: () => void;
   onAdd?: () => void;
+  onDelete: (platform: PlatformStatusRecord) => void;
+  deletingId?: string | null;
 }
 
 const statusStyles = {
@@ -23,6 +26,8 @@ export default function StatusPlatformTable({
   onEdit,
   onRefresh,
   onAdd,
+  onDelete,
+  deletingId,
 }: StatusPlatformTableProps) {
   return (
     <section
@@ -45,7 +50,17 @@ export default function StatusPlatformTable({
           </h2>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Link
+            to="/status"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-fit items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-sm font-medium text-neutral-200 transition hover:bg-neutral-700 sm:px-4"
+          >
+            <ExternalLink className="h-4 w-4" />
+            View Status Page
+          </Link>
+
           {onAdd && (
             <button
               type="button"
@@ -152,7 +167,7 @@ export default function StatusPlatformTable({
                   </span>
                 </div>
 
-                <div>
+                <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => onEdit(platform)}
@@ -175,6 +190,16 @@ export default function StatusPlatformTable({
                   >
                     <Pencil className="h-4 w-4" />
                     Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(platform)}
+                    disabled={deletingId === platform.id}
+                    aria-label={`Delete ${platform.name}`}
+                    className="inline-flex items-center gap-2 rounded-xl border border-red-900/40 bg-neutral-950 px-3 py-2 text-sm text-red-300 transition hover:bg-red-950/30 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {deletingId === platform.id ? "Deleting..." : "Delete"}
                   </button>
                 </div>
               </div>

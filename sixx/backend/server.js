@@ -20,6 +20,7 @@ import statusRoutes from "./routes/statusRoutes.js";
 import adminStatusRoutes from "./routes/adminStatusRoutes.js";
 import careersRoutes from "./routes/careersRoutes.js";
 import adminCareersRoutes from "./routes/adminCareersRoutes.js";
+import adminNewsletterRoutes from "./routes/adminNewsletterRoutes.js";
 
 import { startShiftReminderJob } from "./services/shiftReminderService.js";
 import { startBlogPublisher } from "./services/blogPublisherService.js";
@@ -61,6 +62,7 @@ app.use("/api/status", statusRoutes);
 app.use("/api/admin/status", adminStatusRoutes);
 app.use("/api/careers", careersRoutes);
 app.use("/api/admin/careers", adminCareersRoutes);
+app.use("/api/admin/newsletter", adminNewsletterRoutes);
 
 // Health Route
 app.get("/", (req, res) => {

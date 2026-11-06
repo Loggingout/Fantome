@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createPlatform,
+  deletePlatformStatus,
   getAdminStatuses,
   updatePlatformStatus,
 } from "../controllers/statusController.js";
@@ -12,5 +13,6 @@ router.use(protect, adminOnly);
 router.get("/", getAdminStatuses);
 router.post("/", createPlatform);
 router.patch("/:id", updatePlatformStatus);
+router.delete("/:id", deletePlatformStatus);
 
 export default router;

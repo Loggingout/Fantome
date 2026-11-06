@@ -48,7 +48,6 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Website analytics", path: "/admin/analytics/website" },
       { label: "Opened Blog Posts Analytics", path: "/" },
-      { label: "Newsletter Analytics", path: "/" },
       
     ],
   },
@@ -106,7 +105,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Newsletter",
     icon: Mailbox,
-    path: "*",
+    path: "/admin/newsletter",
   },
   {
     label: "Status",

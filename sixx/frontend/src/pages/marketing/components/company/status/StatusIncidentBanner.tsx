@@ -100,7 +100,7 @@ export default function StatusIncidentBanner({
       id="recent-incidents"
       className="mx-auto max-w-5xl scroll-mt-8 px-5 pb-14 sm:px-8"
     >
-      <div className="mb-7 flex items-end justify-between gap-4">
+      <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div>
           <h2 className="text-xl font-semibold text-white">
             Recent Incidents
@@ -113,14 +113,14 @@ export default function StatusIncidentBanner({
 
         <Link
           to="/status/history"
-          className="shrink-0 text-xs font-medium text-neutral-300 hover:text-white"
+          className="w-fit text-xs font-medium text-neutral-300 hover:text-white"
         >
           View incident history
         </Link>
       </div>
 
       {incidents.length === 0 ? (
-        <div className="flex min-h-[110px] items-center justify-center rounded-2xl border border-neutral-800 bg-neutral-900 px-6 py-8">
+        <div className="flex min-h-27.5 items-center justify-center rounded-2xl border border-neutral-800 bg-neutral-900 px-6 py-8">
           <div className="flex items-center gap-3">
             <CheckCircle2 className="h-5 w-5 text-emerald-500" />
 
@@ -149,7 +149,7 @@ export default function StatusIncidentBanner({
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-semibold text-white">
+                    <h3 className="wrap-break-word text-sm font-semibold text-white">
                       {incident.title}
                     </h3>
 
@@ -170,7 +170,7 @@ export default function StatusIncidentBanner({
               </div>
 
               {incident.message && (
-                <p className="mt-4 text-sm leading-relaxed text-neutral-400">
+                <p className="mt-4 wrap-break-word text-sm leading-relaxed text-neutral-400">
                   {incident.message}
                 </p>
               )}

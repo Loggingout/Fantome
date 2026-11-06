@@ -45,7 +45,8 @@ export default function StatusPage() {
     .map((platform) => platform.updatedAt)
     .filter(
       (updatedAt): updatedAt is string =>
-        Boolean(updatedAt) &&
+        typeof updatedAt === "string" &&
+        updatedAt.length > 0 &&
         !Number.isNaN(Date.parse(updatedAt)),
     )
     .sort(
@@ -64,7 +65,7 @@ export default function StatusPage() {
     : undefined;
 
   return (
-    <div className="min-h-screen bg-neutral-950 px-4 py-6 text-white sm:px-6 sm:py-10">
+    <div className="min-h-screen bg-neutral-950 px-3 py-4 text-white sm:px-6 sm:py-10">
       <Helmet>
         <title>Status | Fantome Technologies</title>
 
@@ -125,11 +126,12 @@ export default function StatusPage() {
           mx-auto
           max-w-6xl
           overflow-hidden
-          rounded-[28px]
+          rounded-2xl
           border
           border-neutral-800
           bg-neutral-900
           shadow-[0_20px_70px_rgba(0,0,0,0.4)]
+          sm:rounded-[28px]
         "
       >
         <StatusHero />

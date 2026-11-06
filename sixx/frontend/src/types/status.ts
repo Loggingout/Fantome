@@ -49,6 +49,7 @@ export interface PlatformStatusRecord {
 }
 
 export interface StatusUpdatePayload {
+  name: string;
   status: PlatformStatus;
   message?: string;
   incident?: {

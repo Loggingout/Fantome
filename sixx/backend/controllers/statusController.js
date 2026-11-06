@@ -253,7 +253,11 @@ export async function createPlatform(req, res) {
 }
 
 export async function updatePlatformStatus(req, res) {
-  const { status, message, incident } = req.body ?? {};
+  const { name, status, message, incident } = req.body ?? {};
+
+  if (typeof name !== "string" || !name.trim() || name.trim().length > 120) {
+    return res.status(400).json({ message: "Platform name is required and must be 120 characters or fewer." });
+  }
 
   if (!VALID_STATUSES.has(status)) {
     return res.status(400).json({ message: "A valid platform status is required." });
@@ -273,6 +277,7 @@ export async function updatePlatformStatus(req, res) {
     const previousStatus = platform.status;
     const previousMessage = platform.message;
 
+    platform.name = name.trim();
     platform.status = status;
     platform.message = message?.trim() ?? "";
     platform.updatedBy = req.user.email || req.user._id.toString();
@@ -299,5 +304,20 @@ export async function updatePlatformStatus(req, res) {
   } catch (error) {
     console.error("updatePlatformStatus error:", error);
     return res.status(500).json({ message: "Unable to update platform status." });
+  }
+}
+
+export async function deletePlatformStatus(req, res) {
+  try {
+    const platform = await StatusPlatform.findOneAndDelete({ slug: req.params.id });
+
+    if (!platform) {
+      return res.status(404).json({ message: "Platform status not found." });
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("deletePlatformStatus error:", error);
+    return res.status(500).json({ message: "Unable to delete platform status." });
   }
 }

@@ -31,7 +31,7 @@ export default function UptimeHistoryBar({
   return (
     <div>
       <div
-        className="flex h-6 items-center gap-[3px] overflow-hidden"
+        className="flex h-6 min-w-0 items-center gap-px overflow-hidden"
         role="img"
         aria-label={`${visibleHistory.length} historical status records available`}
       >
@@ -45,7 +45,7 @@ export default function UptimeHistoryBar({
             }
             className={`
               h-5
-              min-w-[3px]
+              min-w-0
               flex-1
               rounded-full
               ${historyColors[point.status]}

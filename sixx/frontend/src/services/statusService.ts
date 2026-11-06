@@ -41,6 +41,10 @@ export async function updatePlatformStatus(
   return response.data;
 }
 
+export async function deletePlatformStatus(platformId: string): Promise<void> {
+  await api.delete(`${STATUS_ENDPOINT}/${encodeURIComponent(platformId)}`);
+}
+
 export async function getIncidentHistory(): Promise<PlatformIncident[]> {
   const response = await api.get<PlatformIncident[]>("/status/incidents");
   if (!Array.isArray(response.data)) {

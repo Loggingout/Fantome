@@ -55,6 +55,7 @@ export default function UpdateStatusModal({
   onSubmit,
   isSaving = false,
 }: UpdateStatusModalProps) {
+  const [name, setName] = useState("");
   const [status, setStatus] = useState<PlatformStatus>("unknown");
   const [message, setMessage] = useState("");
   const [incidentTitle, setIncidentTitle] = useState("");
@@ -72,6 +73,7 @@ export default function UpdateStatusModal({
     );
 
     setStatus(platform.status);
+    setName(platform.name);
     setMessage(platform.message ?? "");
     setIncidentTitle(activeIncident?.title ?? "");
     setIncidentMessage(activeIncident?.message ?? "");
@@ -106,6 +108,7 @@ export default function UpdateStatusModal({
     event.preventDefault();
 
     await onSubmit({
+      name: name.trim(),
       status,
       message: message.trim() || undefined,
       incident:
@@ -187,6 +190,25 @@ export default function UpdateStatusModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 p-6">
+          <div>
+            <label
+              htmlFor="platform-name"
+              className="mb-2 block text-sm font-medium text-neutral-300"
+            >
+              Platform Name
+            </label>
+
+            <input
+              id="platform-name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              disabled={isSaving}
+              required
+              maxLength={120}
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"
+            />
+          </div>
+
           <div>
             <label
               htmlFor="platform-status"
