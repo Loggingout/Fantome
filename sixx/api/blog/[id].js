@@ -21,7 +21,10 @@ const escapeHtml = (value) =>
 
 function absoluteImageUrl(image) {
   try {
-    const url = new URL(image || "/new-logo.png", SITE_URL);
+    const base = typeof image === "string" && image.startsWith("/api/blog/images/")
+      ? API_ORIGIN
+      : SITE_URL;
+    const url = new URL(image || "/new-logo.png", base);
     return ["http:", "https:"].includes(url.protocol)
       ? url.toString()
       : `${SITE_URL}/new-logo.png`;
@@ -32,7 +35,7 @@ function absoluteImageUrl(image) {
 
 export default async function handler(req, res) {
   const postId = typeof req.query?.id === "string" ? req.query.id : "";
-  if (!/^[a-f\d]{24}$/i.test(postId)) {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(postId) || postId.length > 150) {
     return res.status(404).send("Article not found");
   }
 
@@ -53,7 +56,7 @@ export default async function handler(req, res) {
 
     const shell = await shellResponse.text();
     const post = payload.post;
-    const canonicalUrl = `${SITE_URL}/blog/${encodeURIComponent(post.id)}`;
+    const canonicalUrl = `${SITE_URL}/blog/${encodeURIComponent(post.slug || post.id)}`;
     const title = escapeHtml(post.title);
     const pageTitle = `${title} | Fantome Technologies`;
     const description = escapeHtml(

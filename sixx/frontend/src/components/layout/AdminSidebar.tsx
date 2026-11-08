@@ -47,7 +47,8 @@ const NAV_ITEMS: NavItem[] = [
     icon: ChartPie ,
     children: [
       { label: "Website analytics", path: "/admin/analytics/website" },
-      { label: "Opened Blog Posts Analytics", path: "/" },
+      { label: "Opened Blog Posts Analytics", path: "/admin/analytics/blog" },
+      { label: "Article Inflation", path: "/admin/analytics/article-inflation" },
       
     ],
   },

@@ -53,7 +53,7 @@ export default function FeaturedPost({ post }: { post: BlogPost | null }) {
 
         {/* Read More */}
         <button
-          onClick={() => navigate(`/blog/${post.id}`)}
+          onClick={() => navigate(`/blog/${encodeURIComponent(post.slug || post.id)}`)}
           className="
             mt-2 w-fit px-5 py-2 rounded-xl
             bg-white text-black text-sm font-semibold

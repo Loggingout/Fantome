@@ -1,9 +1,11 @@
 import { Blog } from "../models/Blog.js";
 import mongoose from "mongoose";
 import { BlogImage } from "../models/BlogImage.js";
+import { withUniqueBlogSlug } from "../services/blogSlugService.js";
 
 const serializePost = (post) => ({
   id: post._id.toString(),
+  slug: post.slug,
   title: post.title,
   excerpt: post.excerpt,
   content: post.content,
@@ -33,14 +35,10 @@ export const getPublishedPosts = async (req, res) => {
 };
 
 export const getPublishedPostById = async (req, res) => {
-  if (!mongoose.isValidObjectId(req.params.id)) {
-    return res.status(404).json({ success: false, message: "Post not found" });
-  }
-
   try {
     await publishDueBlogPosts();
     const post = await Blog.findOne({
-      _id: req.params.id,
+      ...(mongoose.isValidObjectId(req.params.id) ? { _id: req.params.id } : { slug: req.params.id }),
       published: true,
       $or: [{ scheduledAt: null }, { scheduledAt: { $lte: new Date() } }],
     });
@@ -92,8 +90,9 @@ export const createPost = async (req, res) => {
     }
 
     const shouldPublish = Boolean(published) && !scheduleDate;
-    const post = await Blog.create({
+    const post = await withUniqueBlogSlug(title.trim(), (slug) => Blog.create({
       title: title.trim(),
+      slug,
       excerpt,
       content,
       category,
@@ -102,7 +101,7 @@ export const createPost = async (req, res) => {
       published: shouldPublish,
       scheduledAt: scheduleDate,
       publishedAt: shouldPublish ? new Date() : null,
-    });
+    }));
     return res.status(201).json({ success: true, post: serializePost(post) });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Server error" });

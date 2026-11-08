@@ -43,11 +43,11 @@ export default function WebsiteAnalyticsPage() {
       {error && <p role="alert" className="mb-4 rounded-lg border border-red-900/50 bg-red-950/20 px-4 py-3 text-sm text-red-300">{error}</p>}
       {isLoading ? (
         <p role="status" className="text-sm text-neutral-400">Loading website analytics...</p>
-      ) : (
+      ) : !error && summary ? (
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard label="Visits" value={String(summary?.totals.visits ?? 0)} sub="Last 30 days" trend={{ value: "live", up: true }} />
-            <StatCard label="Unique visitors" value={String(summary?.totals.uniqueVisitors ?? 0)} sub="Anonymous sessions" trend={{ value: "live", up: true }} />
+            <StatCard label="Sessions" value={String(summary.totals.uniqueVisitors)} sub="Anonymous browser sessions" />
             <StatCard label="Avg. time on page" value={formatSeconds(summary?.totals.averageVisitSeconds ?? 0)} sub="Public pages only" trend={{ value: "live", up: true }} />
             <StatCard label="Platform clicks" value={String(summary?.totals.linkClicks ?? 0)} sub="Outbound links" trend={{ value: "live", up: true }} />
           </div>
@@ -128,7 +128,7 @@ export default function WebsiteAnalyticsPage() {
             )}
           </DashCard>
         </div>
-      )}
+      ) : null}
     </PageContainer>
   );
 }

@@ -41,7 +41,7 @@ function staticUrl(path, changefreq, priority) {
 }
 
 function articleUrl(post) {
-  const loc = `${SITE_URL}/blog/${encodeURIComponent(post.id)}`;
+  const loc = `${SITE_URL}/blog/${encodeURIComponent(post.slug || post.id)}`;
   const lastmod = post.updatedAt || post.publishedAt;
   const lastmodTag = lastmod && !Number.isNaN(Date.parse(lastmod))
     ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>`

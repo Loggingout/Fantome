@@ -119,7 +119,7 @@ class EmailService {
     const siteBase = (process.env.FRONTEND_URL || "https://fantometechnologies.com").replace(/\/+$/, "");
     const articleUrl = isTest
       ? `${siteBase}/blog`
-      : `${siteBase}/blog/${encodeURIComponent(post._id.toString())}`;
+      : `${siteBase}/blog/${encodeURIComponent(post.slug || post._id.toString())}`;
     const title = escapeHtml(post.title);
     const excerpt = escapeHtml(post.excerpt || "A new article is available on the Fantome Technologies blog.");
     const category = escapeHtml(post.category || "Blog");

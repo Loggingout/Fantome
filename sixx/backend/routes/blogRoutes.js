@@ -17,6 +17,7 @@ import {
   getBlogReactionSummary,
   setBlogReaction,
 } from "../controllers/blogReactionController.js";
+import { recordBlogRead } from "../controllers/blogAnalyticsController.js";
 
 const router = express.Router();
 const reactionLimiter = rateLimit({
@@ -65,7 +66,10 @@ router.post("/", protect, adminOnly, createPost);
 router.patch("/:id", protect, adminOnly, updatePost);
 router.delete("/:id", protect, adminOnly, deletePost);
 router.get("/:id/reactions", getBlogReactionSummary);
-router.post("/:id/reactions", reactionLimiter, setBlogReaction);
+router.post("/:id/reactions", reactionLimiter, (req, res, next) =>
+  req.headers.authorization ? protect(req, res, next) : next(), setBlogReaction);
+router.post("/:id/read", reactionLimiter, (req, res, next) =>
+  req.headers.authorization ? protect(req, res, next) : next(), recordBlogRead);
 router.get("/:id", getPublishedPostById);
 
 export default router;

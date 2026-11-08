@@ -1,4 +1,5 @@
 import { WebsiteAnalyticsEvent } from "../models/WebsiteAnalyticsEvent.js";
+import { isProductionAnalyticsSource } from "../utils/analyticsSource.js";
 
 const VALID_EVENT_TYPES = new Set(["visit", "duration", "platform_link_click"]);
 const INTERNAL_PATHS = ["/admin", "/employee", "/login"];
@@ -13,7 +14,16 @@ function normalizePage(value) {
 }
 
 export async function recordWebsiteAnalyticsEvent(req, res) {
-  const { eventType, sessionId, page, durationMs, platformId, url } = req.body ?? {};
+  if (!isProductionAnalyticsSource(req)) return res.status(204).end();
+  let body = req.body;
+  if (typeof body === "string") {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      return res.status(400).json({ success: false, message: "Invalid analytics event." });
+    }
+  }
+  const { eventType, sessionId, page, durationMs, platformId, url } = body ?? {};
   const normalizedPage = normalizePage(page);
 
   if (!VALID_EVENT_TYPES.has(eventType)) {

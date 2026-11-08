@@ -90,7 +90,7 @@ export default function BlogManagementTable({ showOnlyDrafts = false }: { showOn
                       <Pencil className="h-4 w-4" />
                       {showOnlyDrafts ? "Continue" : "Edit"}
                     </Link>
-                    {post.published && <Link to={`/blog/${post.id}`} aria-label={`View ${post.title}`} className="rounded-lg border border-neutral-700 p-2 text-neutral-300 hover:bg-neutral-800"><Eye className="h-4 w-4" /></Link>}
+                    {post.published && <Link to={`/blog/${encodeURIComponent(post.slug || post.id)}`} aria-label={`View ${post.title}`} className="rounded-lg border border-neutral-700 p-2 text-neutral-300 hover:bg-neutral-800"><Eye className="h-4 w-4" /></Link>}
                     <button type="button" onClick={() => void handleDelete(post)} aria-label={`Delete ${post.title}`} className="rounded-lg border border-red-900/50 p-2 text-red-300 hover:bg-red-950/40"><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </div>

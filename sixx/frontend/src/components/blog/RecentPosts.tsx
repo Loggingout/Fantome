@@ -12,7 +12,7 @@ export default function RecentPosts({ posts }: { posts: BlogPost[] }) {
       {posts.slice(0, 5).map((post) => (
         <button
           key={post.id}
-          onClick={() => navigate(`/blog/${post.id}`)}
+          onClick={() => navigate(`/blog/${encodeURIComponent(post.slug || post.id)}`)}
           className="
             text-left group
             flex flex-col gap-1

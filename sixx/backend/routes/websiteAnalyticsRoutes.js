@@ -14,7 +14,7 @@ const eventLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.post("/events", eventLimiter, recordWebsiteAnalyticsEvent);
+router.post("/events", eventLimiter, express.text({ type: "text/plain", limit: "8kb" }), recordWebsiteAnalyticsEvent);
 router.get("/summary", protect, adminOnly, getWebsiteAnalyticsSummary);
 
 export default router;

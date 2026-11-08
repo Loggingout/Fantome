@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { useUser } from "../context/UserContext";
 
 import {
   getBlogReactionSummary,
@@ -10,6 +11,17 @@ import {
 
 const VOTER_KEY = "fantome-blog-voter-id";
 let memoryVoterId = "";
+
+const reactionCountFormatter = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+function formatReactionCount(count: number) {
+  return reactionCountFormatter.formatToParts(count)
+    .map((part) => part.type === "compact" && part.value === "K" ? "k" : part.value)
+    .join("");
+}
 
 function getVoterId() {
   try {
@@ -32,6 +44,8 @@ const emptySummary: BlogReactionSummary = {
 };
 
 export default function ArticleReactions({ postId }: { postId: string }) {
+  const { user } = useUser();
+  const isAdmin = user?.role === "admin";
   const [summary, setSummary] = useState(emptySummary);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -86,24 +100,26 @@ export default function ArticleReactions({ postId }: { postId: string }) {
       <button
         type="button"
         onClick={() => void vote("like")}
-        disabled={isLoading || isSaving}
+        disabled={isLoading || isSaving || isAdmin}
+        title={isAdmin ? "Administrators cannot vote" : "Like"}
         aria-label={`Like article, ${summary.likes} likes`}
         aria-pressed={summary.reaction === "like"}
         className={buttonClass("like")}
       >
         <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>{summary.likes}</span>
+        <span>{formatReactionCount(summary.likes)}</span>
       </button>
       <button
         type="button"
         onClick={() => void vote("dislike")}
-        disabled={isLoading || isSaving}
+        disabled={isLoading || isSaving || isAdmin}
+        title={isAdmin ? "Administrators cannot vote" : "Dislike"}
         aria-label={`Dislike article, ${summary.dislikes} dislikes`}
         aria-pressed={summary.reaction === "dislike"}
         className={buttonClass("dislike")}
       >
         <ThumbsDown className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>{summary.dislikes}</span>
+        <span>{formatReactionCount(summary.dislikes)}</span>
       </button>
       {error && (
         <span role="status" className="sr-only">

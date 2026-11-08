@@ -21,11 +21,13 @@ import adminStatusRoutes from "./routes/adminStatusRoutes.js";
 import careersRoutes from "./routes/careersRoutes.js";
 import adminCareersRoutes from "./routes/adminCareersRoutes.js";
 import adminNewsletterRoutes from "./routes/adminNewsletterRoutes.js";
+import adminBlogAnalyticsRoutes from "./routes/adminBlogAnalyticsRoutes.js";
 
 import { startShiftReminderJob } from "./services/shiftReminderService.js";
 import { startBlogPublisher } from "./services/blogPublisherService.js";
 import { seedStatusPlatforms } from "./controllers/statusController.js";
 import { initializeBlogNewsletter } from "./controllers/newsletterController.js";
+import { backfillBlogSlugs } from "./services/blogSlugService.js";
 
 import { connectDB } from "./config/db.js";
 
@@ -63,6 +65,7 @@ app.use("/api/admin/status", adminStatusRoutes);
 app.use("/api/careers", careersRoutes);
 app.use("/api/admin/careers", adminCareersRoutes);
 app.use("/api/admin/newsletter", adminNewsletterRoutes);
+app.use("/api/admin/blog-analytics", adminBlogAnalyticsRoutes);
 
 // Health Route
 app.get("/", (req, res) => {
@@ -83,6 +86,7 @@ const PORT = process.env.PORT || 5000;
 async function startServer() {
   await connectDB();
 
+  await backfillBlogSlugs();
   await seedStatusPlatforms();
   await initializeBlogNewsletter();
 

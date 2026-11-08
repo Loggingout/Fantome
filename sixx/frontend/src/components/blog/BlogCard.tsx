@@ -53,7 +53,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
 
         {/* Read More */}
         <button
-          onClick={() => navigate(`/blog/${post.id}`)}
+          onClick={() => navigate(`/blog/${encodeURIComponent(post.slug || post.id)}`)}
           className="
             mt-auto w-fit px-4 py-2 rounded-xl
             bg-white text-black text-sm font-semibold

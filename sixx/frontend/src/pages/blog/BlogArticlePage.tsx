@@ -6,6 +6,7 @@ import Footer from "../../components/footer/Footer";
 import BlogArticleBody from "../../components/blog/BlogArticleBody";
 import ShareArticleButton from "../../components/blog/ShareArticleButton";
 import ArticleReactions from "../../components/blog/ArticleReactions";
+import ArticleReadTracker from "../../components/blog/ArticleReadTracker";
 import { getPublicBlogPost } from "../../services/blogService";
 import type { BlogPost } from "../../types/blog";
 import SEOHead from "../../components/SEOHead";
@@ -39,13 +40,14 @@ export default function BlogArticlePage() {
   const isLoading = result?.id !== id;
   const post = result?.id === id ? result.post ?? null : null;
   const error = result?.id === id ? result.error ?? null : null;
+  const articlePath = post ? `/blog/${encodeURIComponent(post.slug || post.id)}` : "/blog";
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
       <SEOHead
         title={post?.title ?? "Blog article"}
         description={post?.excerpt || "Read the latest article from Fantome Technologies."}
-        path={post ? `/blog/${post.id}` : "/blog"}
+        path={articlePath}
         image={post?.image || undefined}
         type="article"
         noIndex={!post}
@@ -63,7 +65,7 @@ export default function BlogArticlePage() {
             name: "Fantome Technologies",
             logo: { "@type": "ImageObject", url: "https://fantometechnologies.com/new-logo.png" },
           },
-          mainEntityOfPage: `https://fantometechnologies.com/blog/${post.id}`,
+          mainEntityOfPage: `https://fantometechnologies.com${articlePath}`,
         } : undefined}
       />
       <Navbar />
@@ -75,6 +77,7 @@ export default function BlogArticlePage() {
           <p role="alert" className="mt-8 rounded-xl border border-neutral-800 bg-neutral-900 p-6 text-neutral-300">{error ?? "Article unavailable."}</p>
         ) : (
           <article className="mx-auto max-w-3xl">
+            <ArticleReadTracker postId={post.id} />
             {post.image && <img src={post.image} alt={post.title} className="mb-8 aspect-video w-full rounded-xl border border-neutral-800 object-cover" />}
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs uppercase tracking-widest text-neutral-500">
               <div className="flex flex-wrap items-center gap-3">
@@ -89,7 +92,7 @@ export default function BlogArticlePage() {
                 <ShareArticleButton
                   title={post.title}
                   text={post.excerpt || post.title}
-                  url={`${window.location.origin}/blog/${post.id}`}
+                  url={`${window.location.origin}${articlePath}`}
                 />
               </div>
             </div>

@@ -9,7 +9,7 @@
     },
     {
       "source": "/blog/:id",
-      "destination": "/api/blog/:id"
+      "destination": "/api/blog-preview?id=:id"
     },
     {
       "source": "/(.*)",

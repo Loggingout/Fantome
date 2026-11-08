@@ -5,14 +5,18 @@ import { BlogReaction } from "../models/BlogReaction.js";
 const isValidVoterId = (value) =>
   typeof value === "string" && /^[a-f\d-]{32,64}$/i.test(value);
 
-async function getReactionSummary(postId, voterId) {
+async function getReactionSummary(post, voterId) {
   const [likes, dislikes, current] = await Promise.all([
-    BlogReaction.countDocuments({ post: postId, reaction: "like" }),
-    BlogReaction.countDocuments({ post: postId, reaction: "dislike" }),
-    BlogReaction.findOne({ post: postId, voterId }).select("reaction").lean(),
+    BlogReaction.countDocuments({ post: post._id, reaction: "like" }),
+    BlogReaction.countDocuments({ post: post._id, reaction: "dislike" }),
+    BlogReaction.findOne({ post: post._id, voterId }).select("reaction").lean(),
   ]);
 
-  return { likes, dislikes, reaction: current?.reaction ?? null };
+  return {
+    likes: likes + (post.inflatedLikes || 0),
+    dislikes: dislikes + (post.inflatedDislikes || 0),
+    reaction: current?.reaction ?? null,
+  };
 }
 
 async function findPublishedPost(id) {
@@ -22,7 +26,7 @@ async function findPublishedPost(id) {
     _id: id,
     published: true,
     $or: [{ scheduledAt: null }, { scheduledAt: { $lte: new Date() } }],
-  }).select("_id");
+  }).select("_id inflatedLikes inflatedDislikes");
 }
 
 export async function getBlogReactionSummary(req, res) {
@@ -35,7 +39,7 @@ export async function getBlogReactionSummary(req, res) {
     const post = await findPublishedPost(req.params.id);
     if (!post) return res.status(404).json({ message: "Article not found." });
 
-    return res.status(200).json(await getReactionSummary(post._id, voterId));
+    return res.status(200).json(await getReactionSummary(post, voterId));
   } catch (error) {
     console.error("getBlogReactionSummary error:", error);
     return res.status(500).json({ message: "Unable to retrieve article reactions." });
@@ -43,6 +47,9 @@ export async function getBlogReactionSummary(req, res) {
 }
 
 export async function setBlogReaction(req, res) {
+  if (req.user?.role === "admin") {
+    return res.status(403).json({ message: "Administrators cannot vote on articles." });
+  }
   const { voterId, reaction } = req.body ?? {};
   if (!isValidVoterId(voterId) || !["like", "dislike", null].includes(reaction)) {
     return res.status(400).json({ message: "A valid voter identifier and reaction are required." });
@@ -62,7 +69,7 @@ export async function setBlogReaction(req, res) {
       );
     }
 
-    return res.status(200).json(await getReactionSummary(post._id, voterId));
+    return res.status(200).json(await getReactionSummary(post, voterId));
   } catch (error) {
     console.error("setBlogReaction error:", error);
     return res.status(500).json({ message: "Unable to save article reaction." });
