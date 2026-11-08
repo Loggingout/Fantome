@@ -49,6 +49,7 @@ export default function Navbar({
   ];
 
   const moreItems: NavbarItem[] = [
+    { label: "Blog", to: "/blog" },
     { label: "Donations", to: "/donations" },
     { label: "Contact", to: "/contact" },
     { label: "Growth and Impact", to: "/growth-and-impact" },

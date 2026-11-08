@@ -78,7 +78,7 @@ export const getScheduledPosts = async (req, res) => {
 // POST /api/blog  — admin creates a post
 export const createPost = async (req, res) => {
   try {
-    const { title, excerpt, content, category, image, author, published, scheduledAt } = req.body;
+    const { title, excerpt, content, category, image, published, scheduledAt } = req.body;
     if (typeof title !== "string" || !title.trim()) {
       return res.status(400).json({ success: false, message: "Title is required" });
     }
@@ -98,7 +98,7 @@ export const createPost = async (req, res) => {
       content,
       category,
       image,
-      author,
+      author: "Fantome Technologies",
       published: shouldPublish,
       scheduledAt: scheduleDate,
       publishedAt: shouldPublish ? new Date() : null,
@@ -112,12 +112,13 @@ export const createPost = async (req, res) => {
 // PATCH /api/blog/:id  — admin updates a post
 export const updatePost = async (req, res) => {
   try {
-    const { title, excerpt, content, category, image, author, published, scheduledAt } = req.body;
+    const { title, excerpt, content, category, image, published, scheduledAt } = req.body;
     const updates = {};
 
-    for (const [key, value] of Object.entries({ title, excerpt, content, category, image, author })) {
+    for (const [key, value] of Object.entries({ title, excerpt, content, category, image })) {
       if (value !== undefined) updates[key] = value;
     }
+    updates.author = "Fantome Technologies";
 
     if (scheduledAt !== undefined) {
       const scheduleDate = scheduledAt ? new Date(scheduledAt) : null;

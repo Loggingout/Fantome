@@ -37,17 +37,17 @@ export default function BlogManagementPage() {
 
     getAdminBlogPosts()
       .then((posts) => {
-        const draft = posts.find((post) => post.id === id && !post.published && !post.scheduledAt);
-        if (!draft) {
-          if (isCurrent) setError("This draft could not be found.");
+        const post = posts.find((item) => item.id === id);
+        if (!post) {
+          if (isCurrent) setError("This article could not be found.");
           return;
         }
         if (!isCurrent) return;
-        setTitle(draft.title);
-        setExcerpt(draft.excerpt);
-        setCategory(draft.category);
-        setContent(draft.content);
-        setCoverImage(draft.image);
+        setTitle(post.title);
+        setExcerpt(post.excerpt);
+        setCategory(post.category);
+        setContent(post.content);
+        setCoverImage(post.image);
       })
       .catch((loadError) => {
         if (isCurrent) {
@@ -63,14 +63,7 @@ export default function BlogManagementPage() {
     };
   }, [id]);
 
-  const author = (() => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user") ?? "null");
-      return user?.name || "Fantome Technologies";
-    } catch {
-      return "Fantome Technologies";
-    }
-  })();
+  const author = "Fantome Technologies";
 
   const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
@@ -280,7 +273,18 @@ export default function BlogManagementPage() {
                 {coverImage ? (
                   <div className="relative overflow-hidden rounded-lg border border-neutral-800">
                     <img src={coverImage} alt="Blog cover preview" className="aspect-16/10 w-full object-cover" />
-                    <button type="button" onClick={() => setCoverImage("")} className="absolute right-2 top-2 rounded-md bg-neutral-950/90 px-2.5 py-1.5 text-xs text-white hover:bg-neutral-900">Remove</button>
+                    <div className="absolute right-2 top-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => coverInputRef.current?.click()}
+                        disabled={isUploadingCover}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-neutral-950/90 px-2.5 py-1.5 text-xs text-white hover:bg-neutral-900 disabled:opacity-50"
+                      >
+                        <ImagePlus className="h-3.5 w-3.5" />
+                        {isUploadingCover ? "Uploading..." : "Replace"}
+                      </button>
+                      <button type="button" onClick={() => setCoverImage("")} className="rounded-md bg-neutral-950/90 px-2.5 py-1.5 text-xs text-white hover:bg-neutral-900">Remove</button>
+                    </div>
                   </div>
                 ) : (
                   <button

@@ -12,8 +12,20 @@ import {
 } from "../controllers/blogController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import multer from "multer";
+import { rateLimit } from "express-rate-limit";
+import {
+  getBlogReactionSummary,
+  setBlogReaction,
+} from "../controllers/blogReactionController.js";
 
 const router = express.Router();
+const reactionLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
@@ -52,6 +64,8 @@ router.get("/scheduled", protect, adminOnly, getScheduledPosts);
 router.post("/", protect, adminOnly, createPost);
 router.patch("/:id", protect, adminOnly, updatePost);
 router.delete("/:id", protect, adminOnly, deletePost);
+router.get("/:id/reactions", getBlogReactionSummary);
+router.post("/:id/reactions", reactionLimiter, setBlogReaction);
 router.get("/:id", getPublishedPostById);
 
 export default router;

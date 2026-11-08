@@ -141,12 +141,12 @@ export default function Footer() {
               <ul className="space-y-2 text-gray-600">
                 <li>
                   <a
-                    href="https://mysterymansion.app"
+                    href="https://topescortnetwork.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-red-600"
                   >
-                    Mystery Mansion
+                    TopEscortNetwork
                   </a>
                 </li>
                 <li>

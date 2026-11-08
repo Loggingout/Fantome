@@ -15,14 +15,14 @@ export interface Platform {
 
 export const platforms: Platform[] = [
   {
-    id: "mystery-mansion",
-    name: "Mystery Mansion",
+    id: "top-escort-network",
+    name: "TopEscortNetwork",
     description:
       "NSFW: A platform developed and operated within the Fantome Technologies ecosystem. Built to provide intimate connections for people across the world.",
     status: "Live",
     category: "PaaS Platform",
     icon: Building2,
-    url: "https://mysterymansion.app",
+    url: "https://topescortnetwork.com",
     external: true,
   },
   {

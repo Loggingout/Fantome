@@ -5,6 +5,7 @@ import Navbar from "../../components/header/Navbar";
 import Footer from "../../components/footer/Footer";
 import BlogArticleBody from "../../components/blog/BlogArticleBody";
 import ShareArticleButton from "../../components/blog/ShareArticleButton";
+import ArticleReactions from "../../components/blog/ArticleReactions";
 import { getPublicBlogPost } from "../../services/blogService";
 import type { BlogPost } from "../../types/blog";
 import SEOHead from "../../components/SEOHead";
@@ -83,11 +84,14 @@ export default function BlogArticlePage() {
                 <span aria-hidden="true">·</span>
                 <time dateTime={post.publishedAt ?? undefined}>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : "Recently published"}</time>
               </div>
-              <ShareArticleButton
-                title={post.title}
-                text={post.excerpt || post.title}
-                url={`${window.location.origin}/blog/${post.id}`}
-              />
+              <div className="flex flex-wrap items-center gap-2">
+                <ArticleReactions postId={post.id} />
+                <ShareArticleButton
+                  title={post.title}
+                  text={post.excerpt || post.title}
+                  url={`${window.location.origin}/blog/${post.id}`}
+                />
+              </div>
             </div>
             <h1 className="text-3xl font-semibold leading-tight text-white sm:text-5xl">{post.title}</h1>
             {post.excerpt && <p className="mt-5 text-lg leading-relaxed text-neutral-400">{post.excerpt}</p>}

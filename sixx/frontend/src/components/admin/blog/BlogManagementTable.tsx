@@ -82,16 +82,14 @@ export default function BlogManagementTable({ showOnlyDrafts = false }: { showOn
                   <span className={`w-fit rounded-full border px-2.5 py-1 text-xs ${status === "Published" ? "border-emerald-900/60 bg-emerald-950/30 text-emerald-300" : status === "Scheduled" ? "border-amber-900/60 bg-amber-950/30 text-amber-300" : "border-neutral-700 bg-neutral-950 text-neutral-400"}`}>{status}</span>
                   <span className="text-sm text-neutral-500">{postDate(post)}</span>
                   <div className="flex items-center gap-2">
-                    {showOnlyDrafts && (
-                      <Link
-                        to={`/admin/blog/${post.id}/edit`}
-                        aria-label={`Continue editing ${post.title}`}
-                        className="inline-flex items-center gap-2 rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-800"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        Continue
-                      </Link>
-                    )}
+                    <Link
+                      to={`/admin/blog/${post.id}/edit`}
+                      aria-label={`Edit ${post.title}`}
+                      className="inline-flex items-center gap-2 rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-800"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      {showOnlyDrafts ? "Continue" : "Edit"}
+                    </Link>
                     {post.published && <Link to={`/blog/${post.id}`} aria-label={`View ${post.title}`} className="rounded-lg border border-neutral-700 p-2 text-neutral-300 hover:bg-neutral-800"><Eye className="h-4 w-4" /></Link>}
                     <button type="button" onClick={() => void handleDelete(post)} aria-label={`Delete ${post.title}`} className="rounded-lg border border-red-900/50 p-2 text-red-300 hover:bg-red-950/40"><Trash2 className="h-4 w-4" /></button>
                   </div>
