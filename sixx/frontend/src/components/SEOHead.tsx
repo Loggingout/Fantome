@@ -24,6 +24,7 @@ export default function SEOHead({
   structuredData,
 }: SEOHeadProps) {
   const canonicalUrl = new URL(path, SITE_URL).toString();
+  const imageUrl = new URL(image, SITE_URL).toString();
   const pageTitle = `${title} | ${SITE_NAME}`;
   const robots = noIndex ? "noindex, nofollow" : "index, follow";
 
@@ -38,11 +39,14 @@ export default function SEOHead({
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:image" content={image} />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:alt" content={title} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image" content={imageUrl} />
+      <meta name="twitter:image:alt" content={title} />
       {structuredData && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}

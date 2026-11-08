@@ -19,23 +19,23 @@ export default function Homepage() {
       transition={{ duration: 0.6 }}
     >
       <Helmet>
-        <title>Fantome Technologies | Building Technology for the Consumer</title>
+        <title>Fantome Technologies | Digital Platforms and Products</title>
 
         <meta
           name="description"
-          content="Fantome Technologies builds, operates, and scales technology products within its own ecosystem — building for the consumer, scaling for the consumer, and listening to the consumer."
+          content="Fantome Technologies builds and operates digital platforms and products, connecting independent ventures within one evolving technology ecosystem."
         />
 
         <meta name="robots" content="index, follow" />
 
         <meta
           property="og:title"
-          content="Fantome Technologies | Building Technology for the Consumer"
+          content="Fantome Technologies | Digital Platforms and Products"
         />
 
         <meta
           property="og:description"
-          content="Fantome Technologies builds, operates, and scales technology products within its own ecosystem."
+          content="Fantome Technologies builds and operates digital platforms and products within an evolving technology ecosystem."
         />
 
         <meta property="og:type" content="website" />
@@ -54,12 +54,12 @@ export default function Homepage() {
 
         <meta
           name="twitter:title"
-          content="Fantome Technologies | Building Technology for the Consumer"
+          content="Fantome Technologies | Digital Platforms and Products"
         />
 
         <meta
           name="twitter:description"
-          content="Fantome Technologies builds, operates, and scales technology products within its own ecosystem."
+          content="Fantome Technologies builds and operates digital platforms and products within an evolving technology ecosystem."
         />
 
         <meta
@@ -78,7 +78,7 @@ export default function Homepage() {
             name: "Fantome Technologies",
             url: "https://fantometechnologies.com/",
             logo: "https://fantometechnologies.com/new-logo.png",
-            description: "Fantome Technologies builds and operates digital products and platforms for consumers.",
+            description: "Fantome Technologies builds and operates digital platforms and products, connecting independent ventures within one evolving technology ecosystem.",
           })}
         </script>
       </Helmet>
